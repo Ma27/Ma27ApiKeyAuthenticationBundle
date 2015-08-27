@@ -92,7 +92,7 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
         $user
             ->expects($this->any())
             ->method('getPassword')
-            ->will($this->returnValue(crypt('foo')))
+            ->will($this->returnValue(crypt('foo', '$6$rounds=500$foo$')))
         ;
 
         $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');

@@ -18,7 +18,9 @@ matrix:
     - php: 5.6
       env: SF_VERSION=2.7.*
 
-script:
+install:
   - if [ "$SF_VERSION" != "" ]; then composer require "symfony/symfony:${SF_VERSION}" --no-update; fi;
   - composer install
+
+script:
   - vendor/bin/phpunit
