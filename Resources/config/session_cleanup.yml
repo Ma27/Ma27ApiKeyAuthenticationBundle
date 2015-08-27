@@ -9,4 +9,4 @@ services:
             - @event_dispatcher
             - %ma27.auth.model_name%
             - %ma27.auth.last_activation_parameter%
-            - @logger
+            -

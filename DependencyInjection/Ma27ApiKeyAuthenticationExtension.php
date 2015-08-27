@@ -30,8 +30,8 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $container->setParameter('ma27.auth.model_name', $config['user']['model_name']);
         $fieldValues = array(
             $config['user']['properties']['password']['property'],
-            $config['user']['properties']['username'],
-            $config['user']['properties']['email'],
+            $config['user']['properties']['username'] ?: '',
+            $config['user']['properties']['email'] ?: '',
             $config['user']['properties']['apiKey']
         );
 
@@ -84,24 +84,31 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
                 throw new InvalidConfigurationException('Cannot create password config!');
         }
 
-        $container->set('ma27.auth.password.strategy', $definition);
+        $container->setDefinition('ma27.auth.password.strategy', $definition);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         if ($this->isConfigEnabled($container, $config['api_key_purge'])) {
-            if (!$config['api_key_purge']['log_state']) {
-                $container->setDefinition('logger', new Definition()); // set empty definition if no logger is in use
-            }
-
             $container->setParameter(
                 'ma27.auth.last_activation_parameter',
                 $config['api_key_purge']['last_active_property']
             );
 
             $loader->load('session_cleanup.yml');
+
+            if ($config['api_key_purge']['log_state']) {
+                if (!$container->hasDefinition('logger')) {
+                    // set empty logger
+                    // unless logger isn't currently registered
+                    $container->setDefinition('logger', new Definition());
+                }
+
+                $definition = $container->getDefinition('ma27.auth.service.cleanup_command');
+                $definition->replaceArgument(5, $container->getDefinition('logger'));
+            }
         }
 
         foreach (array('security_key', 'authorization', 'security') as $file) {
-            $loader->load(sprintf('%s.yml'), $file);
+            $loader->load(sprintf('%s.yml', $file));
         }
 
         $semanticServiceReplacements = array_filter($config['services']);
@@ -113,6 +120,10 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
             );
 
             foreach ($serviceConfig as $configIndex => $replaceableServiceId) {
+                if (!isset($semanticServiceReplacements[$configIndex])) {
+                    continue;
+                }
+
                 if (null === $serviceId = $semanticServiceReplacements[$configIndex]) {
                     continue;
                 }
