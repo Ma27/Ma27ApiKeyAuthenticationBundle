@@ -3,7 +3,7 @@
 # python software properties
 sudo apt-get install -y software-properties-common python-software-properties
 
-# php 5.4
+# php 5.3
 sudo add-apt-repository ppa:ondrej/php5-oldstable
 sudo apt-get update
 sudo apt-get -y install php5
