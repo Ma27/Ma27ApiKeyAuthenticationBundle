@@ -1,0 +1,9 @@
+# VM
+/.vagrant/
+
+# Symfony
+/composer.lock
+/vendor/
+
+# PhpStorm
+/.idea/

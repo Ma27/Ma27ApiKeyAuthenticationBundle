@@ -1,0 +1,12 @@
+services:
+    ma27.auth.service.cleanup_command:
+        class: Ma27\ApiKeyAuthenticationBundle\Command\SessionCleanupCommand
+        tags:
+            - { name: console.command }
+        arguments:
+            - @=service(parameter('ma27.auth.object_manager))
+            - @ma27.auth.service.auth_handler
+            - @event_dispatcher
+            - %ma27.auth.model_name%
+            - %ma27.auth.last_activation_parameter%
+            - @logger

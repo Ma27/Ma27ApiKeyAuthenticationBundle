@@ -1,0 +1,7 @@
+services:
+    ma27.auth.service.key_factory:
+        class: Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactory
+            arguments:
+                - @=service(parameter('ma27.auth.object_manager))
+                - %ma27.auth.model_name%
+                - %ma27.auth.property.apiKey%

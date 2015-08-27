@@ -1,0 +1,10 @@
+services:
+    ma27.auth.service.security.user_provider:
+        class: Ma27\ApiKeyAuthenticationBundle\Security\UserProvider
+        arguments:
+            - @=service(parameter('ma27.auth.object_manager))
+            - %ma27.auth.model_name%
+            - %ma27.auth.property.apiKey%
+
+    ma27.auth.service.security.authenticator:
+        class: Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator

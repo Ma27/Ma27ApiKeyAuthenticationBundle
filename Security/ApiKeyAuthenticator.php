@@ -1,0 +1,109 @@
+<?php
+
+namespace Ma27\ApiKeyAuthenticationBundle\Security;
+
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\SimplePreAuthenticatorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
+
+/**
+ * Concrete implementation of an authentication with an api key
+ */
+class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
+{
+    /**
+     * @var string
+     */
+    const API_KEY_HEADER = 'X-API-KEY';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    {
+        return new JsonResponse(
+            array('username' => $exception->getToken()->getUsername()),
+            JsonResponse::HTTP_UNAUTHORIZED
+        );
+    }
+
+    /**
+     * Returns an authenticated token
+     *
+     * @param TokenInterface $token
+     * @param UserProviderInterface $userProvider
+     * @param string $providerKey
+     *
+     * @return PreAuthenticatedToken
+     *
+     * @throws AuthenticationException If the api key does not exist or is invalid
+     * @throws \RuntimeException If $userProvider is not an instance of AdvancedUserProviderInterface
+     */
+    public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
+    {
+        if (!$userProvider instanceof AdvancedUserProviderInterface) {
+            throw new \RuntimeException(
+                'The api key provider must implement "Ma27\\ApiKeyAuthenticationBundle\\Security\\AdvancedUserProviderInterface"!'
+            );
+        }
+
+        $apiKey = $token->getCredentials();
+
+        if (!$user = $userProvider->findUserByApiKey($apiKey)) {
+            throw new AuthenticationException(
+                sprintf('API key %s does not exist!', $apiKey)
+            );
+        }
+
+        return new PreAuthenticatedToken(
+            $user,
+            $apiKey,
+            $providerKey,
+            $user->getRoles() ?: array()
+        );
+    }
+
+    /**
+     * Checks if the token is supported
+     *
+     * @param TokenInterface $token
+     * @param string $providerKey
+     *
+     * @return boolean
+     */
+    public function supportsToken(TokenInterface $token, $providerKey)
+    {
+        return $token instanceof PreAuthenticatedToken && $providerKey === $token->getProviderKey();
+    }
+
+    /**
+     * Creates an api key by the http request
+     *
+     * @param Request $request
+     * @param string $providerKey
+     *
+     * @return PreAuthenticatedToken
+     *
+     * @throws BadCredentialsException If the request token cannot be found
+     */
+    public function createToken(Request $request, $providerKey)
+    {
+        $apiKey = $request->headers->get(self::API_KEY_HEADER);
+
+        if (!$apiKey) {
+            throw new BadCredentialsException('No ApiKey found in request!');
+        }
+
+        return new PreAuthenticatedToken(
+            'unauthorized',
+            $apiKey,
+            $providerKey
+        );
+    }
+}

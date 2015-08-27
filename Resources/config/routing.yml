@@ -1,0 +1,9 @@
+ma27.api_key.request:
+    path:     /api-key.json
+    methods:  ['POST']
+    defaults: { _controller: Ma27ApiKeyAuthenticationBundle:ApiKey:requestApiKey }
+
+ma27.api_key.remove:
+    path:     /api-key.json
+    methods:  ['DELETE']
+    defaults: { _controller: Ma27ApiKeyAuthenticationBundle:ApiKey:removeSession }
