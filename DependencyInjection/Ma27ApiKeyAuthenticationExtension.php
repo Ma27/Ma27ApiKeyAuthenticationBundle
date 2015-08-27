@@ -38,7 +38,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         if (count(array_unique($fieldValues)) < 4) {
             $valueCount = array_filter(
                 array_count_values($fieldValues),
-                function ($count) {
+                function($count) {
                     return $count > 1;
                 }
             );
@@ -86,7 +86,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
 
         $container->set('ma27.auth.password.strategy', $definition);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         if ($this->isConfigEnabled($container, $config['api_key_purge'])) {
             if (!$config['api_key_purge']['log_state']) {
                 $container->setDefinition('logger', new Definition()); // set empty definition if no logger is in use

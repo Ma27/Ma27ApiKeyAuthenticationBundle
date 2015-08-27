@@ -61,7 +61,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->validate()
                         ->always(
-                            function ($array) {
+                            function($array) {
                                 if (empty($array['properties']['username']) && empty($array['properties']['email'])) {
                                     throw new InvalidConfigurationException('Email and username cannot be null!');
                                 }
