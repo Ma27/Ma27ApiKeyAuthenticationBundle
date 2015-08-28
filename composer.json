@@ -26,5 +26,11 @@
         "psr-4": {
             "Ma27\\ApiKeyAuthenticationBundle\\": ""
         }
+    },
+    "suggest": {
+        "doctrine/orm": "When storing the users in an SQL database",
+        "doctrine/mongodb-odm": "When storing users in a mongodb database",
+        "doctrine/couchdb-odm": "When storing users in a couchdb database",
+        "monolog/monolog": "When logging the apikey purger"
     }
 }
