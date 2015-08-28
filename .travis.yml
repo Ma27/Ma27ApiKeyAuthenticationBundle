@@ -1,6 +1,6 @@
 language: php
 php:
-
+  - 5.3.3
   - 5.3
   - 5.4
   - 5.5
@@ -14,13 +14,14 @@ matrix:
   allow_failures:
     - php: hhvm
     - env: SF_VERSION="3.0.x-dev"
+    - php: 7
   include:
     - php: 5.6
       env: SF_VERSION=2.5.*
     - php: 5.6
       env: SF_VERSION=2.7.*
     - php: 5.6
-      env: SF_VERSION=2.8.*@dev
+      env: SF_VERSION=2.8.x-dev
     - php: 5.6
       env: SF_VERSION="3.0.x-dev"
 
