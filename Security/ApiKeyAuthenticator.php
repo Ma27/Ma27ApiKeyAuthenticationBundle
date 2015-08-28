@@ -2,6 +2,11 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Security;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Ma27\ApiKeyAuthenticationBundle\Event\Events;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnFirewallAuthenticationEvent;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnFirewallFailureEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\SimplePreAuthenticatorInterface;
@@ -21,6 +26,42 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
      * @var string
      */
     const API_KEY_HEADER = 'X-API-KEY';
+
+    /**
+     * @var ObjectManager
+     */
+    private $om;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
+     * @var string
+     */
+    private $modelName;
+
+    /**
+     * @var string
+     */
+    private $apiKeyProperty;
+
+    /**
+     * Constructor
+     *
+     * @param ObjectManager $om
+     * @param EventDispatcherInterface $dispatcher
+     * @param string $modelName
+     * @param string $apiKeyProperty
+     */
+    public function __construct(ObjectManager $om, EventDispatcherInterface $dispatcher, $modelName, $apiKeyProperty)
+    {
+        $this->om = $om;
+        $this->dispatcher = $dispatcher;
+        $this->modelName = (string) $modelName;
+        $this->apiKeyProperty = (string) $apiKeyProperty;
+    }
 
     /**
      * {@inheritdoc}
@@ -47,26 +88,29 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
      */
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
-        if (!$userProvider instanceof AdvancedUserProviderInterface) {
-            throw new \RuntimeException(
-                'The api key provider must implement "Ma27\\ApiKeyAuthenticationBundle\\Security\\AdvancedUserProviderInterface"!'
-            );
-        }
-
         $apiKey = $token->getCredentials();
 
-        if (!$user = $userProvider->findUserByApiKey($apiKey)) {
+        if (!$user = $this->om->getRepository($this->modelName)->findOneBy(array($this->apiKeyProperty => (string) $apiKey))) {
+            $this->dispatcher->dispatch(Events::FIREWALL_FAILURE, new OnFirewallFailureEvent());
+
             throw new AuthenticationException(
                 sprintf('API key %s does not exist!', $apiKey)
             );
         }
 
-        return new PreAuthenticatedToken(
+        $token = new PreAuthenticatedToken(
             $user,
             $apiKey,
             $providerKey,
             $user->getRoles() ?: array()
         );
+
+        $firewallEvent = new OnFirewallAuthenticationEvent($user);
+        $firewallEvent->setToken($token);
+
+        $this->dispatcher->dispatch(Events::FIREWALL_LOGIN, $firewallEvent);
+
+        return $token;
     }
 
     /**

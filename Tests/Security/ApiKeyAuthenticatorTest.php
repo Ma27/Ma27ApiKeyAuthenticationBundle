@@ -4,6 +4,7 @@ namespace Ma27\ApiKeyAuthenticationBundle\Tests\Security;
 
 use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
 use Ma27\ApiKeyAuthenticationBundle\Security\UserProvider;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
@@ -19,7 +20,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/');
         $request->headers->set(ApiKeyAuthenticator::API_KEY_HEADER, $apiKey);
 
-        $apiKeyAuthenticator = new ApiKeyAuthenticator();
+        $apiKeyAuthenticator = $this->mockAuthenticator();
         /** @var PreAuthenticatedToken $token */
         $token = $apiKeyAuthenticator->createToken($request, $providerKey);
 
@@ -40,13 +41,13 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
     public function testCreateTokenWithEmptyRequest($apiKey, $providerKey)
     {
         $request = Request::create('/');
-        $apiKeyAuthenticator = new ApiKeyAuthenticator();
+        $apiKeyAuthenticator = $this->mockAuthenticator();
         $apiKeyAuthenticator->createToken($request, $providerKey);
     }
 
     public function testTokenSupport()
     {
-        $apiKeyAuthenticator = new ApiKeyAuthenticator();
+        $apiKeyAuthenticator = $this->mockAuthenticator();
         $providerKey = 'provider';
         $token = $this->getMockBuilder(
             'Symfony\\Component\\Security\\Core\\Authentication\\Token\\PreAuthenticatedToken'
@@ -100,11 +101,10 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($or))
         ;
 
-        $provider = new UserProvider($mock, 'AppBundle:User', 'apiKey');
-        $authenticator = new ApiKeyAuthenticator();
+        $authenticator = new ApiKeyAuthenticator($mock, new EventDispatcher(), 'AppBundle:User', 'apiKey');
 
         /** @var PreAuthenticatedToken $token */
-        $token = $authenticator->authenticateToken($token, $provider, $providerKey);
+        $token = $authenticator->authenticateToken($token, $this->getMock('Symfony\\Component\\Security\\Core\\User\\UserProviderInterface'), $providerKey);
 
         $this->assertInstanceOf(
             'Symfony\\Component\\Security\\Core\\Authentication\\Token\\PreAuthenticatedToken',
@@ -131,14 +131,17 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($apiKey))
         ;
 
-        $provider = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Security\\AdvancedUserProviderInterface');
-        $provider
+        $provider = $this->getMock('Symfony\\Component\\Security\\Core\\User\\UserProviderInterface');
+
+        $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
+        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $om
             ->expects($this->any())
-            ->method('findUserByApiKey')
-            ->will($this->returnValue(false))
+            ->method('getRepository')
+            ->will($this->returnValue($or))
         ;
 
-        $authenticator = new ApiKeyAuthenticator();
+        $authenticator = new ApiKeyAuthenticator($om, new EventDispatcher(), 'AppBundle:User', 'apiKey');
         $authenticator->authenticateToken($token, $provider, $providerKey);
     }
 
@@ -155,7 +158,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $exception = new AuthenticationException();
         $exception->setToken($token);
 
-        $authenticator = new ApiKeyAuthenticator();
+        $authenticator = $this->mockAuthenticator();
         $response = $authenticator->onAuthenticationFailure(Request::create('/'), $exception);
 
         $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\JsonResponse', $response);
@@ -166,20 +169,6 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($username, $content['username']);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The api key provider must implement "Ma27\ApiKeyAuthenticationBundle\Security\AdvancedUserProviderInterface"!
-     */
-    public function testAuthenticationWithInvalidUserProvider()
-    {
-        $userProvider = new ApiKeyAuthenticator();
-        $userProvider->authenticateToken(
-            $this->getMock('Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface'),
-            $this->getMock('Symfony\\Component\\Security\\Core\\User\\UserProviderInterface'),
-            'anon.'
-        );
-    }
-
     public function getCredentialSet()
     {
         return array(
@@ -188,5 +177,15 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
                 'anon.'
             )
         );
+    }
+
+    /**
+     * Creates an authenticator with mocked arguments
+     *
+     * @return ApiKeyAuthenticator
+     */
+    private function mockAuthenticator()
+    {
+        return new ApiKeyAuthenticator($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'), new EventDispatcher(), 'AppBundle:User', 'apiKey');
     }
 }
