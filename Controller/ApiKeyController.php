@@ -66,7 +66,7 @@ class ApiKeyController extends Controller
         /** @var \Ma27\ApiKeyAuthenticationBundle\Security\AdvancedUserProviderInterface $userProvider */
         $userProvider = $this->get('ma27.auth.service.security.user_provider');
 
-        if (!$header = $request->headers->get(ApiKeyAuthenticator::API_KEY_HEADER)) {
+        if (!$header = (string) $request->headers->get(ApiKeyAuthenticator::API_KEY_HEADER)) {
             throw new HttpException(Response::HTTP_BAD_REQUEST, 'Missing api key header!');
         }
 
