@@ -1,5 +1,6 @@
 language: php
 php:
+
   - 5.3
   - 5.4
   - 5.5
@@ -12,9 +13,16 @@ sudo: false
 matrix:
   allow_failures:
     - php: hhvm
+    - env: SF_VERSION="3.0.x-dev"
   include:
     - php: 5.6
+      env: SF_VERSION=2.5.*
+    - php: 5.6
       env: SF_VERSION=2.7.*
+    - php: 5.6
+      env: SF_VERSION=2.8.*
+    - php: 5.6
+      env: SF_VERSION="3.0.x-dev"
 
 install:
   - if [ "$SF_VERSION" != "" ]; then composer require "symfony/symfony:${SF_VERSION}" --no-update; fi;
@@ -22,3 +30,7 @@ install:
 
 script:
   - vendor/bin/phpunit
+
+cache:
+  directories:
+    - $HOME/.composer/cache
