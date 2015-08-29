@@ -31,7 +31,23 @@ Click [here](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/
 3) Contributing
 ---------------
 
-*in progress*
+####There's a short instruction for contributing:
+
+- Fork the project
+- Create a new local branch called *topic_<name_of_your_branch>
+- Open a PR (Pull Request)
+
+####Devtools
+
+There's a simple vagrant box that can be used when contributing:
+
+    vagrant up
+    vagrant ssh
+    cd /vagrant/auth-bundle
+
+####Functional Tests
+
+__Functional tests are currently not available, but under construction, so this section won't work__
 
 4) LICENSE
 ----------
