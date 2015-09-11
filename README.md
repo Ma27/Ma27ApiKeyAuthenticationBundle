@@ -34,7 +34,7 @@ Click [here](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/
 ####There's a short instruction for contributing:
 
 - Fork the project
-- Create a new local branch called *topic_<name_of_your_branch>
+- Create a new local branch called *topic_<name_of_your_branch>*
 - Open a PR (Pull Request)
 
 ####Devtools
@@ -52,4 +52,5 @@ __Functional tests are currently not available, but under construction, so this 
 4) LICENSE
 ----------
 
-MIT. See the [LICENSE](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/LICENSE) file
+MIT.
+See the [Resources/meta/LICENSE](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/Resources/meta/LICENSE) file for more information
