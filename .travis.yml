@@ -16,6 +16,10 @@ matrix:
     - env: SF_VERSION=2.8.x-dev
   include:
     - php: 5.6
+      env: SF_VERSION=2.3.*
+    - php: 5.6
+      env: SF_VERSION=2.4.*
+    - php: 5.6
       env: SF_VERSION=2.5.*
     - php: 5.6
       env: SF_VERSION=2.6.*

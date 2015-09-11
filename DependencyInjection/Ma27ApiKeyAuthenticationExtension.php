@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -87,6 +88,10 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $container->setDefinition('ma27.auth.password.strategy', $definition);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        foreach (array('security_key', 'authorization', 'security') as $file) {
+            $loader->load(sprintf('%s.yml', $file));
+        }
+
         if ($this->isConfigEnabled($container, $config['api_key_purge'])) {
             $container->setParameter(
                 'ma27.auth.last_activation_parameter',
@@ -105,10 +110,6 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
                 $definition = $container->getDefinition('ma27.auth.service.cleanup_command');
                 $definition->replaceArgument(5, $container->getDefinition('logger'));
             }
-        }
-
-        foreach (array('security_key', 'authorization', 'security') as $file) {
-            $loader->load(sprintf('%s.yml', $file));
         }
 
         $semanticServiceReplacements = array_filter($config['services']);
@@ -131,6 +132,23 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
                 $container->removeDefinition($replaceableServiceId);
                 $container->setAlias($replaceableServiceId, new Alias($serviceId));
             }
+        }
+
+        $affectedServiceIds = array(
+            'ma27.auth.service.key_factory',
+            'ma27.auth.service.security.authenticator',
+            'ma27.auth.service.auth_handler',
+            'ma27.auth.service.cleanup_command'
+        );
+
+        foreach ($affectedServiceIds as $affectedServiceId) {
+            if (!$container->hasDefinition($affectedServiceId)) {
+                continue;
+            }
+
+            $serviceDefinition = $container->getDefinition($affectedServiceId);
+
+            $serviceDefinition->replaceArgument(0, new Reference($container->getParameter('ma27.auth.object_manager')));
         }
     }
 }

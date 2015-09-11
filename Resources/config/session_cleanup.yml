@@ -4,7 +4,7 @@ services:
         tags:
             - { name: console.command }
         arguments:
-            - @=service(parameter('ma27.auth.object_manager))
+            - ~
             - @ma27.auth.service.auth_handler
             - @event_dispatcher
             - %ma27.auth.model_name%

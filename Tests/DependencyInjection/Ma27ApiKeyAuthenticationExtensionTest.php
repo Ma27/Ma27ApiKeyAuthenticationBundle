@@ -74,6 +74,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $container->setDefinition('foo.bar', new Definition('stdClass'));
         $container->setDefinition('logger', new Definition(get_class($logger)));
         $container->setDefinition('event_dispatcher', new Definition('Symfony\\Component\\EventDispatcher\\EventDispatcher'));
+        $container->setDefinition('om', new Definition(get_class($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
 
         $container->compile();
 
@@ -82,5 +83,8 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
             'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher',
             $container->getDefinition('ma27.auth.password.strategy')->getClass()
         );
+
+        $this->assertNotNull($container->getDefinition('ma27.auth.service.cleanup_command')->getArgument(0));
+        $this->assertSame('om', (string) $container->getDefinition('ma27.auth.service.security.authenticator')->getArgument(0));
     }
 }

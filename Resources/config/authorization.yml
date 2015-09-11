@@ -2,7 +2,7 @@ services:
     ma27.auth.service.auth_handler:
         class: Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken\ApiKeyAuthorizationHandler
         arguments:
-            - @=service(parameter('ma27.auth.object_manager))
+            - ~
             - @ma27.auth.password.strategy
             - @ma27.auth.service.key_factory
             - @event_dispatcher
