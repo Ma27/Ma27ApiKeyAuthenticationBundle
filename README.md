@@ -1,5 +1,5 @@
-ApiKeyAuthenticationBundle
-==========================
+Ma27ApiKeyAuthenticationBundle
+==============================
 
 [![Build Status](https://travis-ci.org/Ma27/Ma27ApiKeyAuthenticationBundle.svg?branch=master)](https://travis-ci.org/Ma27/Ma27ApiKeyAuthenticationBundle)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Ma27/Ma27ApiKeyAuthenticationBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Ma27/Ma27ApiKeyAuthenticationBundle/?branch=master)
@@ -55,9 +55,15 @@ __Functional tests are currently not available, but under construction, so this 
 MIT.
 See the [Resources/meta/LICENSE](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/Resources/meta/LICENSE) file for more information
 
-5) Symfony 2.3 Support
-----------------------
+5) Support
+-----------
 
+This software supports all php versions from php-5.3 up to php-7-nightly.
+The supported symfony version are 2.7, 2.6, 2.5 and 2.4.
+
+See the symfony 2.3 section for more information about symfony2.3 support
+
+###Symfony 2.3
 Symfony 2.3 doesn't support the *SimplePreAuthenticatorInterface* since it has been added in symfony 2.4.
 
 There's a backport (which is in use for the sf2.3 travis builds btw) that includes this feature in symfony 2.3: [giosh94mhz/simple-pre-authenticator-bundle](https://packagist.org/packages/giosh94mhz/simple-pre-authenticator-bundle)
