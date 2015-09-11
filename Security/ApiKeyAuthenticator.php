@@ -3,7 +3,7 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Security;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Ma27\ApiKeyAuthenticationBundle\Event\Events;
+use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnFirewallAuthenticationEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnFirewallFailureEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -88,7 +88,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
         $apiKey = $token->getCredentials();
 
         if (!$user = $this->om->getRepository($this->modelName)->findOneBy(array($this->apiKeyProperty => (string) $apiKey))) {
-            $this->dispatcher->dispatch(Events::FIREWALL_FAILURE, new OnFirewallFailureEvent());
+            $this->dispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::FIREWALL_FAILURE, new OnFirewallFailureEvent());
 
             throw new AuthenticationException(
                 sprintf('API key %s does not exist!', $apiKey)
@@ -105,7 +105,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
         $firewallEvent = new OnFirewallAuthenticationEvent($user);
         $firewallEvent->setToken($token);
 
-        $this->dispatcher->dispatch(Events::FIREWALL_LOGIN, $firewallEvent);
+        $this->dispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::FIREWALL_LOGIN, $firewallEvent);
 
         return $token;
     }

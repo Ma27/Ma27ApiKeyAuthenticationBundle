@@ -25,19 +25,19 @@ class ApiKeyController extends Controller
     public function requestApiKeyAction(Request $request)
     {
         /** @var \Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthorizationHandlerInterface $authorizationHandler */
-        $authorizationHandler = $this->get('ma27.auth.service.auth_handler');
+        $authorizationHandler = $this->get('ma27_api_key_authentication.auth_handler');
 
         $credentials = array();
         if ($username = $request->request->get('username')) {
-            $credentials[$this->container->getParameter('ma27.auth.property.username')] = $username;
+            $credentials[$this->container->getParameter('ma27_api_key_authentication.property.username')] = $username;
         }
 
         if ($email = $request->request->get('email')) {
-            $credentials[$this->container->getParameter('ma27.auth.property.email')] = $email;
+            $credentials[$this->container->getParameter('ma27_api_key_authentication.property.email')] = $email;
         }
 
         if ($password = $request->request->get('password')) {
-            $credentials[$this->container->getParameter('ma27.auth.property.password')] = $password;
+            $credentials[$this->container->getParameter('ma27_api_key_authentication.property.password')] = $password;
         }
 
         try {
@@ -66,16 +66,17 @@ class ApiKeyController extends Controller
     public function removeSessionAction(Request $request)
     {
         /** @var \Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthorizationHandlerInterface $authorizationHandler */
-        $authorizationHandler = $this->get('ma27.auth.service.auth_handler');
+        $authorizationHandler = $this->get('ma27_api_key_authentication.auth_handler');
         /** @var \Doctrine\Common\Persistence\ObjectManager $om */
-        $om = $this->get($this->container->getParameter('ma27.auth.object_manager'));
+        $om = $this->get($this->container->getParameter('ma27_api_key_authentication.object_manager'));
 
         if (!$header = (string) $request->headers->get(ApiKeyAuthenticator::API_KEY_HEADER)) {
             throw new HttpException(400, 'Missing api key header!');
         }
 
+        $repository = $om->getRepository($this->container->getParameter('ma27_api_key_authentication.model_name'));
         /** @var \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface $user */
-        $user = $om->getRepository($this->container->getParameter('ma27.auth.model_name'))->findOneBy(array($this->container->getParameter('ma27.auth.property.apiKey') => (string) $header));
+        $user = $repository->findOneBy(array($this->container->getParameter('ma27_api_key_authentication.property.apiKey') => (string) $header));
 
         $authorizationHandler->removeSession($user);
 

@@ -78,13 +78,13 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container->compile();
 
-        $this->assertSame((string) $container->getAlias('ma27.auth.service.auth_handler'), 'foo.bar');
+        $this->assertSame((string) $container->getAlias('ma27_api_key_authentication.auth_handler'), 'foo.bar');
         $this->assertSame(
             'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher',
-            $container->getDefinition('ma27.auth.password.strategy')->getClass()
+            $container->getDefinition('ma27_api_key_authentication.password.strategy')->getClass()
         );
 
-        $this->assertNotNull($container->getDefinition('ma27.auth.service.cleanup_command')->getArgument(0));
-        $this->assertSame('om', (string) $container->getDefinition('ma27.auth.service.security.authenticator')->getArgument(0));
+        $this->assertNotNull($container->getDefinition('ma27_api_key_authentication.cleanup_command')->getArgument(0));
+        $this->assertSame('om', (string) $container->getDefinition('ma27_api_key_authentication.security.authenticator')->getArgument(0));
     }
 }

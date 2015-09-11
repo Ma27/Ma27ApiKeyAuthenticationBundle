@@ -1,8 +1,8 @@
 services:
-    ma27.auth.service.key_factory:
+    ma27_api_key_authentication.key_factory:
         class: Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactory
         arguments:
             - ~
-            - %ma27.auth.model_name%
-            - %ma27.auth.property.apiKey%
+            - %ma27_api_key_authentication.model_name%
+            - %ma27_api_key_authentication.property.apiKey%
         public: false

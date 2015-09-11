@@ -3,7 +3,7 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Ma27\ApiKeyAuthenticationBundle\Event\Events;
+use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnAuthenticationEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnInvalidCredentialsEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnLogoutEvent;
@@ -137,12 +137,12 @@ class ApiKeyAuthorizationHandler implements AuthorizationHandlerInterface
                 $object->getPassword(), $credentials[$this->passwordProperty]
             )
         ) {
-            $this->eventDispatcher->dispatch(Events::CREDENTIAL_FAILURE, new OnInvalidCredentialsEvent($object));
+            $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CREDENTIAL_FAILURE, new OnInvalidCredentialsEvent($object));
 
             throw new CredentialException;
         }
 
-        $this->eventDispatcher->dispatch(Events::AUTHENTICATION, new OnAuthenticationEvent($object));
+        $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::AUTHENTICATION, new OnAuthenticationEvent($object));
 
         $object->setApiKey($this->keyFactory->getKey());
         $this->om->merge($object);
@@ -164,7 +164,7 @@ class ApiKeyAuthorizationHandler implements AuthorizationHandlerInterface
             $event->markAsPurgeJob();
         }
 
-        $this->eventDispatcher->dispatch(Events::LOGOUT, $event);
+        $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::LOGOUT, $event);
 
         $this->om->merge($user);
 

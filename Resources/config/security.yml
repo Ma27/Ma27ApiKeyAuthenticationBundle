@@ -1,8 +1,8 @@
 services:
-    ma27.auth.service.security.authenticator:
+    ma27_api_key_authentication.security.authenticator:
         class: Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator
         arguments:
             - ~
             - @event_dispatcher
-            - %ma27.auth.model_name%
-            - %ma27.auth.property.apiKey%
+            - %ma27_api_key_authentication.model_name%
+            - %ma27_api_key_authentication.property.apiKey%

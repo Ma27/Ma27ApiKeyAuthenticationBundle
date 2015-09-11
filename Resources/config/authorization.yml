@@ -1,12 +1,12 @@
 services:
-    ma27.auth.service.auth_handler:
+    ma27_api_key_authentication.auth_handler:
         class: Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken\ApiKeyAuthorizationHandler
         arguments:
             - ~
-            - @ma27.auth.password.strategy
-            - @ma27.auth.service.key_factory
+            - @ma27_api_key_authentication.password.strategy
+            - @ma27_api_key_authentication.key_factory
             - @event_dispatcher
-            - %ma27.auth.model_name%
-            - %ma27.auth.property.password%
-            - %ma27.auth.property.username%
-            - %ma27.auth.property.email%
+            - %ma27_api_key_authentication.model_name%
+            - %ma27_api_key_authentication.property.password%
+            - %ma27_api_key_authentication.property.username%
+            - %ma27_api_key_authentication.property.email%

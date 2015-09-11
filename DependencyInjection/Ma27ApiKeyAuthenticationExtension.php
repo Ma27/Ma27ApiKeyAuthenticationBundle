@@ -28,7 +28,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $configuration = new Configuration();
         $config = $processor->processConfiguration($configuration, $configs);
 
-        $container->setParameter('ma27.auth.model_name', $config['user']['model_name']);
+        $container->setParameter('ma27_api_key_authentication.model_name', $config['user']['model_name']);
         $fieldValues = array(
             $config['user']['properties']['password']['property'],
             $config['user']['properties']['username'] ?: '',
@@ -54,20 +54,20 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
 
         foreach (array('username', 'email', 'apiKey') as $authProperty) {
             $container->setParameter(
-                sprintf('ma27.auth.property.%s', $authProperty),
+                sprintf('ma27_api_key_authentication.property.%s', $authProperty),
                 $config['user']['properties'][$authProperty]
             );
         }
 
-        $container->setParameter('ma27.auth.object_manager', $config['user']['object_manager']);
+        $container->setParameter('ma27_api_key_authentication.object_manager', $config['user']['object_manager']);
 
         $container->setParameter(
-            'ma27.auth.property.apiKeyLength',
+            'ma27_api_key_authentication.property.apiKeyLength',
             intval(floor($config['user']['api_key_length'] / 2))
         );
 
         $passwordConfig = $config['user']['properties']['password'];
-        $container->setParameter('ma27.auth.property.password', $passwordConfig['property']);
+        $container->setParameter('ma27_api_key_authentication.property.password', $passwordConfig['property']);
         switch ($passwordConfig['strategy']) {
             case 'php55':
                 $definition = new Definition('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PhpPasswordHasher');
@@ -85,7 +85,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
                 throw new InvalidConfigurationException('Cannot create password config!');
         }
 
-        $container->setDefinition('ma27.auth.password.strategy', $definition);
+        $container->setDefinition('ma27_api_key_authentication.password.strategy', $definition);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         foreach (array('security_key', 'authorization', 'security') as $file) {
@@ -94,7 +94,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
 
         if ($this->isConfigEnabled($container, $config['api_key_purge'])) {
             $container->setParameter(
-                'ma27.auth.last_activation_parameter',
+                'ma27_api_key_authentication.last_activation_parameter',
                 $config['api_key_purge']['last_active_property']
             );
 
@@ -107,7 +107,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
                     $container->setDefinition('logger', new Definition());
                 }
 
-                $definition = $container->getDefinition('ma27.auth.service.cleanup_command');
+                $definition = $container->getDefinition('ma27_api_key_authentication.cleanup_command');
                 $definition->replaceArgument(5, $container->getDefinition('logger'));
             }
         }
@@ -115,9 +115,9 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $semanticServiceReplacements = array_filter($config['services']);
         if (!empty($semanticServiceReplacements)) {
             $serviceConfig = array(
-                'auth_handler' => 'ma27.auth.service.auth_handler',
-                'key_factory' => 'ma27.auth.service.key_factory',
-                'password_hasher' => 'ma27.auth.password.strategy'
+                'auth_handler' => 'ma27_api_key_authentication.auth_handler',
+                'key_factory' => 'ma27_api_key_authentication.key_factory',
+                'password_hasher' => 'ma27_api_key_authentication.password.strategy'
             );
 
             foreach ($serviceConfig as $configIndex => $replaceableServiceId) {
@@ -135,10 +135,10 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         }
 
         $affectedServiceIds = array(
-            'ma27.auth.service.key_factory',
-            'ma27.auth.service.security.authenticator',
-            'ma27.auth.service.auth_handler',
-            'ma27.auth.service.cleanup_command'
+            'ma27_api_key_authentication.key_factory',
+            'ma27_api_key_authentication.security.authenticator',
+            'ma27_api_key_authentication.auth_handler',
+            'ma27_api_key_authentication.cleanup_command'
         );
 
         foreach ($affectedServiceIds as $affectedServiceId) {
@@ -147,8 +147,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
             }
 
             $serviceDefinition = $container->getDefinition($affectedServiceId);
-
-            $serviceDefinition->replaceArgument(0, new Reference($container->getParameter('ma27.auth.object_manager')));
+            $serviceDefinition->replaceArgument(0, new Reference($container->getParameter('ma27_api_key_authentication.object_manager')));
         }
     }
 }

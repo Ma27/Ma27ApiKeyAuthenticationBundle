@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\ExpressionBuilder;
 use Doctrine\Common\Persistence\ObjectManager;
-use Ma27\ApiKeyAuthenticationBundle\Event\Events;
+use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnAfterSessionCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnBeforeSessionCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthorizationHandlerInterface;
@@ -115,7 +115,7 @@ class SessionCleanupCommand extends Command
 
         $affectedUsers = $filteredUsers->toArray();
         $event = new OnBeforeSessionCleanupEvent($affectedUsers);
-        $this->eventDispatcher->dispatch(Events::BEFORE_CLEANUP, $event);
+        $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::BEFORE_CLEANUP, $event);
 
         foreach ($filteredUsers as $user) {
             if (!$user instanceof UserInterface) {
@@ -147,7 +147,7 @@ class SessionCleanupCommand extends Command
         }
 
         $afterEvent = new OnAfterSessionCleanupEvent($affectedUsers);
-        $this->eventDispatcher->dispatch(Events::AFTER_CLEANUP, $afterEvent);
+        $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::AFTER_CLEANUP, $afterEvent);
 
         $this->om->flush();
 
