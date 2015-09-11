@@ -162,7 +162,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $response = $authenticator->onAuthenticationFailure(Request::create('/'), $exception);
 
         $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\JsonResponse', $response);
-        $this->assertSame($response->getStatusCode(), Response::HTTP_UNAUTHORIZED);
+        $this->assertSame($response->getStatusCode(), 401);
 
         $content = json_decode($response->getContent(), true);
 

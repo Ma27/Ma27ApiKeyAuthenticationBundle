@@ -49,7 +49,7 @@ class ApiKeyController extends Controller
 
             return new JsonResponse(
                 array('message' => $errorMessage),
-                Response::HTTP_UNAUTHORIZED
+                401
             );
         }
 
@@ -71,7 +71,7 @@ class ApiKeyController extends Controller
         $om = $this->get($this->container->getParameter('ma27.auth.object_manager'));
 
         if (!$header = (string) $request->headers->get(ApiKeyAuthenticator::API_KEY_HEADER)) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Missing api key header!');
+            throw new HttpException(400, 'Missing api key header!');
         }
 
         /** @var \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface $user */
@@ -79,6 +79,6 @@ class ApiKeyController extends Controller
 
         $authorizationHandler->removeSession($user);
 
-        return new JsonResponse(array(), Response::HTTP_NO_CONTENT);
+        return new JsonResponse(array(),204);
     }
 }
