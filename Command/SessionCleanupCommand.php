@@ -5,9 +5,12 @@ namespace Ma27\ApiKeyAuthenticationBundle\Command;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\ExpressionBuilder;
+use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnAfterCleanupEvent;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnApiKeyCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
-use Ma27\ApiKeyAuthenticationBundle\Event\OnAfterSessionCleanupEvent;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnSuccessfulCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnBeforeSessionCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthorizationHandlerInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
@@ -88,6 +91,18 @@ class SessionCleanupCommand extends Command
         $this
             ->setName('ma27:auth:session-cleanup')
             ->setDescription('Cleans all outdated sessions')
+            ->setHelp(<<<EOF
+The <info>ma27:auth:session-cleanup</info> command purges all api keys of users that were inactive for at least 5 days
+
+The usage is pretty simple:
+
+    <info>php app/console ma27:auth:session-cleanup</info>
+
+NOTE: you have to enable the cleanup section of that bundle (please review the docs for more information)
+
+<info>It's recommended to use a cronjob that purges old api keys every day/two days</info>
+EOF
+            )
         ;
     }
 
@@ -96,68 +111,88 @@ class SessionCleanupCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $dateTime = new \DateTime();
-        if (null !== $this->logger) {
-            $now = $dateTime->format('m/d/Y H:i:s');
+        try {
+            $dateTime = new \DateTime();
+            if (null !== $this->logger) {
+                $now = $dateTime->format('m/d/Y H:i:s');
 
-            $this->logger->notice(sprintf('Starting session purge at %s', $now));
-        }
-
-        $allUsers = new ArrayCollection($this->om->getRepository($this->modelName)->findAll());
-
-        $expressions = new ExpressionBuilder();
-        $expr = $expressions->gte($this->lastActiveProperty, new \DateTime('-5 days'));
-
-        $filterCriteria = new Criteria($expr);
-        $filteredUsers = $allUsers->matching($filterCriteria);
-
-        $processedObjects = 0;
-
-        $affectedUsers = $filteredUsers->toArray();
-        $event = new OnBeforeSessionCleanupEvent($affectedUsers);
-        $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::BEFORE_CLEANUP, $event);
-
-        foreach ($filteredUsers as $user) {
-            if (!$user instanceof UserInterface) {
-                if (null !== $this->logger) {
-                    $this->logger->critical(
-                        sprintf('Broken model found (%s)!', print_r($user, true))
-                    );
-                }
-
-                $this->om->clear();
-
-                throw new \RuntimeException('Cannot remove session of invalid user!');
+                $this->logger->notice(sprintf('Starting session purge at %s', $now));
             }
 
-            if (!$user->getApiKey()) {
-                if (null !== $this->logger) {
-                    $this->logger->notice(sprintf('Skipping unauthorized user "%s"', $user->getUsername()));
-                }
+            $expressions = new ExpressionBuilder();
+            $expr = $expressions->lte($this->lastActiveProperty, new \DateTime('-5 days'));
 
-                continue;
+            $filterCriteria = new Criteria($expr);
+            $repository = $this->om->getRepository($this->modelName);
+
+            if ($repository instanceof Selectable) {
+                // orm and mongodb have a Selectable implementation, so it is possible to query for old users
+                $filteredUsers = $repository->matching($filterCriteria);
+            } else {
+                // couchdb and phpcr unfortunately don't implement that feature, so all users must be queried and filtered using the array collection
+                $allUsers = new ArrayCollection($repository->findAll());
+                $filteredUsers = $allUsers->matching($filterCriteria);
             }
 
-            $this->handler->removeSession($user, true);
-            ++$processedObjects;
+            $processedObjects = 0;
+
+            $affectedUsers = $filteredUsers->toArray();
+            $event = new OnBeforeSessionCleanupEvent($affectedUsers);
+            $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::BEFORE_CLEANUP, $event);
+
+            foreach ($filteredUsers as $user) {
+                if (!$user instanceof UserInterface) {
+                    if (null !== $this->logger) {
+                        $this->logger->critical(
+                            sprintf('Broken model found (%s)!', print_r($user, true))
+                        );
+                    }
+
+                    $this->om->clear();
+
+                    throw new \RuntimeException('Cannot remove session of invalid user!');
+                }
+
+                if (!$user->getApiKey()) {
+                    if (null !== $this->logger) {
+                        $this->logger->notice(sprintf('Skipping unauthorized user "%s"', $user->getUsername()));
+                    }
+
+                    continue;
+                }
+
+                $this->handler->removeSession($user, true);
+                ++$processedObjects;
+            }
+
+            if (null !== $this->logger) {
+                $this->logger->notice(sprintf('Processed %d items successfully', $processedObjects));
+            }
+
+            $afterEvent = new OnSuccessfulCleanupEvent($affectedUsers);
+            $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CLEANUP_SUCCESS, $afterEvent);
+
+            $this->om->flush();
+
+            if (null !== $this->logger) {
+                $endTime = new \DateTime();
+                $end = $endTime->format('m/d/Y H:i:s');
+
+                $diff = $endTime->getTimestamp() - $dateTime->getTimestamp();
+
+                $this->logger->notice(sprintf('Stopped cleanup at %s after %d seconds', $end, $diff));
+            }
+        } catch (\Exception $ex) {
+            $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CLEANUP_ERROR, new OnApiKeyCleanupEvent($ex));
+
+            throw $ex;
         }
 
-        if (null !== $this->logger) {
-            $this->logger->notice(sprintf('Processed %d items successfully', $processedObjects));
-        }
+        $this->eventDispatcher->dispatch(
+            Ma27ApiKeyAuthenticationEvents::AFTER_CLEANUP,
+            new OnAfterCleanupEvent($affectedUsers)
+        );
 
-        $afterEvent = new OnAfterSessionCleanupEvent($affectedUsers);
-        $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::AFTER_CLEANUP, $afterEvent);
-
-        $this->om->flush();
-
-        if (null !== $this->logger) {
-            $endTime = new \DateTime();
-            $end = $endTime->format('m/d/Y H:i:s');
-
-            $diff = $endTime->getTimestamp() - $dateTime->getTimestamp();
-
-            $this->logger->notice(sprintf('Stopped cleanup at %s after %d seconds', $end, $diff));
-        }
+        return 0;
     }
 }
