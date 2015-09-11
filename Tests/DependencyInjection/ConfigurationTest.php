@@ -32,7 +32,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Invalid configuration for path "ma27_api_key_authentication.user.properties.password.strategy": Invalid password strategy ""md5""! Allowed strategies are "password", "crypt", "sha512"!
+     * @expectedExceptionMessage Invalid configuration for path "ma27_api_key_authentication.user.properties.password.strategy": Invalid password strategy ""md5""! Allowed strategies are "password", "crypt", "sha512", "phpass"!
      */
     public function testInvalidPasswordAlgorithm()
     {

@@ -68,24 +68,31 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
 
         $passwordConfig = $config['user']['properties']['password'];
         $container->setParameter('ma27_api_key_authentication.property.password', $passwordConfig['property']);
+
+        $strategyArguments = array();
         switch ($passwordConfig['strategy']) {
             case 'php55':
-                $definition = new Definition('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PhpPasswordHasher');
+                $className = 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PhpPasswordHasher';
 
                 break;
             case 'crypt':
-                $definition = new Definition('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\CryptPasswordHasher');
+                $className = 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\CryptPasswordHasher';
 
                 break;
             case 'sha512':
-                $definition = new Definition('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher');
+                $className = 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher';
+
+                break;
+            case 'phpass':
+                $className = 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PHPassHasher';
+                $strategyArguments[] = $config['user']['properties']['password']['phpass_iteration_length'];
 
                 break;
             default:
                 throw new InvalidConfigurationException('Cannot create password config!');
         }
 
-        $container->setDefinition('ma27_api_key_authentication.password.strategy', $definition);
+        $container->setDefinition('ma27_api_key_authentication.password.strategy', new Definition($className, $strategyArguments));
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         foreach (array('security_key', 'authorization', 'security') as $file) {

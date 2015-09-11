@@ -15,6 +15,7 @@
         "symfony/symfony": "~2.7",
         "doctrine/common": "~2.5",
         "doctrine/collections": "~1.3",
+        "hautelook/phpass": "~0.3",
         "psr/log": "~1.0"
     },
     "require-dev": {

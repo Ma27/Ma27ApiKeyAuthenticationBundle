@@ -87,4 +87,56 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($container->getDefinition('ma27_api_key_authentication.cleanup_command')->getArgument(0));
         $this->assertSame('om', (string) $container->getDefinition('ma27_api_key_authentication.security.authenticator')->getArgument(0));
     }
+
+    /**
+     * @dataProvider hashStrategyProvider
+     *
+     * @param string $strategyName
+     * @param string $expectedClass
+     * @param mixed[] $expectedArgs
+     */
+    public function testHashingStrategies($strategyName, $expectedClass, $expectedArgs)
+    {
+        $container = new ContainerBuilder();
+        $extension = new Ma27ApiKeyAuthenticationExtension();
+
+        $extension->load(
+            array(
+                'ma27_api_key_authentication' => array(
+                    'user' => array(
+                        'object_manager' => 'om',
+                        'properties' => array(
+                            'username' => 'foo',
+                            'apiKey' => 'apiKey',
+                            'password' => array(
+                                'strategy' => $strategyName,
+                                'property' => 'password',
+                                'phpass_iteration_length' => 5
+                            )
+                        )
+                    )
+                )
+            ),
+            $container
+        );
+
+        $container->setDefinition('om', new Definition(get_class($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
+        $container->setDefinition('event_dispatcher', new Definition('Symfony\\Component\\EventDispatcher\\EventDispatcher'));
+
+        $container->compile();
+
+        $definition = $container->getDefinition('ma27_api_key_authentication.password.strategy');
+        $this->assertSame($expectedClass, $definition->getClass());
+        $this->assertSame($expectedArgs, $definition->getArguments());
+    }
+
+    public function hashStrategyProvider()
+    {
+        return array(
+            array('crypt', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\CryptPasswordHasher', array()),
+            array('php55', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PhpPasswordHasher', array()),
+            array('sha512', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher', array()),
+            array('phpass', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PHPassHasher', array(5))
+        );
+    }
 }

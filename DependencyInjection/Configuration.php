@@ -44,15 +44,18 @@ class Configuration implements ConfigurationInterface
                                         ->scalarNode('strategy')
                                             ->defaultValue('php55')
                                             ->validate()
-                                            ->ifNotInArray(array('php55', 'crypt', 'sha512'))
+                                            ->ifNotInArray(array('php55', 'crypt', 'sha512', 'phpass'))
                                                 ->thenInvalid(
                                                     'Invalid password strategy "%s"! '
-                                                    . 'Allowed strategies are "password", "crypt", "sha512"!'
+                                                    . 'Allowed strategies are "password", "crypt", "sha512", "phpass"!'
                                                 )
                                             ->end()
                                         ->end()
                                         ->scalarNode('property')
                                             ->defaultValue('password')
+                                        ->end()
+                                        ->integerNode('phpass_iteration_length')
+                                            ->defaultValue(8)
                                         ->end()
                                     ->end()
                                 ->end()
