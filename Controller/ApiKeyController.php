@@ -43,8 +43,12 @@ class ApiKeyController extends Controller
         try {
             $user = $authorizationHandler->authenticate($credentials);
         } catch (CredentialException $ex) {
+            /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
+            $translator = $this->get('translator');
+            $errorMessage = $translator->trans($ex->getMessage() ?: 'Unable to grant access with the given credentials!');
+
             return new JsonResponse(
-                array('message' => $ex->getMessage() ?: 'Unable to grant access with the given credentials!'),
+                array('message' => $errorMessage),
                 Response::HTTP_UNAUTHORIZED
             );
         }
@@ -63,14 +67,17 @@ class ApiKeyController extends Controller
     {
         /** @var \Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthorizationHandlerInterface $authorizationHandler */
         $authorizationHandler = $this->get('ma27.auth.service.auth_handler');
-        /** @var \Ma27\ApiKeyAuthenticationBundle\Security\AdvancedUserProviderInterface $userProvider */
-        $userProvider = $this->get('ma27.auth.service.security.user_provider');
+        /** @var \Doctrine\Common\Persistence\ObjectManager $om */
+        $om = $this->get($this->container->getParameter('ma27.auth.object_manager'));
 
         if (!$header = (string) $request->headers->get(ApiKeyAuthenticator::API_KEY_HEADER)) {
             throw new HttpException(Response::HTTP_BAD_REQUEST, 'Missing api key header!');
         }
 
-        $authorizationHandler->removeSession($userProvider->findUserByApiKey($header));
+        /** @var \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface $user */
+        $user = $om->getRepository($this->container->getParameter('ma27.auth.model_name'))->findOneBy(array($this->container->getParameter('ma27.auth.property.apiKey') => (string) $header));
+
+        $authorizationHandler->removeSession($user);
 
         return new JsonResponse(array(), Response::HTTP_NO_CONTENT);
     }
