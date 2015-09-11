@@ -54,3 +54,10 @@ __Functional tests are currently not available, but under construction, so this 
 
 MIT.
 See the [Resources/meta/LICENSE](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/Resources/meta/LICENSE) file for more information
+
+5) Symfony 2.3 Support
+----------------------
+
+Symfony 2.3 doesn't support the *SimplePreAuthenticatorInterface* since it has been added in symfony 2.4.
+
+There's a backport (which is in use for the sf2.3 travis builds btw) that includes this feature in symfony 2.3: [giosh94mhz/simple-pre-authenticator-bundle](https://packagist.org/packages/giosh94mhz/simple-pre-authenticator-bundle)
