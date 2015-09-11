@@ -79,6 +79,6 @@ class ApiKeyController extends Controller
 
         $authorizationHandler->removeSession($user);
 
-        return new JsonResponse(array(),204);
+        return new JsonResponse(array(), 204);
     }
 }
