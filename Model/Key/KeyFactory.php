@@ -50,12 +50,11 @@ class KeyFactory implements KeyFactoryInterface
      */
     public function getKey()
     {
-        $key = $this->doGenerate();
         $repository = $this->om->getRepository($this->modelName);
         $max = 200;
         $count = 0;
 
-        while (null !== $repository->findOneBy(array($this->apiKeyProperty => $key))) {
+        do {
             ++$count;
 
             if ($count > $max) {
@@ -63,7 +62,7 @@ class KeyFactory implements KeyFactoryInterface
             }
 
             $key = $this->doGenerate();
-        }
+        } while (null !== $repository->findOneBy(array($this->apiKeyProperty => $key)));
 
         return $key;
     }
