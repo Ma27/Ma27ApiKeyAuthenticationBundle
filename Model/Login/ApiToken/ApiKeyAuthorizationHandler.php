@@ -173,4 +173,84 @@ class ApiKeyAuthorizationHandler implements AuthorizationHandlerInterface
             $this->om->flush();
         }
     }
+
+    /**
+     * Getter for the object manager
+     *
+     * @return ObjectManager
+     */
+    protected function getOm()
+    {
+        return $this->om;
+    }
+
+    /**
+     * Getter for the password hasher
+     *
+     * @return PasswordHasherInterface
+     */
+    protected function getPasswordHasher()
+    {
+        return $this->passwordHasher;
+    }
+
+    /**
+     * Getter for the key factory
+     *
+     * @return KeyFactoryInterface
+     */
+    protected function getKeyFactory()
+    {
+        return $this->keyFactory;
+    }
+
+    /**
+     * Getter for the dispatcher
+     *
+     * @return EventDispatcherInterface
+     */
+    protected function getEventDispatcher()
+    {
+        return $this->eventDispatcher;
+    }
+
+    /**
+     * Getter for the model name
+     *
+     * @return string
+     */
+    protected function getModelName()
+    {
+        return $this->modelName;
+    }
+
+    /**
+     * Getter for the password property
+     *
+     * @return string
+     */
+    protected function getPasswordProperty()
+    {
+        return $this->passwordProperty;
+    }
+
+    /**
+     * Getter for the user property
+     *
+     * @return string
+     */
+    protected function getUserProperty()
+    {
+        return $this->userProperty;
+    }
+
+    /**
+     * Getter for the email property
+     *
+     * @return string
+     */
+    protected function getEmailProperty()
+    {
+        return $this->emailProperty;
+    }
 }

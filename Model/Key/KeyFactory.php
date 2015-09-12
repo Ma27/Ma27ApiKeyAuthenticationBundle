@@ -69,6 +69,46 @@ class KeyFactory implements KeyFactoryInterface
     }
 
     /**
+     * Getter for the object manager
+     *
+     * @return ObjectManager
+     */
+    protected function getOm()
+    {
+        return $this->om;
+    }
+
+    /**
+     * Getter for the model name
+     *
+     * @return string
+     */
+    protected function getModelName()
+    {
+        return $this->modelName;
+    }
+
+    /**
+     * Getter for the api key property
+     *
+     * @return string
+     */
+    protected function getApiKeyProperty()
+    {
+        return $this->apiKeyProperty;
+    }
+
+    /**
+     * Getter for the key length
+     *
+     * @return integer
+     */
+    protected function getKeyLength()
+    {
+        return $this->keyLength;
+    }
+
+    /**
      * Generates the bare key
      *
      * @return string

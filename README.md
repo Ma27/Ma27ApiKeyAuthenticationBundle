@@ -8,7 +8,7 @@ Ma27ApiKeyAuthenticationBundle
 [![Latest Stable Version](https://poser.pugx.org/ma27/api-key-authentication-bundle/v/stable)](https://packagist.org/packages/ma27/api-key-authentication-bundle)
 [![Latest Unstable Version](https://poser.pugx.org/ma27/api-key-authentication-bundle/v/unstable)](https://packagist.org/packages/ma27/api-key-authentication-bundle)
 [![License](https://poser.pugx.org/ma27/api-key-authentication-bundle/license)](https://packagist.org/packages/ma27/api-key-authentication-bundle)
-[![PHP 7 ready](http://php7ready.timesplinter.ch/Ma27/Ma27ApiKeyAuthenticationBundle/badge.svg)](https://travis-ci.org/Ma27/ApiKeyAuthenticationBundle)
+[![PHP 7 ready](http://php7ready.timesplinter.ch/Ma27/Ma27ApiKeyAuthenticationBundle/badge.svg)](https://travis-ci.org/Ma27/Ma27ApiKeyAuthenticationBundle)
 
 This bundle provides a way of restful authentication using api keys.
 

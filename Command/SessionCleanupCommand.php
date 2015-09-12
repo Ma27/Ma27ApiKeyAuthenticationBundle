@@ -119,6 +119,7 @@ EOF
                 $this->logger->notice(sprintf('Starting session purge at %s', $now));
             }
 
+            // search query
             $expressions = new ExpressionBuilder();
             $expr = $expressions->lte($this->lastActiveProperty, new \DateTime('-5 days'));
 
@@ -140,6 +141,7 @@ EOF
             $event = new OnBeforeSessionCleanupEvent($affectedUsers);
             $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::BEFORE_CLEANUP, $event);
 
+            // purge filtered users
             foreach ($filteredUsers as $user) {
                 if (!$user instanceof UserInterface) {
                     if (null !== $this->logger) {
@@ -183,7 +185,10 @@ EOF
                 $this->logger->notice(sprintf('Stopped cleanup at %s after %d seconds', $end, $diff));
             }
         } catch (\Exception $ex) {
-            $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CLEANUP_ERROR, new OnApiKeyCleanupEvent($ex));
+            $this->eventDispatcher->dispatch(
+                Ma27ApiKeyAuthenticationEvents::CLEANUP_ERROR,
+                new OnApiKeyCleanupEvent($ex)
+            );
 
             throw $ex;
         }
