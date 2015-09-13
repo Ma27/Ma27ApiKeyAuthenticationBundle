@@ -49,7 +49,7 @@ There's a simple vagrant box that can be used when contributing:
 
 ####Functional Tests
 
-__Functional tests are currently not available, but under construction, so this section won't work__
+The functional tests will be executed with the rest of the test suite and require mysql (which will be installed when using vagrant)
 
 4) LICENSE
 ----------
@@ -63,4 +63,3 @@ See the [Resources/meta/LICENSE](https://github.com/Ma27/Ma27ApiKeyAuthenticatio
 This software supports all php versions from php-5.3 up to php-7-nightly.
 The supported symfony version are 2.7, 2.6, 2.5 and 2.4.
 
-See the symfony 2.3 section for more information about symfony2.3 support

@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\Event;
 /**
  * Event to be triggered on an api key error
  */
-class OnApiKeyCleanupEvent extends Event
+class OnApiKeyCleanupErrorEvent extends Event
 {
     /**
      * @var \Exception

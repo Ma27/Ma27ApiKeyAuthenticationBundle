@@ -41,7 +41,7 @@ final class Ma27ApiKeyAuthenticationEvents
      *
      * @var string
      */
-    const CREDENTIAL_FAILURE = 'ma27_api_key_authentication.authentication.credential_failure';
+    const CREDENTIAL_FAILURE = 'ma27_api_key_authentication.credential_failure';
 
     /**
      * Event to be triggered if the firewall (pre authenticator) refuses access

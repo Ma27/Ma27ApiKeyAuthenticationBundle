@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ExpressionBuilder;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnAfterCleanupEvent;
-use Ma27\ApiKeyAuthenticationBundle\Event\OnApiKeyCleanupEvent;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnApiKeyCleanupErrorEvent;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnSuccessfulCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnBeforeSessionCleanupEvent;
@@ -187,7 +187,7 @@ EOF
         } catch (\Exception $ex) {
             $this->eventDispatcher->dispatch(
                 Ma27ApiKeyAuthenticationEvents::CLEANUP_ERROR,
-                new OnApiKeyCleanupEvent($ex)
+                new OnApiKeyCleanupErrorEvent($ex)
             );
 
             throw $ex;
