@@ -2,7 +2,7 @@ services:
     ma27_api_key_authentication.security.authenticator:
         class: Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator
         arguments:
-            - ~
+            - @=service(parameter('ma27.auth.object_manager))
             - @event_dispatcher
             - %ma27_api_key_authentication.model_name%
             - %ma27_api_key_authentication.property.apiKey%

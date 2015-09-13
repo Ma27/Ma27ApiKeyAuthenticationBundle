@@ -85,7 +85,6 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertNotNull($container->getDefinition('ma27_api_key_authentication.cleanup_command')->getArgument(0));
-        $this->assertSame('om', (string) $container->getDefinition('ma27_api_key_authentication.security.authenticator')->getArgument(0));
     }
 
     /**

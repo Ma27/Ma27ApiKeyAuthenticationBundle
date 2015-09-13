@@ -34,7 +34,6 @@
         "doctrine/orm": "When storing the users in an SQL database",
         "doctrine/mongodb-odm": "When storing users in a mongodb database",
         "doctrine/couchdb-odm": "When storing users in a couchdb database",
-        "monolog/monolog": "When logging the apikey purger",
-        "giosh94mhz/simple-pre-authenticator-bundle": "As a backport for the pre authenticator when using symfony 2.3"
+        "monolog/monolog": "When logging the apikey purger"
     }
 }

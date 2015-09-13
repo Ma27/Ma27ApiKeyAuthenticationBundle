@@ -140,21 +140,5 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
                 $container->setAlias($replaceableServiceId, new Alias($serviceId));
             }
         }
-
-        $affectedServiceIds = array(
-            'ma27_api_key_authentication.key_factory',
-            'ma27_api_key_authentication.security.authenticator',
-            'ma27_api_key_authentication.auth_handler',
-            'ma27_api_key_authentication.cleanup_command'
-        );
-
-        foreach ($affectedServiceIds as $affectedServiceId) {
-            if (!$container->hasDefinition($affectedServiceId)) {
-                continue;
-            }
-
-            $serviceDefinition = $container->getDefinition($affectedServiceId);
-            $serviceDefinition->replaceArgument(0, new Reference($container->getParameter('ma27_api_key_authentication.object_manager')));
-        }
     }
 }

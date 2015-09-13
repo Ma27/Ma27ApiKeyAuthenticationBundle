@@ -64,8 +64,3 @@ This software supports all php versions from php-5.3 up to php-7-nightly.
 The supported symfony version are 2.7, 2.6, 2.5 and 2.4.
 
 See the symfony 2.3 section for more information about symfony2.3 support
-
-###Symfony 2.3
-Symfony 2.3 doesn't support the *SimplePreAuthenticatorInterface* since it has been added in symfony 2.4.
-
-There's a backport (which is in use for the sf2.3 travis builds btw) that includes this feature in symfony 2.3: [giosh94mhz/simple-pre-authenticator-bundle](https://packagist.org/packages/giosh94mhz/simple-pre-authenticator-bundle)
