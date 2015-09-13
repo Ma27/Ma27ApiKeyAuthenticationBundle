@@ -32,7 +32,7 @@ install:
   - if [ "$SF_VERSION" != "" ]; then composer require "symfony/symfony:${SF_VERSION}" --no-update; fi;
   - if [ "$SF_VERSION" = "2.3.*" ]; then composer require "giosh94mhz/simple-pre-authenticator-bundle:2.3" --no-update; fi;
   - composer install
-  - echo mysql -e "CREATE DATABASE IF NOT EXISTS symfony_functional"
+  - mysql -e "CREATE DATABASE IF NOT EXISTS symfony_functional"
   - echo "use mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user = 'root';\nFLUSH PRIVILEGES;\n" | mysql -u root
   - php ./Tests/Resources/app/console.php doctrine:schema:create
 
