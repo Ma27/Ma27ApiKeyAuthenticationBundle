@@ -227,5 +227,18 @@ The command can be used over the cli:
 
 It is recommended to use this as a cronjob:
 
-crontab -e
-@midnight /usr/bin/php /path/to/application/app/console ma27:auth:session-cleanup
+    crontab -e
+    @midnight /usr/bin/php /path/to/application/app/console ma27:auth:session-cleanup
+
+8) Overriding services
+----------------------
+
+It is possible to override the services, too.
+
+The overridable services are:
+
+- auth_handler (Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiKey\ApiKeyAuthenticationHandler)
+- key_factory (Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactory)
+- password_hasher (Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface)
+
+There's a service section in the bundle config that can be used in order to exchange these services.
