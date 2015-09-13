@@ -45,7 +45,7 @@ class ApiKeyController extends Controller
         } catch (CredentialException $ex) {
             /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
             $translator = $this->get('translator');
-            $errorMessage = $translator->trans($ex->getMessage() ?: 'Unable to grant access with the given credentials!');
+            $errorMessage = $translator->trans($ex->getMessage() ?: 'Credentials refused!');
 
             return new JsonResponse(
                 array('message' => $errorMessage),
@@ -71,7 +71,7 @@ class ApiKeyController extends Controller
         $om = $this->get($this->container->getParameter('ma27_api_key_authentication.object_manager'));
 
         if (!$header = (string) $request->headers->get(ApiKeyAuthenticator::API_KEY_HEADER)) {
-            throw new HttpException(400, 'Missing api key header!');
+            return new JsonResponse(array('message' => 'Missing api key header!'), 400);
         }
 
         $repository = $om->getRepository($this->container->getParameter('ma27_api_key_authentication.model_name'));

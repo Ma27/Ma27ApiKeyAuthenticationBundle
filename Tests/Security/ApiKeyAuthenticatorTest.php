@@ -163,10 +163,6 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\JsonResponse', $response);
         $this->assertSame($response->getStatusCode(), 401);
-
-        $content = json_decode($response->getContent(), true);
-
-        $this->assertSame($username, $content['username']);
     }
 
     public function getCredentialSet()

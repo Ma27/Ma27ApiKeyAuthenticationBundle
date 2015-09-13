@@ -5,4 +5,5 @@ services:
             - ~
             - %ma27_api_key_authentication.model_name%
             - %ma27_api_key_authentication.property.apiKey%
+            - %ma27_api_key_authentication.property.apiKeyLength%
         public: false

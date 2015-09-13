@@ -1,0 +1,50 @@
+framework:
+    secret:          secret
+    test: ~
+    router:          { resource: "%kernel.root_dir%/configs/functional_routing.yml" }
+    form:            false
+    csrf_protection: false
+    templating:
+        engines: ['php']
+    validation:      { enable_annotations: true }
+    session:
+        storage_id: session.storage.filesystem
+
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                user: root
+                password: root
+                dbname: symfony_functional
+                host: localhost
+    orm:
+        entity_managers:
+            default:
+                mappings:
+                    Functional:
+                        type: annotation
+                        is_bundle: false
+                        alias: Functional
+                        prefix: Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity
+                        dir: %kernel.root_dir%/../Entity
+
+ma27_api_key_authentication:
+    user:
+        object_manager: doctrine.orm.default_entity_manager
+        model_name: Functional:TestUser
+        properties:
+            password:
+                strategy: crypt
+
+security:
+    providers:
+        in_memory:
+            memory: ~
+    firewalls:
+        default:
+            pattern:   ^/restricted
+            stateless: true
+            simple_preauth:
+                authenticator: ma27_api_key_authentication.security.authenticator

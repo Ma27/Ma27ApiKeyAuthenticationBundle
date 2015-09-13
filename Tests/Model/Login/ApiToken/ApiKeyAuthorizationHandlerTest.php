@@ -125,12 +125,19 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildApiKey()
     {
+        $hasher = new CryptPasswordHasher();
         $key = uniqid();
         $user = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\UserInterface');
         $user
             ->expects($this->once())
             ->method('setApiKey')
             ->with($key)
+        ;
+
+        $user
+            ->expects($this->once())
+            ->method('getPassword')
+            ->will($this->returnValue($hasher->generateHash('123456')))
         ;
 
         $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
@@ -145,13 +152,6 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getRepository')
             ->will($this->returnValue($or))
-        ;
-
-        $hasher = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface');
-        $hasher
-            ->expects($this->any())
-            ->method('compareWith')
-            ->will($this->returnValue(true))
         ;
 
         $factory = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface');

@@ -100,7 +100,7 @@ class ApiKeyAuthorizationHandler implements AuthorizationHandlerInterface
             throw new \InvalidArgumentException('Username property and email property must not be null!');
         }
 
-        $query = array();
+        $criteria = array();
         if (null !== $this->userProperty) {
             if (!isset($credentials[$this->userProperty])) {
                 throw new \InvalidArgumentException(
@@ -108,7 +108,7 @@ class ApiKeyAuthorizationHandler implements AuthorizationHandlerInterface
                 );
             }
 
-            $query[$this->userProperty] = $credentials[$this->userProperty];
+            $criteria[$this->userProperty] = $credentials[$this->userProperty];
         }
 
         if (null !== $this->emailProperty) {
@@ -118,7 +118,7 @@ class ApiKeyAuthorizationHandler implements AuthorizationHandlerInterface
                 );
             }
 
-            $query[$this->emailProperty] = $credentials[$this->emailProperty];
+            $criteria[$this->emailProperty] = $credentials[$this->emailProperty];
         }
 
         if (!isset($credentials[$this->passwordProperty])) {
@@ -129,14 +129,9 @@ class ApiKeyAuthorizationHandler implements AuthorizationHandlerInterface
 
         $objectRepository = $this->om->getRepository($this->modelName);
         /** @var UserInterface $object */
-        $object = $objectRepository->findOneBy($query);
+        $object = $objectRepository->findOneBy($criteria);
 
-        if (
-            null === $object
-            || !$this->passwordHasher->compareWith(
-                $object->getPassword(), $credentials[$this->passwordProperty]
-            )
-        ) {
+        if (null === $object || !$this->passwordHasher->compareWith($object->getPassword(), $credentials[$this->passwordProperty])) {
             $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CREDENTIAL_FAILURE, new OnInvalidCredentialsEvent($object));
 
             throw new CredentialException;

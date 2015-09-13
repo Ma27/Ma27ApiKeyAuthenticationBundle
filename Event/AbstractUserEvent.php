@@ -20,7 +20,7 @@ abstract class AbstractUserEvent extends Event
      *
      * @param UserInterface $user
      */
-    public function __construct(UserInterface $user)
+    public function __construct(UserInterface $user = null)
     {
         $this->user = $user;
     }
@@ -33,5 +33,17 @@ abstract class AbstractUserEvent extends Event
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Checks whether a user is available
+     *
+     * Helpful when writing a subscriber for the auth error (when providing an invalid username, no user can be loaded)
+     *
+     * @return boolean
+     */
+    public function isUserAvailable()
+    {
+        return null !== $this->user;
     }
 }

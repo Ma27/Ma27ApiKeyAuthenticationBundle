@@ -1,0 +1,8 @@
+app:
+  resource: "@Ma27ApiKeyAuthenticationBundle/Resources/config/routing/routing.yml"
+  prefix: /
+
+test:
+  path: /restricted.html
+  defaults:
+    _controller: \Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Controller\TestController::helloAction

@@ -11,7 +11,7 @@ Vagrant.configure(2) do |config|
     vb.gui = true
     vb.memory = "1024"
     vb.cpus  = 1
-    vb.name = "ApiKeyAuthentication VM"
+    vb.name = "Ma27ApiKeyAuthentication VM"
   end
 
   config.vm.network :private_network, :ip => '193.68.45.123'
