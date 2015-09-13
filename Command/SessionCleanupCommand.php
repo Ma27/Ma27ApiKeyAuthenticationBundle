@@ -12,7 +12,7 @@ use Ma27\ApiKeyAuthenticationBundle\Event\OnApiKeyCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnSuccessfulCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnBeforeSessionCleanupEvent;
-use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthorizationHandlerInterface;
+use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -31,7 +31,7 @@ class SessionCleanupCommand extends Command
     private $om;
 
     /**
-     * @var AuthorizationHandlerInterface
+     * @var AuthenticationHandlerInterface
      */
     private $handler;
 
@@ -59,7 +59,7 @@ class SessionCleanupCommand extends Command
      * Constructor
      *
      * @param ObjectManager $om
-     * @param AuthorizationHandlerInterface $authorizationHandler
+     * @param AuthenticationHandlerInterface $authenticationHandler
      * @param EventDispatcherInterface $eventDispatcher
      * @param $modelName
      * @param $lastActiveProperty
@@ -67,14 +67,14 @@ class SessionCleanupCommand extends Command
      */
     public function __construct(
         ObjectManager $om,
-        AuthorizationHandlerInterface $authorizationHandler,
+        AuthenticationHandlerInterface $authenticationHandler,
         EventDispatcherInterface $eventDispatcher,
         $modelName,
         $lastActiveProperty,
         LoggerInterface $logger = null
     ) {
         $this->om = $om;
-        $this->handler = $authorizationHandler;
+        $this->handler = $authenticationHandler;
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
         $this->modelName = (string) $modelName;

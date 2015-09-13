@@ -24,8 +24,8 @@ class ApiKeyController extends Controller
      */
     public function requestApiKeyAction(Request $request)
     {
-        /** @var \Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthorizationHandlerInterface $authorizationHandler */
-        $authorizationHandler = $this->get('ma27_api_key_authentication.auth_handler');
+        /** @var \Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface $authenticationHandler */
+        $authenticationHandler = $this->get('ma27_api_key_authentication.auth_handler');
 
         $credentials = array();
         if ($username = $request->request->get('username')) {
@@ -41,7 +41,7 @@ class ApiKeyController extends Controller
         }
 
         try {
-            $user = $authorizationHandler->authenticate($credentials);
+            $user = $authenticationHandler->authenticate($credentials);
         } catch (CredentialException $ex) {
             /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
             $translator = $this->get('translator');
@@ -65,8 +65,8 @@ class ApiKeyController extends Controller
      */
     public function removeSessionAction(Request $request)
     {
-        /** @var \Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthorizationHandlerInterface $authorizationHandler */
-        $authorizationHandler = $this->get('ma27_api_key_authentication.auth_handler');
+        /** @var \Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface $authenticationHandler */
+        $authenticationHandler = $this->get('ma27_api_key_authentication.auth_handler');
         /** @var \Doctrine\Common\Persistence\ObjectManager $om */
         $om = $this->get($this->container->getParameter('ma27_api_key_authentication.object_manager'));
 
@@ -78,7 +78,7 @@ class ApiKeyController extends Controller
         /** @var \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface $user */
         $user = $repository->findOneBy(array($this->container->getParameter('ma27_api_key_authentication.property.apiKey') => (string) $header));
 
-        $authorizationHandler->removeSession($user);
+        $authenticationHandler->removeSession($user);
 
         return new JsonResponse(array(), 204);
     }

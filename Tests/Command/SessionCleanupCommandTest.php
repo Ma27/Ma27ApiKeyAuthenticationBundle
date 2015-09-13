@@ -1,6 +1,6 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Tests;
+namespace Ma27\ApiKeyAuthenticationBundle\Tests\Command;
 
 use Ma27\ApiKeyAuthenticationBundle\Command\SessionCleanupCommand;
 use Symfony\Component\Console\Application;
@@ -28,7 +28,7 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($repository))
         ;
 
-        $handler = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\AuthorizationHandlerInterface');
+        $handler = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\AuthenticationHandlerInterface');
         $handler
             ->expects($this->exactly(3))
             ->method('removeSession')
@@ -76,7 +76,7 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
             ->method('clear')
         ;
 
-        $handler = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\AuthorizationHandlerInterface');
+        $handler = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\AuthenticationHandlerInterface');
         $cmd = new SessionCleanupCommand(
             $om,
             $handler,

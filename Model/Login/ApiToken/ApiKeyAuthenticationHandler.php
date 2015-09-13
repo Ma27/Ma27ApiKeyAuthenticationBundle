@@ -9,7 +9,7 @@ use Ma27\ApiKeyAuthenticationBundle\Event\OnInvalidCredentialsEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnLogoutEvent;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
 use Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactoryInterface;
-use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthorizationHandlerInterface;
+use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Concrete handler for api key authorization
  */
-class ApiKeyAuthorizationHandler implements AuthorizationHandlerInterface
+class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
 {
     /**
      * @var ObjectManager

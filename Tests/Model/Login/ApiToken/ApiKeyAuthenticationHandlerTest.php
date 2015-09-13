@@ -2,11 +2,11 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Model\Login\ApiToken;
 
-use Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken\ApiKeyAuthorizationHandler;
+use Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken\ApiKeyAuthenticationHandler;
 use Ma27\ApiKeyAuthenticationBundle\Model\Password\CryptPasswordHasher;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
+class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
@@ -15,7 +15,7 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
     public function testInvalidCredentialParameters()
     {
         $fullMock = $this->getMockBuilder(
-            'Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\ApiToken\\ApiKeyAuthorizationHandler'
+            'Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\ApiToken\\ApiKeyAuthenticationHandler'
         );
 
         $mock = $fullMock->disableOriginalConstructor()->getMockForAbstractClass();
@@ -29,7 +29,7 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingEmail()
     {
-        $handler = new ApiKeyAuthorizationHandler(
+        $handler = new ApiKeyAuthenticationHandler(
             $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
@@ -49,7 +49,7 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingUsername()
     {
-        $handler = new ApiKeyAuthorizationHandler(
+        $handler = new ApiKeyAuthenticationHandler(
             $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
@@ -69,7 +69,7 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingPasswordParam()
     {
-        $handler = new ApiKeyAuthorizationHandler(
+        $handler = new ApiKeyAuthenticationHandler(
             $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
@@ -109,7 +109,7 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($or))
         ;
 
-        $handler = new ApiKeyAuthorizationHandler(
+        $handler = new ApiKeyAuthenticationHandler(
             $om,
             new CryptPasswordHasher(),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
@@ -161,7 +161,7 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($key))
         ;
 
-        $handler = new ApiKeyAuthorizationHandler(
+        $handler = new ApiKeyAuthenticationHandler(
             $om,
             $hasher,
             $factory,
@@ -191,7 +191,7 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($user)
         ;
 
-        $handler = new ApiKeyAuthorizationHandler(
+        $handler = new ApiKeyAuthenticationHandler(
             $om,
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
@@ -225,7 +225,7 @@ class ApiKeyAuthorizationHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('flush')
         ;
 
-        $handler = new ApiKeyAuthorizationHandler(
+        $handler = new ApiKeyAuthenticationHandler(
             $om,
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),

@@ -7,7 +7,7 @@ use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 /**
  * Interface of a handler that executes the authorization
  */
-interface AuthorizationHandlerInterface
+interface AuthenticationHandlerInterface
 {
     /**
      * Authenticates the user

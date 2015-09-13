@@ -95,7 +95,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $container->setDefinition('ma27_api_key_authentication.password.strategy', new Definition($className, $strategyArguments));
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        foreach (array('security_key', 'authorization', 'security') as $file) {
+        foreach (array('security_key', 'authentication', 'security') as $file) {
             $loader->load(sprintf('%s.yml', $file));
         }
 
