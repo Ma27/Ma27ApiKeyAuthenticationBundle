@@ -5,7 +5,7 @@ namespace Ma27\ApiKeyAuthenticationBundle\Model\Key;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Factory which generates the api keys
+ * Factory which generates the api keys.
  */
 class KeyFactory implements KeyFactoryInterface
 {
@@ -30,12 +30,12 @@ class KeyFactory implements KeyFactoryInterface
     private $keyLength;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ObjectManager $om
-     * @param string $modelName
-     * @param string $apiKeyProperty
-     * @param int $keyLength
+     * @param string        $modelName
+     * @param string        $apiKeyProperty
+     * @param int           $keyLength
      */
     public function __construct(ObjectManager $om, $modelName, $apiKeyProperty, $keyLength = 200)
     {
@@ -62,13 +62,13 @@ class KeyFactory implements KeyFactoryInterface
             }
 
             $key = $this->doGenerate();
-        } while (null !== $repository->findOneBy(array($this->apiKeyProperty => $key)));
+        } while (null !== $repository->findOneBy([$this->apiKeyProperty => $key]));
 
         return $key;
     }
 
     /**
-     * Getter for the object manager
+     * Getter for the object manager.
      *
      * @return ObjectManager
      */
@@ -78,7 +78,7 @@ class KeyFactory implements KeyFactoryInterface
     }
 
     /**
-     * Getter for the model name
+     * Getter for the model name.
      *
      * @return string
      */
@@ -88,7 +88,7 @@ class KeyFactory implements KeyFactoryInterface
     }
 
     /**
-     * Getter for the api key property
+     * Getter for the api key property.
      *
      * @return string
      */
@@ -98,9 +98,9 @@ class KeyFactory implements KeyFactoryInterface
     }
 
     /**
-     * Getter for the key length
+     * Getter for the key length.
      *
-     * @return integer
+     * @return int
      */
     protected function getKeyLength()
     {
@@ -108,7 +108,7 @@ class KeyFactory implements KeyFactoryInterface
     }
 
     /**
-     * Generates the bare key
+     * Generates the bare key.
      *
      * @return string
      */

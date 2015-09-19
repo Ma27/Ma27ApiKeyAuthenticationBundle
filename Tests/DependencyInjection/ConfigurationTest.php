@@ -13,16 +13,16 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyEmailAndUsername()
     {
-        $config = array(
-            'ma27_api_key_authentication' => array(
-                'user' => array(
+        $config = [
+            'ma27_api_key_authentication' => [
+                'user' => [
                     'object_manager' => 'om',
-                    'properties' => array(
-                        'username' => null
-                    )
-                )
-            )
-        );
+                    'properties'     => [
+                        'username' => null,
+                    ],
+                ],
+            ],
+        ];
 
         $configuration = new Configuration();
         $processor = new Processor();
@@ -36,18 +36,18 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidPasswordAlgorithm()
     {
-        $config = array(
-            'ma27_api_key_authentication' => array(
-                'user' => array(
+        $config = [
+            'ma27_api_key_authentication' => [
+                'user' => [
                     'object_manager' => 'om',
-                    'properties' => array(
-                        'password' => array(
-                            'strategy' => 'md5'
-                        )
-                    )
-                )
-            )
-        );
+                    'properties'     => [
+                        'password' => [
+                            'strategy' => 'md5',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         $configuration = new Configuration();
         $processor = new Processor();
@@ -57,14 +57,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testDefaultConfig()
     {
-        $config = array(
-            'ma27_api_key_authentication' => array(
-                'user' => array(
+        $config = [
+            'ma27_api_key_authentication' => [
+                'user' => [
                     'object_manager' => 'om',
-                    'properties' => array('username' => 'username')
-                )
-            )
-        );
+                    'properties'     => ['username' => 'username'],
+                ],
+            ],
+        ];
 
         $configuration = new Configuration();
         $processor = new Processor();

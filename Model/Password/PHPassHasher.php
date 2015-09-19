@@ -5,7 +5,7 @@ namespace Ma27\ApiKeyAuthenticationBundle\Model\Password;
 use Hautelook\Phpass\PasswordHash;
 
 /**
- * Hasher using the phpass framework
+ * Hasher using the phpass framework.
  */
 class PHPassHasher implements PasswordHasherInterface
 {
@@ -15,7 +15,7 @@ class PHPassHasher implements PasswordHasherInterface
     private $phpass;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param int $iterationLength
      */

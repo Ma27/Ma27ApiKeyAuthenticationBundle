@@ -3,7 +3,7 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Model\Password;
 
 /**
- * Hasher which uses the crypt algorithm
+ * Hasher which uses the crypt algorithm.
  */
 class CryptPasswordHasher implements PasswordHasherInterface
 {
@@ -12,7 +12,8 @@ class CryptPasswordHasher implements PasswordHasherInterface
      */
     public function generateHash($password)
     {
-        $salt = '$6$rounds=3000$' . base64_encode(uniqid()) . '$';
+        $salt = '$6$rounds=3000$'.base64_encode(uniqid()).'$';
+
         return crypt($password, $salt);
     }
 

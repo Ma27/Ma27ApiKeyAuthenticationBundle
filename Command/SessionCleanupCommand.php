@@ -9,9 +9,9 @@ use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnAfterCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnApiKeyCleanupErrorEvent;
-use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
-use Ma27\ApiKeyAuthenticationBundle\Event\OnSuccessfulCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnBeforeSessionCleanupEvent;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnSuccessfulCleanupEvent;
+use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 use Psr\Log\LoggerInterface;
@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Command which is responsible for the session cleanup
+ * Command which is responsible for the session cleanup.
  */
 class SessionCleanupCommand extends Command
 {
@@ -56,11 +56,11 @@ class SessionCleanupCommand extends Command
     private $lastActiveProperty;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param ObjectManager $om
+     * @param ObjectManager                  $om
      * @param AuthenticationHandlerInterface $authenticationHandler
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param EventDispatcherInterface       $eventDispatcher
      * @param $modelName
      * @param $lastActiveProperty
      * @param LoggerInterface $logger
@@ -102,8 +102,7 @@ NOTE: you have to enable the cleanup section of that bundle (please review the d
 
 <info>It's recommended to use a cronjob that purges old api keys every day/two days</info>
 EOF
-            )
-        ;
+            );
     }
 
     /**

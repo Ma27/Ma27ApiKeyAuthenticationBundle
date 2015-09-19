@@ -5,17 +5,17 @@ namespace Ma27\ApiKeyAuthenticationBundle\Event;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Abstract event for job commands
+ * Abstract event for job commands.
  */
 abstract class AbstractJobEvent extends Event
 {
     /**
      * @var \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface[]
      */
-    private $affectedUsers = array();
+    private $affectedUsers = [];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface[] $users
      */
@@ -25,7 +25,7 @@ abstract class AbstractJobEvent extends Event
     }
 
     /**
-     * Returns all affected version
+     * Returns all affected version.
      *
      * @return \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface[]
      */
