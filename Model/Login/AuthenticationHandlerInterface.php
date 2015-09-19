@@ -5,12 +5,12 @@ namespace Ma27\ApiKeyAuthenticationBundle\Model\Login;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 
 /**
- * Interface of a handler that executes the authorization
+ * Interface of a handler that executes the authorization.
  */
 interface AuthenticationHandlerInterface
 {
     /**
-     * Authenticates the user
+     * Authenticates the user.
      *
      * @param string[] $credentials
      *
@@ -19,10 +19,10 @@ interface AuthenticationHandlerInterface
     public function authenticate(array $credentials);
 
     /**
-     * Removes the user session
+     * Removes the user session.
      *
      * @param UserInterface $user
-     * @param bool $purgeJob
+     * @param bool          $purgeJob
      */
     public function removeSession(UserInterface $user, $purgeJob = false);
 }

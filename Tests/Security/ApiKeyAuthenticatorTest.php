@@ -3,10 +3,8 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Security;
 
 use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
-use Ma27\ApiKeyAuthenticationBundle\Security\UserProvider;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
@@ -53,14 +51,12 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
             'Symfony\\Component\\Security\\Core\\Authentication\\Token\\PreAuthenticatedToken'
         )
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $token
             ->expects($this->any())
             ->method('getProviderKey')
-            ->will($this->returnValue($providerKey))
-        ;
+            ->will($this->returnValue($providerKey));
 
         $this->assertTrue($apiKeyAuthenticator->supportsToken($token, $providerKey));
         $this->assertFalse($apiKeyAuthenticator->supportsToken($token, 'foo'));
@@ -84,22 +80,19 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $token
             ->expects($this->any())
             ->method('getCredentials')
-            ->will($this->returnValue($apiKey))
-        ;
+            ->will($this->returnValue($apiKey));
 
         $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $or
             ->expects($this->once())
             ->method('findOneBy')
-            ->will($this->returnValue($user))
-        ;
+            ->will($this->returnValue($user));
 
         $mock = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $mock
             ->expects($this->any())
             ->method('getRepository')
-            ->will($this->returnValue($or))
-        ;
+            ->will($this->returnValue($or));
 
         $authenticator = new ApiKeyAuthenticator($mock, new EventDispatcher(), 'AppBundle:User', 'apiKey');
 
@@ -128,8 +121,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $token
             ->expects($this->any())
             ->method('getCredentials')
-            ->will($this->returnValue($apiKey))
-        ;
+            ->will($this->returnValue($apiKey));
 
         $provider = $this->getMock('Symfony\\Component\\Security\\Core\\User\\UserProviderInterface');
 
@@ -138,8 +130,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $om
             ->expects($this->any())
             ->method('getRepository')
-            ->will($this->returnValue($or))
-        ;
+            ->will($this->returnValue($or));
 
         $authenticator = new ApiKeyAuthenticator($om, new EventDispatcher(), 'AppBundle:User', 'apiKey');
         $authenticator->authenticateToken($token, $provider, $providerKey);
@@ -152,8 +143,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $token
             ->expects($this->any())
             ->method('getUsername')
-            ->will($this->returnValue($username))
-        ;
+            ->will($this->returnValue($username));
 
         $exception = new AuthenticationException();
         $exception->setToken($token);
@@ -167,16 +157,16 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
 
     public function getCredentialSet()
     {
-        return array(
-            array(
+        return [
+            [
                 uniqid(),
-                'anon.'
-            )
-        );
+                'anon.',
+            ],
+        ];
     }
 
     /**
-     * Creates an authenticator with mocked arguments
+     * Creates an authenticator with mocked arguments.
      *
      * @return ApiKeyAuthenticator
      */

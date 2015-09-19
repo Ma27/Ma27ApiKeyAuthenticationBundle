@@ -3,7 +3,7 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Event;
 
 /**
- * Logout event
+ * Logout event.
  */
 class OnLogoutEvent extends AbstractUserEvent
 {
@@ -13,7 +13,7 @@ class OnLogoutEvent extends AbstractUserEvent
     private $purgeJob = false;
 
     /**
-     * Marks the logout as purge job of the session purger
+     * Marks the logout as purge job of the session purger.
      */
     public function markAsPurgeJob()
     {
@@ -21,7 +21,7 @@ class OnLogoutEvent extends AbstractUserEvent
     }
 
     /**
-     * Checks if the event is triggered inside a purge job
+     * Checks if the event is triggered inside a purge job.
      *
      * @return bool
      */

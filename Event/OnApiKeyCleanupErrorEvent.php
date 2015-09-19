@@ -5,7 +5,7 @@ namespace Ma27\ApiKeyAuthenticationBundle\Event;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Event to be triggered on an api key error
+ * Event to be triggered on an api key error.
  */
 class OnApiKeyCleanupErrorEvent extends Event
 {
@@ -15,7 +15,7 @@ class OnApiKeyCleanupErrorEvent extends Event
     private $exception;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \Exception $exception
      */

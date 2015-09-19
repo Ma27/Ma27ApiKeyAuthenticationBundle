@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test kernel
+ * Test kernel.
  */
 class AppKernel extends \Symfony\Component\HttpKernel\Kernel
 {
@@ -10,14 +10,14 @@ class AppKernel extends \Symfony\Component\HttpKernel\Kernel
      */
     public function registerBundles()
     {
-        return array(
+        return [
             // Dependencies
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             // My Bundle to test
             new Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationBundle(),
-        );
+        ];
     }
 
     /**
@@ -25,6 +25,6 @@ class AppKernel extends \Symfony\Component\HttpKernel\Kernel
      */
     public function registerContainerConfiguration(\Symfony\Component\Config\Loader\LoaderInterface $loader)
     {
-        $loader->load(__DIR__ . '/configs/functional.yml');
+        $loader->load(__DIR__.'/configs/functional.yml');
     }
 }

@@ -7,16 +7,14 @@ use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
- * Controller which is responsible for the authentication routes
+ * Controller which is responsible for the authentication routes.
  */
 class ApiKeyController extends Controller
 {
     /**
-     * Requests an api key
+     * Requests an api key.
      *
      * @param Request $request
      *
@@ -27,7 +25,7 @@ class ApiKeyController extends Controller
         /** @var \Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface $authenticationHandler */
         $authenticationHandler = $this->get('ma27_api_key_authentication.auth_handler');
 
-        $credentials = array();
+        $credentials = [];
         if ($username = $request->request->get('username')) {
             $credentials[$this->container->getParameter('ma27_api_key_authentication.property.username')] = $username;
         }
@@ -48,16 +46,16 @@ class ApiKeyController extends Controller
             $errorMessage = $translator->trans($ex->getMessage() ?: 'Credentials refused!');
 
             return new JsonResponse(
-                array('message' => $errorMessage),
+                ['message' => $errorMessage],
                 401
             );
         }
 
-        return new JsonResponse(array('apiKey' => $user->getApiKey()));
+        return new JsonResponse(['apiKey' => $user->getApiKey()]);
     }
 
     /**
-     * Removes an api key
+     * Removes an api key.
      *
      * @param Request $request
      *
@@ -71,15 +69,15 @@ class ApiKeyController extends Controller
         $om = $this->get($this->container->getParameter('ma27_api_key_authentication.object_manager'));
 
         if (!$header = (string) $request->headers->get(ApiKeyAuthenticator::API_KEY_HEADER)) {
-            return new JsonResponse(array('message' => 'Missing api key header!'), 400);
+            return new JsonResponse(['message' => 'Missing api key header!'], 400);
         }
 
         $repository = $om->getRepository($this->container->getParameter('ma27_api_key_authentication.model_name'));
         /** @var \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface $user */
-        $user = $repository->findOneBy(array($this->container->getParameter('ma27_api_key_authentication.property.apiKey') => (string) $header));
+        $user = $repository->findOneBy([$this->container->getParameter('ma27_api_key_authentication.property.apiKey') => (string) $header]);
 
         $authenticationHandler->removeSession($user);
 
-        return new JsonResponse(array(), 204);
+        return new JsonResponse([], 204);
     }
 }

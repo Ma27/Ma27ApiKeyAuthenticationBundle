@@ -35,7 +35,7 @@ class ApiKeyControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api-key.json', array('username' => 'foo', 'password' => 'foo'));
+        $client->request('POST', '/api-key.json', ['username' => 'foo', 'password' => 'foo']);
         $response = $client->getResponse();
 
         $bareResponse = json_decode($response->getContent(), true);
@@ -49,7 +49,7 @@ class ApiKeyControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api-key.json', array('username' => 'Ma27', 'password' => '123456'));
+        $client->request('POST', '/api-key.json', ['username' => 'Ma27', 'password' => '123456']);
         $response = $client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());
@@ -73,15 +73,15 @@ class ApiKeyControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api-key.json', array('username' => 'Ma27', 'password' => '123456'));
+        $client->request('POST', '/api-key.json', ['username' => 'Ma27', 'password' => '123456']);
         $response = json_decode($client->getResponse()->getContent(), true);
 
         $apiKey = $response['apiKey'];
-        $client->request('GET', '/restricted.html', array(), array(), array('HTTP_'.ApiKeyAuthenticator::API_KEY_HEADER => $apiKey));
+        $client->request('GET', '/restricted.html', [], [], ['HTTP_'.ApiKeyAuthenticator::API_KEY_HEADER => $apiKey]);
         $testResponse = $client->getResponse();
         $this->assertSame(200, $testResponse->getStatusCode());
 
-        $client->request('DELETE', '/api-key.json', array(), array(), array('HTTP_'.ApiKeyAuthenticator::API_KEY_HEADER => $apiKey));
+        $client->request('DELETE', '/api-key.json', [], [], ['HTTP_'.ApiKeyAuthenticator::API_KEY_HEADER => $apiKey]);
         $logoutResponse = $client->getResponse();
 
         $this->assertSame(204, $logoutResponse->getStatusCode());

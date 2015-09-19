@@ -14,8 +14,7 @@ class KeyFactoryTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getRepository')
             ->with('AppBundle:User')
-            ->will($this->returnValue($or))
-        ;
+            ->will($this->returnValue($or));
 
         $factory = new KeyFactory($om, 'AppBundle:User', 'apiKey');
         $key = $factory->getKey();
@@ -34,16 +33,14 @@ class KeyFactoryTest extends \PHPUnit_Framework_TestCase
         $or
             ->expects($this->any())
             ->method('findOneBy')
-            ->will($this->returnValue($userMock))
-        ;
+            ->will($this->returnValue($userMock));
 
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->any())
             ->method('getRepository')
             ->with('AppBundle:User')
-            ->will($this->returnValue($or))
-        ;
+            ->will($this->returnValue($or));
 
         $factory = new KeyFactory($om, 'AppBundle:User', 'apiKey');
         $factory->getKey();

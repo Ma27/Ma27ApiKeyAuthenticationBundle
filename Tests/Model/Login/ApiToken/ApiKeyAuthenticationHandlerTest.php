@@ -20,7 +20,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 
         $mock = $fullMock->disableOriginalConstructor()->getMockForAbstractClass();
 
-        $mock->authenticate(array());
+        $mock->authenticate([]);
     }
 
     /**
@@ -40,7 +40,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             'email'
         );
 
-        $handler->authenticate(array());
+        $handler->authenticate([]);
     }
 
     /**
@@ -60,7 +60,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             null
         );
 
-        $handler->authenticate(array());
+        $handler->authenticate([]);
     }
 
     /**
@@ -80,7 +80,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             null
         );
 
-        $handler->authenticate(array('username' => 'Ma27'));
+        $handler->authenticate(['username' => 'Ma27']);
     }
 
     /**
@@ -92,22 +92,19 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $user
             ->expects($this->any())
             ->method('getPassword')
-            ->will($this->returnValue(crypt('foo', '$6$rounds=500$foo$')))
-        ;
+            ->will($this->returnValue(crypt('foo', '$6$rounds=500$foo$')));
 
         $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $or
             ->expects($this->any())
             ->method('findOneBy')
-            ->will($this->returnValue($user))
-        ;
+            ->will($this->returnValue($user));
 
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->any())
             ->method('getRepository')
-            ->will($this->returnValue($or))
-        ;
+            ->will($this->returnValue($or));
 
         $handler = new ApiKeyAuthenticationHandler(
             $om,
@@ -120,7 +117,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             'email'
         );
 
-        $handler->authenticate(array('email' => 'ma27@example.org', 'password' => 'blah'));
+        $handler->authenticate(['email' => 'ma27@example.org', 'password' => 'blah']);
     }
 
     public function testBuildApiKey()
@@ -131,35 +128,30 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $user
             ->expects($this->once())
             ->method('setApiKey')
-            ->with($key)
-        ;
+            ->with($key);
 
         $user
             ->expects($this->once())
             ->method('getPassword')
-            ->will($this->returnValue($hasher->generateHash('123456')))
-        ;
+            ->will($this->returnValue($hasher->generateHash('123456')));
 
         $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $or
             ->expects($this->any())
             ->method('findOneBy')
-            ->will($this->returnValue($user))
-        ;
+            ->will($this->returnValue($user));
 
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->any())
             ->method('getRepository')
-            ->will($this->returnValue($or))
-        ;
+            ->will($this->returnValue($or));
 
         $factory = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface');
         $factory
             ->expects($this->any())
             ->method('getKey')
-            ->will($this->returnValue($key))
-        ;
+            ->will($this->returnValue($key));
 
         $handler = new ApiKeyAuthenticationHandler(
             $om,
@@ -172,7 +164,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             'email'
         );
 
-        $result = $handler->authenticate(array('email' => 'ma27@example.org', 'password' => '123456'));
+        $result = $handler->authenticate(['email' => 'ma27@example.org', 'password' => '123456']);
         $this->assertSame($user, $result);
     }
 
@@ -181,15 +173,13 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $user = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\UserInterface');
         $user
             ->expects($this->once())
-            ->method('removeApiKey')
-        ;
+            ->method('removeApiKey');
 
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->once())
             ->method('merge')
-            ->with($user)
-        ;
+            ->with($user);
 
         $handler = new ApiKeyAuthenticationHandler(
             $om,
@@ -210,20 +200,17 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $user = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\UserInterface');
         $user
             ->expects($this->once())
-            ->method('removeApiKey')
-        ;
+            ->method('removeApiKey');
 
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->once())
             ->method('merge')
-            ->with($user)
-        ;
+            ->with($user);
 
         $om
             ->expects($this->never())
-            ->method('flush')
-        ;
+            ->method('flush');
 
         $handler = new ApiKeyAuthenticationHandler(
             $om,

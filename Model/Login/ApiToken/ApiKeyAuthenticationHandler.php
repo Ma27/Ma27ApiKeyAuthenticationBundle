@@ -3,11 +3,11 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnAuthenticationEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnInvalidCredentialsEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnLogoutEvent;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
+use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactoryInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface;
@@ -15,7 +15,7 @@ use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Concrete handler for api key authorization
+ * Concrete handler for api key authorization.
  */
 class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
 {
@@ -60,16 +60,16 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     private $emailProperty;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param ObjectManager $om
-     * @param PasswordHasherInterface $passwordHasher
-     * @param KeyFactoryInterface $keyFactory
+     * @param ObjectManager            $om
+     * @param PasswordHasherInterface  $passwordHasher
+     * @param KeyFactoryInterface      $keyFactory
      * @param EventDispatcherInterface $dispatcher
-     * @param string $modelName
-     * @param string $passwordProperty
-     * @param string $userProperty
-     * @param string $emailProperty
+     * @param string                   $modelName
+     * @param string                   $passwordProperty
+     * @param string                   $userProperty
+     * @param string                   $emailProperty
      */
     public function __construct(
         ObjectManager $om,
@@ -100,7 +100,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
             throw new \InvalidArgumentException('Username property and email property must not be null!');
         }
 
-        $criteria = array();
+        $criteria = [];
         if (null !== $this->userProperty) {
             if (!isset($credentials[$this->userProperty])) {
                 throw new \InvalidArgumentException(
@@ -134,7 +134,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
         if (null === $object || !$this->passwordHasher->compareWith($object->getPassword(), $credentials[$this->passwordProperty])) {
             $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CREDENTIAL_FAILURE, new OnInvalidCredentialsEvent($object));
 
-            throw new CredentialException;
+            throw new CredentialException();
         }
 
         $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::AUTHENTICATION, new OnAuthenticationEvent($object));
@@ -170,7 +170,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     }
 
     /**
-     * Getter for the object manager
+     * Getter for the object manager.
      *
      * @return ObjectManager
      */
@@ -180,7 +180,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     }
 
     /**
-     * Getter for the password hasher
+     * Getter for the password hasher.
      *
      * @return PasswordHasherInterface
      */
@@ -190,7 +190,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     }
 
     /**
-     * Getter for the key factory
+     * Getter for the key factory.
      *
      * @return KeyFactoryInterface
      */
@@ -200,7 +200,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     }
 
     /**
-     * Getter for the dispatcher
+     * Getter for the dispatcher.
      *
      * @return EventDispatcherInterface
      */
@@ -210,7 +210,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     }
 
     /**
-     * Getter for the model name
+     * Getter for the model name.
      *
      * @return string
      */
@@ -220,7 +220,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     }
 
     /**
-     * Getter for the password property
+     * Getter for the password property.
      *
      * @return string
      */
@@ -230,7 +230,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     }
 
     /**
-     * Getter for the user property
+     * Getter for the user property.
      *
      * @return string
      */
@@ -240,7 +240,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     }
 
     /**
-     * Getter for the email property
+     * Getter for the email property.
      *
      * @return string
      */

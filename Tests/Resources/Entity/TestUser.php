@@ -53,7 +53,7 @@ class TestUser implements UserInterface
 
     public function getRoles()
     {
-        return array();
+        return [];
     }
 
     public function getPassword()

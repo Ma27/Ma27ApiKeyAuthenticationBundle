@@ -18,21 +18,21 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $extension = new Ma27ApiKeyAuthenticationExtension();
 
         $extension->load(
-            array(
-                'ma27_api_key_authentication' => array(
-                    'user' => array(
+            [
+                'ma27_api_key_authentication' => [
+                    'user' => [
                         'object_manager' => 'om',
-                        'properties' => array(
+                        'properties'     => [
                             'username' => 'foo',
-                            'apiKey' => 'foo',
-                            'password' => array(
+                            'apiKey'   => 'foo',
+                            'password' => [
                                 'strategy' => 'sha512',
-                                'property' => 'password'
-                            )
-                        )
-                    )
-                )
-            ),
+                                'property' => 'password',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             $container
         );
     }
@@ -43,29 +43,29 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $extension = new Ma27ApiKeyAuthenticationExtension();
 
         $extension->load(
-            array(
-                'ma27_api_key_authentication' => array(
-                    'user' => array(
+            [
+                'ma27_api_key_authentication' => [
+                    'user' => [
                         'object_manager' => 'om',
-                        'properties' => array(
+                        'properties'     => [
                             'username' => 'username',
-                            'apiKey' => 'apiKey',
-                            'password' => array(
+                            'apiKey'   => 'apiKey',
+                            'password' => [
                                 'strategy' => 'sha512',
-                                'property' => 'password'
-                            )
-                        )
-                    ),
-                    'api_key_purge' => array(
-                        'enabled' => true,
+                                'property' => 'password',
+                            ],
+                        ],
+                    ],
+                    'api_key_purge' => [
+                        'enabled'              => true,
                         'last_active_property' => 'lastActivation',
-                        'log_state' => true
-                    ),
-                    'services' => array(
-                        'auth_handler' => 'foo.bar'
-                    )
-                )
-            ),
+                        'log_state'            => true,
+                    ],
+                    'services' => [
+                        'auth_handler' => 'foo.bar',
+                    ],
+                ],
+            ],
             $container
         );
 
@@ -90,8 +90,8 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider hashStrategyProvider
      *
-     * @param string $strategyName
-     * @param string $expectedClass
+     * @param string  $strategyName
+     * @param string  $expectedClass
      * @param mixed[] $expectedArgs
      */
     public function testHashingStrategies($strategyName, $expectedClass, $expectedArgs)
@@ -100,22 +100,22 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $extension = new Ma27ApiKeyAuthenticationExtension();
 
         $extension->load(
-            array(
-                'ma27_api_key_authentication' => array(
-                    'user' => array(
+            [
+                'ma27_api_key_authentication' => [
+                    'user' => [
                         'object_manager' => 'om',
-                        'properties' => array(
+                        'properties'     => [
                             'username' => 'foo',
-                            'apiKey' => 'apiKey',
-                            'password' => array(
-                                'strategy' => $strategyName,
-                                'property' => 'password',
-                                'phpass_iteration_length' => 5
-                            )
-                        )
-                    )
-                )
-            ),
+                            'apiKey'   => 'apiKey',
+                            'password' => [
+                                'strategy'                => $strategyName,
+                                'property'                => 'password',
+                                'phpass_iteration_length' => 5,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             $container
         );
 
@@ -131,11 +131,11 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function hashStrategyProvider()
     {
-        return array(
-            array('crypt', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\CryptPasswordHasher', array()),
-            array('php55', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PhpPasswordHasher', array()),
-            array('sha512', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher', array()),
-            array('phpass', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PHPassHasher', array(5))
-        );
+        return [
+            ['crypt', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\CryptPasswordHasher', []],
+            ['php55', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PhpPasswordHasher', []],
+            ['sha512', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher', []],
+            ['phpass', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PHPassHasher', [5]],
+        ];
     }
 }
