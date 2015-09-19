@@ -18,21 +18,18 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
         $repository
             ->expects($this->any())
             ->method('findAll')
-            ->will($this->returnValue($userList))
-        ;
+            ->will($this->returnValue($userList));
 
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->once())
             ->method('getRepository')
-            ->will($this->returnValue($repository))
-        ;
+            ->will($this->returnValue($repository));
 
         $handler = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\AuthenticationHandlerInterface');
         $handler
             ->expects($this->exactly(3))
-            ->method('removeSession')
-        ;
+            ->method('removeSession');
 
         $cmd = new SessionCleanupCommand(
             $om,
@@ -61,20 +58,17 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
         $repository
             ->expects($this->any())
             ->method('findAll')
-            ->will($this->returnValue($userList))
-        ;
+            ->will($this->returnValue($userList));
 
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->once())
             ->method('getRepository')
-            ->will($this->returnValue($repository))
-        ;
+            ->will($this->returnValue($repository));
 
         $om
             ->expects($this->once())
-            ->method('clear')
-        ;
+            ->method('clear');
 
         $handler = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\AuthenticationHandlerInterface');
         $cmd = new SessionCleanupCommand(
@@ -91,7 +85,7 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Returns a simple user list
+     * Returns a simple user list.
      *
      * @return array
      */
@@ -110,14 +104,12 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
             $user
                 ->expects($this->any())
                 ->method('getLatestActivation')
-                ->will($this->returnValue(new \DateTime($expr)))
-            ;
+                ->will($this->returnValue(new \DateTime($expr)));
 
             $user
                 ->expects($this->any())
                 ->method('getApiKey')
-                ->will($this->returnValue(uniqid()))
-            ;
+                ->will($this->returnValue(uniqid()));
 
             $result[] = $user;
         }
@@ -126,7 +118,7 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Creates a command tester
+     * Creates a command tester.
      *
      * @param Command $command
      *

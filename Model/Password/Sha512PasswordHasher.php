@@ -3,7 +3,7 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Model\Password;
 
 /**
- * Hasher using the sha512 algorithm
+ * Hasher using the sha512 algorithm.
  */
 class Sha512PasswordHasher implements PasswordHasherInterface
 {

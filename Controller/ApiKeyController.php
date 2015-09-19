@@ -7,16 +7,14 @@ use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
- * Controller which is responsible for the authentication routes
+ * Controller which is responsible for the authentication routes.
  */
 class ApiKeyController extends Controller
 {
     /**
-     * Requests an api key
+     * Requests an api key.
      *
      * @param Request $request
      *
@@ -57,7 +55,7 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * Removes an api key
+     * Removes an api key.
      *
      * @param Request $request
      *

@@ -2,12 +2,12 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
- * This is the class that validates and merges configuration from your app/config files
+ * This is the class that validates and merges configuration from your app/config files.
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
  */
@@ -47,7 +47,7 @@ class Configuration implements ConfigurationInterface
                                             ->ifNotInArray(array('php55', 'crypt', 'sha512', 'phpass'))
                                                 ->thenInvalid(
                                                     'Invalid password strategy "%s"! '
-                                                    . 'Allowed strategies are "password", "crypt", "sha512", "phpass"!'
+                                                    .'Allowed strategies are "password", "crypt", "sha512", "phpass"!'
                                                 )
                                             ->end()
                                         ->end()
@@ -64,7 +64,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->validate()
                         ->always(
-                            function($array) {
+                            function ($array) {
                                 if (empty($array['properties']['username']) && empty($array['properties']['email'])) {
                                     throw new InvalidConfigurationException('Email and username cannot be null!');
                                 }
@@ -89,8 +89,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('password_hasher')->defaultNull()->end()
                     ->end()
                 ->end()
-            ->end()
-        ;
+            ->end();
 
         return $treeBuilder;
     }

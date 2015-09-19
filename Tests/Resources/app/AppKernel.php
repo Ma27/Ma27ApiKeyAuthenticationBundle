@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test kernel
+ * Test kernel.
  */
 class AppKernel extends \Symfony\Component\HttpKernel\Kernel
 {
@@ -25,6 +25,6 @@ class AppKernel extends \Symfony\Component\HttpKernel\Kernel
      */
     public function registerContainerConfiguration(\Symfony\Component\Config\Loader\LoaderInterface $loader)
     {
-        $loader->load(__DIR__ . '/configs/functional.yml');
+        $loader->load(__DIR__.'/configs/functional.yml');
     }
 }

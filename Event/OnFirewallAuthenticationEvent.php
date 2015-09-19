@@ -5,7 +5,7 @@ namespace Ma27\ApiKeyAuthenticationBundle\Event;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 
 /**
- * Event to be triggered after the successful authentication
+ * Event to be triggered after the successful authentication.
  */
 class OnFirewallAuthenticationEvent extends AbstractUserEvent
 {
@@ -15,7 +15,7 @@ class OnFirewallAuthenticationEvent extends AbstractUserEvent
     private $token;
 
     /**
-     * Sets the auth token
+     * Sets the auth token.
      *
      * @param PreAuthenticatedToken $token
      */
@@ -25,7 +25,7 @@ class OnFirewallAuthenticationEvent extends AbstractUserEvent
     }
 
     /**
-     * Returns the authentication token
+     * Returns the authentication token.
      *
      * @return PreAuthenticatedToken
      */
