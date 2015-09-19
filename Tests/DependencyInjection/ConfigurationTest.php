@@ -17,11 +17,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'ma27_api_key_authentication' => array(
                 'user' => array(
                     'object_manager' => 'om',
-                    'properties' => array(
-                        'username' => null
-                    )
-                )
-            )
+                    'properties'     => array(
+                        'username' => null,
+                    ),
+                ),
+            ),
         );
 
         $configuration = new Configuration();
@@ -40,13 +40,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'ma27_api_key_authentication' => array(
                 'user' => array(
                     'object_manager' => 'om',
-                    'properties' => array(
+                    'properties'     => array(
                         'password' => array(
-                            'strategy' => 'md5'
-                        )
-                    )
-                )
-            )
+                            'strategy' => 'md5',
+                        ),
+                    ),
+                ),
+            ),
         );
 
         $configuration = new Configuration();
@@ -61,9 +61,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'ma27_api_key_authentication' => array(
                 'user' => array(
                     'object_manager' => 'om',
-                    'properties' => array('username' => 'username')
-                )
-            )
+                    'properties'     => array('username' => 'username'),
+                ),
+            ),
         );
 
         $configuration = new Configuration();

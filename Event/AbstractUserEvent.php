@@ -6,7 +6,7 @@ use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Basic user event
+ * Basic user event.
  */
 abstract class AbstractUserEvent extends Event
 {
@@ -16,7 +16,7 @@ abstract class AbstractUserEvent extends Event
     private $user;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param UserInterface $user
      */
@@ -26,7 +26,7 @@ abstract class AbstractUserEvent extends Event
     }
 
     /**
-     * Returns the user
+     * Returns the user.
      *
      * @return UserInterface
      */
@@ -36,11 +36,11 @@ abstract class AbstractUserEvent extends Event
     }
 
     /**
-     * Checks whether a user is available
+     * Checks whether a user is available.
      *
      * Helpful when writing a subscriber for the auth error (when providing an invalid username, no user can be loaded)
      *
-     * @return boolean
+     * @return bool
      */
     public function isUserAvailable()
     {

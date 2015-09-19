@@ -3,9 +3,9 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Security;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnFirewallAuthenticationEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnFirewallFailureEvent;
+use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
 
 /**
- * Concrete implementation of an authentication with an api key
+ * Concrete implementation of an authentication with an api key.
  */
 class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
 {
@@ -48,12 +48,12 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
     private $apiKeyProperty;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param ObjectManager $om
+     * @param ObjectManager            $om
      * @param EventDispatcherInterface $dispatcher
-     * @param string $modelName
-     * @param string $apiKeyProperty
+     * @param string                   $modelName
+     * @param string                   $apiKeyProperty
      */
     public function __construct(ObjectManager $om, EventDispatcherInterface $dispatcher, $modelName, $apiKeyProperty)
     {
@@ -72,16 +72,16 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
     }
 
     /**
-     * Returns an authenticated token
+     * Returns an authenticated token.
      *
-     * @param TokenInterface $token
+     * @param TokenInterface        $token
      * @param UserProviderInterface $userProvider
-     * @param string $providerKey
-     *
-     * @return PreAuthenticatedToken
+     * @param string                $providerKey
      *
      * @throws AuthenticationException If the api key does not exist or is invalid
-     * @throws \RuntimeException If $userProvider is not an instance of AdvancedUserProviderInterface
+     * @throws \RuntimeException       If $userProvider is not an instance of AdvancedUserProviderInterface
+     *
+     * @return PreAuthenticatedToken
      */
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
@@ -111,12 +111,12 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
     }
 
     /**
-     * Checks if the token is supported
+     * Checks if the token is supported.
      *
      * @param TokenInterface $token
-     * @param string $providerKey
+     * @param string         $providerKey
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsToken(TokenInterface $token, $providerKey)
     {
@@ -124,14 +124,14 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
     }
 
     /**
-     * Creates an api key by the http request
+     * Creates an api key by the http request.
      *
      * @param Request $request
-     * @param string $providerKey
-     *
-     * @return PreAuthenticatedToken
+     * @param string  $providerKey
      *
      * @throws BadCredentialsException If the request token cannot be found
+     *
+     * @return PreAuthenticatedToken
      */
     public function createToken(Request $request, $providerKey)
     {

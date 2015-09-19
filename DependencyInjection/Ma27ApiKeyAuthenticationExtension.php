@@ -9,11 +9,10 @@ use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
- * This is the class that loads and manages your bundle configuration
+ * This is the class that loads and manages your bundle configuration.
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
@@ -33,13 +32,13 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
             $config['user']['properties']['password']['property'],
             $config['user']['properties']['username'] ?: '',
             $config['user']['properties']['email'] ?: '',
-            $config['user']['properties']['apiKey']
+            $config['user']['properties']['apiKey'],
         );
 
         if (count(array_unique($fieldValues)) < 4) {
             $valueCount = array_filter(
                 array_count_values($fieldValues),
-                function($count) {
+                function ($count) {
                     return $count > 1;
                 }
             );
@@ -94,7 +93,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
 
         $container->setDefinition('ma27_api_key_authentication.password.strategy', new Definition($className, $strategyArguments));
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         foreach (array('security_key', 'authentication', 'security') as $file) {
             $loader->load(sprintf('%s.yml', $file));
         }
@@ -122,9 +121,9 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $semanticServiceReplacements = array_filter($config['services']);
         if (!empty($semanticServiceReplacements)) {
             $serviceConfig = array(
-                'auth_handler' => 'ma27_api_key_authentication.auth_handler',
-                'key_factory' => 'ma27_api_key_authentication.key_factory',
-                'password_hasher' => 'ma27_api_key_authentication.password.strategy'
+                'auth_handler'    => 'ma27_api_key_authentication.auth_handler',
+                'key_factory'     => 'ma27_api_key_authentication.key_factory',
+                'password_hasher' => 'ma27_api_key_authentication.password.strategy',
             );
 
             foreach ($serviceConfig as $configIndex => $replaceableServiceId) {
