@@ -8,35 +8,6 @@ use Symfony\Component\DependencyInjection\Definition;
 
 class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The user model properties must be unique! Duplicated items found: foo
-     */
-    public function testDuplicatedModelProperties()
-    {
-        $container = new ContainerBuilder();
-        $extension = new Ma27ApiKeyAuthenticationExtension();
-
-        $extension->load(
-            array(
-                'ma27_api_key_authentication' => array(
-                    'user' => array(
-                        'object_manager' => 'om',
-                        'properties'     => array(
-                            'username' => 'foo',
-                            'apiKey'   => 'foo',
-                            'password' => array(
-                                'strategy' => 'sha512',
-                                'property' => 'password',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            $container
-        );
-    }
-
     public function testFullConfig()
     {
         $container = new ContainerBuilder();

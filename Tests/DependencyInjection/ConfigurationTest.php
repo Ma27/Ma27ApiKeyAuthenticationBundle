@@ -9,6 +9,25 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedExceptionMessage The user model properties must be unique! Duplicated items found: foo
+     */
+    public function testDuplicatedFields()
+    {
+        $config = array(
+            'ma27_api_key_authentication' => array(
+                'user' => array(
+                    'object_manager' => 'foobar',
+                    'properties' => array('email' => 'foo', 'username' => 'foo'),
+                ),
+            ),
+        );
+
+        $processor = new Processor();
+        $processor->processConfiguration(new Configuration(), $config);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      * @expectedExceptionMessage Email and username cannot be null!
      */
     public function testEmptyEmailAndUsername()

@@ -32,6 +32,36 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('object_manager')->isRequired()->end()
                         ->scalarNode('model_name')->defaultValue('AppBundle:User')->end()
                         ->arrayNode('properties')
+                            ->validate()
+                                ->always(function ($properties) {
+                                    $fieldValues = array(
+                                        $properties['username'] ?: '',
+                                        $properties['email'] ?: '',
+                                    );
+
+                                    if (empty($fieldValues[0]) && empty($fieldValues[1])) {
+                                        throw new InvalidConfigurationException('Email and username cannot be null!');
+                                    }
+
+                                    if (count(array_unique($fieldValues)) < 2) {
+                                        $valueCount = array_filter(
+                                            array_count_values($fieldValues),
+                                            function ($count) {
+                                                return $count > 1;
+                                            }
+                                        );
+
+                                        throw new InvalidConfigurationException(
+                                            sprintf(
+                                                'The user model properties must be unique! Duplicated items found: %s',
+                                                implode(', ', array_keys($valueCount))
+                                            )
+                                        );
+                                    }
+
+                                    return $properties;
+                                })
+                            ->end()
                             ->children()
                                 ->scalarNode('username')->defaultValue('username')->end()
                                 ->scalarNode('email')->defaultNull()->end()
@@ -61,17 +91,6 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
-                    ->end()
-                    ->validate()
-                        ->always(
-                            function ($array) {
-                                if (empty($array['properties']['username']) && empty($array['properties']['email'])) {
-                                    throw new InvalidConfigurationException('Email and username cannot be null!');
-                                }
-
-                                return $array;
-                            }
-                        )
                     ->end()
                 ->end()
                 ->arrayNode('api_key_purge')

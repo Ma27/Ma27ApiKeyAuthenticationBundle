@@ -3,7 +3,6 @@
 namespace Ma27\ApiKeyAuthenticationBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -23,33 +22,10 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $processor = new Processor();
         $configuration = new Configuration();
-        $config = $processor->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('ma27_api_key_authentication.model_name', $config['user']['model_name']);
-        $fieldValues = array(
-            $config['user']['properties']['password']['property'],
-            $config['user']['properties']['username'] ?: '',
-            $config['user']['properties']['email'] ?: '',
-            $config['user']['properties']['apiKey'],
-        );
-
-        if (count(array_unique($fieldValues)) < 4) {
-            $valueCount = array_filter(
-                array_count_values($fieldValues),
-                function ($count) {
-                    return $count > 1;
-                }
-            );
-
-            throw new InvalidConfigurationException(
-                sprintf(
-                    'The user model properties must be unique! Duplicated items found: %s',
-                    implode(', ', array_keys($valueCount))
-                )
-            );
-        }
 
         foreach (array('username', 'email', 'apiKey') as $authProperty) {
             $container->setParameter(
@@ -65,7 +41,15 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
             intval(floor($config['user']['api_key_length'] / 2))
         );
 
-        $passwordConfig = $config['user']['properties']['password'];
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $this->loadPassword($container, $config['user']['properties']['password']);
+        $this->loadServices($loader);
+        $this->loadApiKeyPurger($container, $loader, $config['api_key_purge']);
+        $this->overrideServices($container, $config['services']);
+    }
+
+    private function loadPassword(ContainerBuilder $container, $passwordConfig)
+    {
         $container->setParameter('ma27_api_key_authentication.property.password', $passwordConfig['property']);
 
         $strategyArguments = array();
@@ -84,55 +68,59 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
                 break;
             case 'phpass':
                 $className = 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PHPassHasher';
-                $strategyArguments[] = $config['user']['properties']['password']['phpass_iteration_length'];
+                $strategyArguments[] = $passwordConfig['phpass_iteration_length'];
 
                 break;
             default:
                 throw new InvalidConfigurationException('Cannot create password config!');
         }
 
-        $container->setDefinition('ma27_api_key_authentication.password.strategy', new Definition($className, $strategyArguments));
+        $container->setDefinition(
+            'ma27_api_key_authentication.password.strategy',
+            new Definition($className, $strategyArguments)
+        );
+    }
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+    private function loadServices(Loader\YamlFileLoader $loader)
+    {
         foreach (array('security_key', 'authentication', 'security') as $file) {
             $loader->load(sprintf('%s.yml', $file));
         }
+    }
 
-        if ($this->isConfigEnabled($container, $config['api_key_purge'])) {
+    private function loadApiKeyPurger(ContainerBuilder $container, Loader\YamlFileLoader $loader, array $purgerConfig)
+    {
+        if ($this->isConfigEnabled($container, $purgerConfig)) {
             $container->setParameter(
                 'ma27_api_key_authentication.last_activation_parameter',
-                $config['api_key_purge']['last_active_property']
+                $purgerConfig['last_active_property']
             );
 
             $loader->load('session_cleanup.yml');
 
-            if ($config['api_key_purge']['log_state']) {
-                $loggerService = $config['api_key_purge']['logger_service'];
-                if (!$container->hasDefinition($loggerService)) {
-                    // set empty logger
-                    // unless logger isn't currently registered
-                    $container->setDefinition($loggerService, new Definition());
-                }
-
-                $definition = $container->getDefinition('ma27_api_key_authentication.cleanup_command');
-                $definition->replaceArgument(5, $container->getDefinition($loggerService));
+            if ($purgerConfig['log_state']) {
+                $container->setParameter(
+                    'ma27_api_key_authentication.logger',
+                    $purgerConfig['logger_service']
+                );
             }
         }
+    }
 
-        $semanticServiceReplacements = array_filter($config['services']);
+    private function overrideServices(ContainerBuilder $container, array $services)
+    {
+        $semanticServiceReplacements = array_filter($services);
         if (!empty($semanticServiceReplacements)) {
             $serviceConfig = array(
-                'auth_handler'    => 'ma27_api_key_authentication.auth_handler',
-                'key_factory'     => 'ma27_api_key_authentication.key_factory',
+                'auth_handler' => 'ma27_api_key_authentication.auth_handler',
+                'key_factory' => 'ma27_api_key_authentication.key_factory',
                 'password_hasher' => 'ma27_api_key_authentication.password.strategy',
             );
 
             foreach ($serviceConfig as $configIndex => $replaceableServiceId) {
-                if (!isset($semanticServiceReplacements[$configIndex])) {
-                    continue;
-                }
-
-                if (null === $serviceId = $semanticServiceReplacements[$configIndex]) {
+                if (!isset($semanticServiceReplacements[$configIndex])
+                    || null === $serviceId = $semanticServiceReplacements[$configIndex]
+                ) {
                     continue;
                 }
 
