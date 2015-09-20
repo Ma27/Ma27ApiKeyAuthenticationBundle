@@ -17,7 +17,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'ma27_api_key_authentication' => array(
                 'user' => array(
                     'object_manager' => 'foobar',
-                    'properties' => array('email' => 'foo', 'username' => 'foo'),
+                    'properties'     => array('email' => 'foo', 'username' => 'foo'),
                 ),
             ),
         );
