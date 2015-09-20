@@ -79,6 +79,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('last_active_property')->end()
                         ->booleanNode('log_state')->defaultFalse()->end()
+                        ->scalarNode('logger_service')->defaultValue('logger')->end()
                     ->end()
                 ->end()
                 ->arrayNode('services')

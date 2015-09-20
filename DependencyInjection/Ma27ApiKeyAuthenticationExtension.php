@@ -107,14 +107,15 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
             $loader->load('session_cleanup.yml');
 
             if ($config['api_key_purge']['log_state']) {
-                if (!$container->hasDefinition('logger')) {
+                $loggerService = $config['api_key_purge']['logger_service'];
+                if (!$container->hasDefinition($loggerService)) {
                     // set empty logger
                     // unless logger isn't currently registered
-                    $container->setDefinition('logger', new Definition());
+                    $container->setDefinition($loggerService, new Definition());
                 }
 
                 $definition = $container->getDefinition('ma27_api_key_authentication.cleanup_command');
-                $definition->replaceArgument(5, $container->getDefinition('logger'));
+                $definition->replaceArgument(5, $container->getDefinition($loggerService));
             }
         }
 

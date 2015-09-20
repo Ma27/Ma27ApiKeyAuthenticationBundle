@@ -215,11 +215,14 @@ When the latest activation is 5 days ago, the user can be removed using the api 
     api_key_purge:
         enabled: true
         log_state: false
+        logger_service: logger
         last_active_property: last_active_prop
 ```
 
 Here you have to adjust a property of the domain model that shows you the latest activation as timestamp.
 If you'd like to log the progress of the removal, you have to set the *log_state* value to *true*, but you have to provide a service called *logger* (e.g. the logger of the MonologBundle).
+
+The *logger_service* is optional and is the service id of the logger (default value is *logger*).
 
 The command can be used over the cli:
 
