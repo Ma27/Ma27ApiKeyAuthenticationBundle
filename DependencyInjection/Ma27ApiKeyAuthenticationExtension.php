@@ -41,7 +41,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
             intval(floor($config['user']['api_key_length'] / 2))
         );
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $this->loadPassword($container, $config['user']['properties']['password']);
         $this->loadServices($loader);
         $this->loadApiKeyPurger($container, $loader, $config['api_key_purge']);
@@ -112,8 +112,8 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $semanticServiceReplacements = array_filter($services);
         if (!empty($semanticServiceReplacements)) {
             $serviceConfig = array(
-                'auth_handler' => 'ma27_api_key_authentication.auth_handler',
-                'key_factory' => 'ma27_api_key_authentication.key_factory',
+                'auth_handler'    => 'ma27_api_key_authentication.auth_handler',
+                'key_factory'     => 'ma27_api_key_authentication.key_factory',
                 'password_hasher' => 'ma27_api_key_authentication.password.strategy',
             );
 
