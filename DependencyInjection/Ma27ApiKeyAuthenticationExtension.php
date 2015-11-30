@@ -48,6 +48,12 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $this->overrideServices($container, $config['services']);
     }
 
+    /**
+     * Loads the password strategy.
+     *
+     * @param ContainerBuilder $container
+     * @param string           $passwordConfig
+     */
     private function loadPassword(ContainerBuilder $container, $passwordConfig)
     {
         $container->setParameter('ma27_api_key_authentication.property.password', $passwordConfig['property']);
@@ -81,6 +87,11 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         );
     }
 
+    /**
+     * Loads all internal services.
+     *
+     * @param Loader\YamlFileLoader $loader
+     */
     private function loadServices(Loader\YamlFileLoader $loader)
     {
         foreach (array('security_key', 'authentication', 'security') as $file) {
@@ -88,6 +99,13 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         }
     }
 
+    /**
+     * Loads the purger job command into the container.
+     *
+     * @param ContainerBuilder      $container
+     * @param Loader\YamlFileLoader $loader
+     * @param string[]              $purgerConfig
+     */
     private function loadApiKeyPurger(ContainerBuilder $container, Loader\YamlFileLoader $loader, array $purgerConfig)
     {
         if ($this->isConfigEnabled($container, $purgerConfig)) {
@@ -107,6 +125,12 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         }
     }
 
+    /**
+     * Processes the service override configuration into the container.
+     *
+     * @param ContainerBuilder $container
+     * @param array $services
+     */
     private function overrideServices(ContainerBuilder $container, array $services)
     {
         $semanticServiceReplacements = array_filter($services);

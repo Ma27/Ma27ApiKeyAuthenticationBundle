@@ -30,7 +30,15 @@ This bundle has some extra features:
 
 Click [here](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/Resources/doc/index.md) in order to view the current docs.
 
-3) Contributing
+3) Symfony 3.0
+--------------
+
+All versions 0.1.x versions support all Symfony 2.x versions.
+This branch will be still maintained.
+
+The 0.2 versions support all Symfony 3.x versions including Symfony 2.8.
+
+4) Contributing
 ---------------
 
 ####There's a short instruction for contributing:
@@ -51,13 +59,13 @@ There's a simple vagrant box that can be used when contributing:
 
 The functional tests will be executed with the rest of the test suite and require mysql (which will be installed when using vagrant)
 
-4) LICENSE
+5) LICENSE
 ----------
 
 MIT.
 See the [Resources/meta/LICENSE](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/Resources/meta/LICENSE) file for more information
 
-5) Support
+6) Support
 -----------
 
 This software supports all php versions from php-5.3 up to php-7-nightly.

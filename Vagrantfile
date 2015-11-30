@@ -2,13 +2,12 @@
 # vi: set ft=ruby :
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "precise64"
+  config.vm.box = "mayflower/trusty64-puppet3"
   config.vm.synced_folder ".", "/vagrant/auth-bundle"
 
   config.vm.hostname = "api-key-auth-vm"
 
   config.vm.provider "virtualbox" do |vb|
-    vb.gui = true
     vb.memory = "1024"
     vb.cpus  = 1
     vb.name = "Ma27ApiKeyAuthentication VM"

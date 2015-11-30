@@ -4,9 +4,9 @@ services:
         tags:
             - { name: console.command }
         arguments:
-            - @=service(parameter('ma27_api_key_authentication.object_manager'))
-            - @ma27_api_key_authentication.auth_handler
-            - @event_dispatcher
-            - %ma27_api_key_authentication.model_name%
-            - %ma27_api_key_authentication.last_activation_parameter%
-            - @=service(parameter('ma27_api_key_authentication.logger'))
+            - "@=service(parameter('ma27_api_key_authentication.object_manager'))"
+            - "@ma27_api_key_authentication.auth_handler"
+            - "@event_dispatcher"
+            - "%ma27_api_key_authentication.model_name%"
+            - "%ma27_api_key_authentication.last_activation_parameter%"
+            - "@=service(parameter('ma27_api_key_authentication.logger'))"

@@ -3,8 +3,7 @@
 # python software properties
 sudo apt-get install -y software-properties-common python-software-properties
 
-# php 5.3
-sudo add-apt-repository ppa:ondrej/php5-oldstable
+# php 5.5
 sudo apt-get update
 sudo apt-get -y install php5
 sudo apt-get -y install php5-mysql
@@ -16,7 +15,7 @@ curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 sudo chown vagrant /usr/local/bin/composer
 
-# sqlite
+# mysql
 debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
 debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
 apt-get update
