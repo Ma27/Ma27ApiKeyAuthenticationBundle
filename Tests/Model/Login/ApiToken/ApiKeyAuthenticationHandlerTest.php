@@ -178,7 +178,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->once())
-            ->method('merge')
+            ->method('persist')
             ->with($user);
 
         $handler = new ApiKeyAuthenticationHandler(
@@ -205,7 +205,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->once())
-            ->method('merge')
+            ->method('persist')
             ->with($user);
 
         $om

@@ -140,7 +140,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
         $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::AUTHENTICATION, new OnAuthenticationEvent($object));
 
         $object->setApiKey($this->keyFactory->getKey());
-        $this->om->merge($object);
+        $this->om->persist($object);
 
         $this->om->flush();
 
@@ -161,7 +161,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
 
         $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::LOGOUT, $event);
 
-        $this->om->merge($user);
+        $this->om->persist($user);
 
         // on purge jobs one big flush will be commited to the db after the whole action
         if (!$purgeJob) {
