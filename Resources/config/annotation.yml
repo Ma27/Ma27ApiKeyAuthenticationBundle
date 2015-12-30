@@ -1,0 +1,12 @@
+services:
+    ma27_api_key_authentication.annotation_driver:
+        class: Ma27\ApiKeyAuthenticationBundle\Annotation\Driver\AnnotationDriver
+        arguments:
+            - "@annotation_reader"
+            - "%ma27_api_key_authentication.model_name%"
+
+    ma27_api_key_authentication.class_metadata:
+        class: Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata
+        factory:
+            - "@ma27_api_key_authentication.annotation_driver"
+            - "getMetadataForUser"

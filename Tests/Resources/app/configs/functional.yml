@@ -33,11 +33,9 @@ doctrine:
 ma27_api_key_authentication:
     user:
         object_manager: doctrine.orm.default_entity_manager
-        model_name: Functional:TestUser
-        properties:
-            username: username
-            password:
-                strategy: crypt
+        model_name: Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser
+        password:
+            strategy: crypt
 
 security:
     providers:

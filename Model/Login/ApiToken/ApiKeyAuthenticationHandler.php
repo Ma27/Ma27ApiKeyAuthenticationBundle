@@ -11,6 +11,7 @@ use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactoryInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface;
+use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -45,19 +46,9 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     private $modelName;
 
     /**
-     * @var string
+     * @var ClassMetadata
      */
-    private $passwordProperty;
-
-    /**
-     * @var string
-     */
-    private $userProperty;
-
-    /**
-     * @var string
-     */
-    private $emailProperty;
+    private $classMetadata;
 
     /**
      * Constructor.
@@ -67,9 +58,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
      * @param KeyFactoryInterface      $keyFactory
      * @param EventDispatcherInterface $dispatcher
      * @param string                   $modelName
-     * @param string                   $passwordProperty
-     * @param string                   $userProperty
-     * @param string                   $emailProperty
+     * @param ClassMetadata            $metadata
      */
     public function __construct(
         ObjectManager $om,
@@ -77,18 +66,14 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
         KeyFactoryInterface $keyFactory,
         EventDispatcherInterface $dispatcher,
         $modelName,
-        $passwordProperty,
-        $userProperty = null,
-        $emailProperty = null
+        ClassMetadata $metadata
     ) {
         $this->om = $om;
         $this->passwordHasher = $passwordHasher;
         $this->keyFactory = $keyFactory;
         $this->eventDispatcher = $dispatcher;
         $this->modelName = (string) $modelName;
-        $this->passwordProperty = (string) $passwordProperty;
-        $this->userProperty = $userProperty;
-        $this->emailProperty = $emailProperty;
+        $this->classMetadata = $metadata;
     }
 
     /**
@@ -96,42 +81,25 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
      */
     public function authenticate(array $credentials)
     {
-        if (null === $this->userProperty && null === $this->emailProperty) {
-            throw new \InvalidArgumentException('Username property and email property must not be null!');
-        }
+        $loginProperty    = $this->classMetadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY);
+        $passwordProperty = $this->classMetadata->getPropertyName(ClassMetadata::PASSWORD_PROPERTY);
 
-        $criteria = array();
-        if (null !== $this->userProperty) {
-            if (!isset($credentials[$this->userProperty])) {
-                throw new \InvalidArgumentException(
-                    sprintf('Unable to required find property "%s" in credential array!', $this->userProperty)
-                );
-            }
-
-            $criteria[$this->userProperty] = $credentials[$this->userProperty];
-        }
-
-        if (null !== $this->emailProperty) {
-            if (!isset($credentials[$this->emailProperty])) {
-                throw new \InvalidArgumentException(
-                    sprintf('Unable to required find property "%s" in credential array!', $this->emailProperty)
-                );
-            }
-
-            $criteria[$this->emailProperty] = $credentials[$this->emailProperty];
-        }
-
-        if (!isset($credentials[$this->passwordProperty])) {
+        if (!isset($credentials[$passwordProperty])) {
             throw new \InvalidArgumentException(
-                sprintf('Unable to find password property "%s" in credential set!', $this->passwordProperty)
+                sprintf('Unable to find password property "%s" in credential set!', $passwordProperty)
+            );
+        }
+
+        if (!isset($credentials[$loginProperty])) {
+            throw new \InvalidArgumentException(
+                sprintf('Unable to find login property "%s" in credential set!', $loginProperty)
             );
         }
 
         $objectRepository = $this->om->getRepository($this->modelName);
-        /** @var UserInterface $object */
-        $object = $objectRepository->findOneBy($criteria);
+        $object = $objectRepository->findOneBy(array($loginProperty => $credentials[$loginProperty],));
 
-        if (null === $object || !$this->passwordHasher->compareWith($object->getPassword(), $credentials[$this->passwordProperty])) {
+        if (null === $object || !$this->passwordHasher->compareWith($object->getPassword(), $credentials[$passwordProperty])) {
             $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CREDENTIAL_FAILURE, new OnInvalidCredentialsEvent($object));
 
             throw new CredentialException();
@@ -150,9 +118,9 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function removeSession(UserInterface $user, $purgeJob = false)
+    public function removeSession($user, $purgeJob = false)
     {
-        $user->removeApiKey();
+        $this->classMetadata->modifyProperty($user, null, ClassMetadata::API_KEY_PROPERTY);
 
         $event = new OnLogoutEvent($user);
         if ($purgeJob) {
@@ -220,32 +188,10 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     }
 
     /**
-     * Getter for the password property.
-     *
-     * @return string
+     * @return ClassMetadata
      */
-    protected function getPasswordProperty()
+    public function getClassMetadata()
     {
-        return $this->passwordProperty;
-    }
-
-    /**
-     * Getter for the user property.
-     *
-     * @return string
-     */
-    protected function getUserProperty()
-    {
-        return $this->userProperty;
-    }
-
-    /**
-     * Getter for the email property.
-     *
-     * @return string
-     */
-    protected function getEmailProperty()
-    {
-        return $this->emailProperty;
+        return $this->classMetadata;
     }
 }

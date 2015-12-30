@@ -3,7 +3,8 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
+use Ma27\ApiKeyAuthenticationBundle\Annotation as Auth;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity()
@@ -24,16 +25,19 @@ class TestUser implements UserInterface
 
     /**
      * @ORM\Column(name="api_key", unique=true, nullable=true, length=255)
+     * @Auth\ApiKey
      */
     private $apiKey;
 
     /**
      * @ORM\Column(name="password", length=500)
+     * @Auth\Password
      */
     private $password;
 
     /**
      * @ORM\Column(name="username", unique=true)
+     * @Auth\Login
      */
     private $username;
 

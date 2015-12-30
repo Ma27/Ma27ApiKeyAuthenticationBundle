@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnFirewallAuthenticationEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnFirewallFailureEvent;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
+use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,9 +44,9 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
     private $modelName;
 
     /**
-     * @var string
+     * @var ClassMetadata
      */
-    private $apiKeyProperty;
+    private $metadata;
 
     /**
      * Constructor.
@@ -53,14 +54,14 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
      * @param ObjectManager            $om
      * @param EventDispatcherInterface $dispatcher
      * @param string                   $modelName
-     * @param string                   $apiKeyProperty
+     * @param ClassMetadata            $metadata
      */
-    public function __construct(ObjectManager $om, EventDispatcherInterface $dispatcher, $modelName, $apiKeyProperty)
+    public function __construct(ObjectManager $om, EventDispatcherInterface $dispatcher, $modelName, ClassMetadata $metadata)
     {
         $this->om = $om;
         $this->dispatcher = $dispatcher;
         $this->modelName = (string) $modelName;
-        $this->apiKeyProperty = (string) $apiKeyProperty;
+        $this->metadata = $metadata;
     }
 
     /**
@@ -87,7 +88,12 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
     {
         $apiKey = $token->getCredentials();
 
-        if (!$user = $this->om->getRepository($this->modelName)->findOneBy(array($this->apiKeyProperty => (string) $apiKey))) {
+        $user = $this
+            ->om
+            ->getRepository($this->modelName)
+            ->findOneBy(array($this->metadata->getPropertyName(ClassMetadata::API_KEY_PROPERTY) => (string) $apiKey));
+
+        if (!$user) {
             $this->dispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::FIREWALL_FAILURE, new OnFirewallFailureEvent());
 
             throw new AuthenticationException(

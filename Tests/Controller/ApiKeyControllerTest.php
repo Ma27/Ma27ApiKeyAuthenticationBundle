@@ -27,15 +27,13 @@ class ApiKeyControllerTest extends WebTestCase
         $em = $container->get('doctrine.orm.default_entity_manager');
         $em->persist($user);
         $em->flush();
-
-        $this->container = $container;
     }
 
     public function testRefusedCredentials()
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api-key.json', array('username' => 'foo', 'password' => 'foo'));
+        $client->request('POST', '/api-key.json', array('login' => 'foo', 'password' => 'foo'));
         $response = $client->getResponse();
 
         $bareResponse = json_decode($response->getContent(), true);
@@ -49,7 +47,7 @@ class ApiKeyControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api-key.json', array('username' => 'Ma27', 'password' => '123456'));
+        $client->request('POST', '/api-key.json', array('login' => 'Ma27', 'password' => '123456'));
         $response = $client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());
@@ -73,7 +71,7 @@ class ApiKeyControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api-key.json', array('username' => 'Ma27', 'password' => '123456'));
+        $client->request('POST', '/api-key.json', array('login' => 'Ma27', 'password' => '123456'));
         $response = json_decode($client->getResponse()->getContent(), true);
 
         $apiKey = $response['apiKey'];

@@ -4,6 +4,6 @@ services:
         arguments:
             - "@=service(parameter('ma27_api_key_authentication.object_manager'))"
             - "%ma27_api_key_authentication.model_name%"
-            - "%ma27_api_key_authentication.property.apiKey%"
+            - "@ma27_api_key_authentication.class_metadata"
             - "%ma27_api_key_authentication.property.apiKeyLength%"
         public: false

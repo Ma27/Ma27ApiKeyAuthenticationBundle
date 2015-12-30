@@ -31,63 +31,19 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('object_manager')->isRequired()->end()
                         ->scalarNode('model_name')->defaultValue('AppBundle:User')->end()
-                        ->arrayNode('properties')
-                            ->validate()
-                                ->always(function ($properties) {
-                                    $fieldValues = array(
-                                        $properties['username'] ?: '',
-                                        $properties['email'] ?: '',
-                                    );
-
-                                    if (empty($fieldValues[0]) && empty($fieldValues[1])) {
-                                        throw new InvalidConfigurationException('Email and username cannot be null!');
-                                    }
-
-                                    if (count(array_unique($fieldValues)) < 2) {
-                                        $valueCount = array_filter(
-                                            array_count_values($fieldValues),
-                                            function ($count) {
-                                                return $count > 1;
-                                            }
-                                        );
-
-                                        throw new InvalidConfigurationException(
-                                            sprintf(
-                                                'The user model properties must be unique! Duplicated items found: %s',
-                                                implode(', ', array_keys($valueCount))
-                                            )
-                                        );
-                                    }
-
-                                    return $properties;
-                                })
-                            ->end()
+                        ->arrayNode('password')
                             ->children()
-                                ->scalarNode('username')->defaultValue('username')->end()
-                                ->scalarNode('email')->defaultNull()->end()
-                                ->scalarNode('apiKey')
-                                    ->defaultValue('apiKey')
-                                    ->cannotBeEmpty()
-                                ->end()
-                                ->arrayNode('password')
-                                    ->children()
-                                        ->scalarNode('strategy')
-                                            ->defaultValue('php55')
-                                            ->validate()
-                                            ->ifNotInArray(array('php55', 'crypt', 'sha512', 'phpass'))
-                                                ->thenInvalid(
-                                                    'Invalid password strategy "%s"! '
-                                                    .'Allowed strategies are "password", "crypt", "sha512", "phpass"!'
-                                                )
-                                            ->end()
-                                        ->end()
-                                        ->scalarNode('property')
-                                            ->defaultValue('password')
-                                        ->end()
-                                        ->integerNode('phpass_iteration_length')
-                                            ->defaultValue(8)
-                                        ->end()
+                                ->scalarNode('strategy')
+                                    ->validate()
+                                        ->ifNotInArray(array('php55', 'crypt', 'sha512', 'phpass'))
+                                        ->thenInvalid(
+                                            'Invalid password strategy "%s"! '
+                                            .'Allowed strategies are "password", "crypt", "sha512", "phpass"!'
+                                        )
                                     ->end()
+                                ->end()
+                                ->integerNode('phpass_iteration_length')
+                                    ->defaultValue(8)
                                 ->end()
                             ->end()
                         ->end()
@@ -96,7 +52,6 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('api_key_purge')
                     ->canBeEnabled()
                     ->children()
-                        ->scalarNode('last_active_property')->end()
                         ->booleanNode('log_state')->defaultFalse()->end()
                         ->scalarNode('logger_service')->defaultValue('logger')->end()
                     ->end()
