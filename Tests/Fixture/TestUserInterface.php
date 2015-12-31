@@ -2,9 +2,7 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Fixture;
 
-use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
-
-interface TestUserInterface extends UserInterface
+interface TestUserInterface extends \Symfony\Component\Security\Core\User\UserInterface
 {
     public function getLatestActivation();
 }

@@ -22,7 +22,7 @@ This bundle can be simply added using composer:
 ``` json
 {
     "require": {
-        "ma27/api-key-authentication-bundle": "~0.1"
+        "ma27/api-key-authentication-bundle": "~1.0"
     }
 }
 ```
@@ -57,22 +57,15 @@ Here you can see the full configuration of the bundle
 ma27_api_key_authentication:
     user:
         object_manager: om_service
-        model_name: 'AppBundle:User'
-        properties: {
-            password: {
-                strategy: crypt,
-                property: password,
-                phpass_iteration_length: 8
-            },
-            username: username,
-            email: ~,
-            apiKey: apiKey
-        }
+        model_name: 'AppBundle\\Entity\\User'
+        password: {
+            strategy: crypt,
+            phpass_iteration_length: 8
+        },
         api_key_length: 200
     api_key_purge:
         enabled: false
         log_state: false
-        last_active_property: ~
     services:
         auth_handler: null
         key_factory: null
@@ -82,21 +75,10 @@ ma27_api_key_authentication:
 3) Basic usage
 --------------
 
-In order to handle the authentication, you need to provide a model that implements *Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface*
-Now you have to adjust the properties in the bundle configuration.
+In order to handle the authentication, you need to provide a model that implements *Symfony\Component\Security\Core\UserInterface* as such classes are required for the authentication.
 
-Say you'd like to authenticate your user with the email and the password, the configuration should look like this:
-
-``` yaml
-    # ...
-    password:
-        strategy: crypt
-        property: password
-    username: username
-```
-
-Now your user must contain the "username" and "password" property that will be used by doctrine in order to find and validate the user.
-When trying to provide an email authentication, just set the user field to null and provide a value for the email property.
+Now your user must contain the "login" (may be username or email or something else) and "password" property
+that will be used by doctrine in order to find and validate the user.
 
 Now you have to provide the doctrine manager service. When using the *doctrine-orm* package, it is usually the service __doctrine.orm.default_entity_manager__.
 You also have to provide the doctrine model name.
@@ -106,7 +88,27 @@ This must be done in the configuration:
 ``` yaml
     # ...
     object_manager: object_manager_service_name
-    model_name: 'AppBundle:User'
+    model_name: 'AppBundle\\Entity\\User'
+```
+
+In order to tell this bundle which properties should be used, annotations must be attached at the model:
+
+``` php
+namespace AppBundle\Entity;
+
+use Ma27\ApiKeyAuthenticationBundle\Annotation as Auth;
+use Symfony\Component\Security\Core\UserInterface;
+
+class User implements UserInterface {
+  /** @Auth\Login */
+  private $usernameOrEmail;
+  /** @Auth\Password */
+  private $password;
+  /** @Auth\ApiKey */
+  private $apiKey; // for authentication using the api key
+  /** @Auth\LastAction */
+  private $lastAction; // only necessary when using purger feature
+}
 ```
 
 In order to protect some routes using the api key authenticator, you have to configure your *security.yml*:
@@ -179,7 +181,6 @@ You can enable them like this:
 ``` yaml
     # ...
     password:
-        property: ...
         strategy: "your hasing strategy"
 ```
 
@@ -216,7 +217,6 @@ When the latest activation is 5 days ago, the user can be removed using the api 
         enabled: true
         log_state: false
         logger_service: logger
-        last_active_property: last_active_prop
 ```
 
 Here you have to adjust a property of the domain model that shows you the latest activation as timestamp.
