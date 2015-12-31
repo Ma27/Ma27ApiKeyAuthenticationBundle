@@ -16,7 +16,6 @@ use Doctrine\Common\Annotations\Reader;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ModelConfigurationDriverInterface;
 use ReflectionClass;
-use ReflectionProperty;
 
 /**
  * Annotation driver which parses the annotations of the user model instance.

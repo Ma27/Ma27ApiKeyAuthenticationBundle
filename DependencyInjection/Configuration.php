@@ -30,7 +30,7 @@ class Configuration implements ConfigurationInterface
                             ->defaultValue(200)
                         ->end()
                         ->scalarNode('object_manager')->isRequired()->end()
-                        ->scalarNode('model_name')->defaultValue('AppBundle:User')->end()
+                        ->scalarNode('model_name')->defaultValue('AppBundle\\Entity\\User')->end()
                         ->arrayNode('password')
                             ->children()
                                 ->scalarNode('strategy')

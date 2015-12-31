@@ -98,11 +98,6 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
     private function loadApiKeyPurger(ContainerBuilder $container, Loader\YamlFileLoader $loader, array $purgerConfig)
     {
         if ($this->isConfigEnabled($container, $purgerConfig)) {
-            $container->setParameter(
-                'ma27_api_key_authentication.last_activation_parameter',
-                $purgerConfig['last_active_property']
-            );
-
             $loader->load('session_cleanup.yml');
 
             if ($purgerConfig['log_state']) {

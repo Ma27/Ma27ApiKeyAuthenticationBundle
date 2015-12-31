@@ -97,7 +97,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
         }
 
         $objectRepository = $this->om->getRepository($this->modelName);
-        $object = $objectRepository->findOneBy(array($loginProperty => $credentials[$loginProperty],));
+        $object = $objectRepository->findOneBy(array($loginProperty => $credentials[$loginProperty]));
 
         if (null === $object || !$this->passwordHasher->compareWith($object->getPassword(), $credentials[$passwordProperty])) {
             $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CREDENTIAL_FAILURE, new OnInvalidCredentialsEvent($object));
@@ -107,7 +107,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
 
         $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::AUTHENTICATION, new OnAuthenticationEvent($object));
 
-        $object->setApiKey($this->keyFactory->getKey());
+        $this->classMetadata->modifyProperty($object, $this->keyFactory->getKey(), ClassMetadata::API_KEY_PROPERTY);
         $this->om->persist($object);
 
         $this->om->flush();
