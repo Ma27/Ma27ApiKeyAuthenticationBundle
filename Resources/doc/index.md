@@ -22,7 +22,7 @@ This bundle can be simply added using composer:
 ``` json
 {
     "require": {
-        "ma27/api-key-authentication-bundle": "~1.0"
+        "ma27/api-key-authentication-bundle": "^1.0"
     }
 }
 ```
