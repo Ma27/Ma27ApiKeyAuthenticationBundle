@@ -120,23 +120,26 @@ EOF
             }
 
             // search query
-            $expressions = new ExpressionBuilder();
-            $expr = $expressions->lte(
-                $this->classMetadata->getPropertyName(ClassMetadata::LAST_ACTION_PROPERTY),
-                new \DateTime('-5 days')
-            );
+            $latestActivationPropertyName = $this->classMetadata->getPropertyName(ClassMetadata::LAST_ACTION_PROPERTY);
+            $criteria                     = Criteria::create()
+                ->where(Criteria::expr()->lte($latestActivationPropertyName, new \DateTime('-5 days')))
+                ->andWhere(
+                    Criteria::expr()->neq(
+                        $this->classMetadata->getPropertyName(ClassMetadata::API_KEY_PROPERTY),
+                        null
+                    )
+                );
 
-            $filterCriteria = new Criteria($expr);
             $repository = $this->om->getRepository($this->modelName);
 
             if ($repository instanceof Selectable) {
                 // orm and mongodb have a Selectable implementation, so it is possible to query for old users
-                $filteredUsers = $repository->matching($filterCriteria);
+                $filteredUsers = $repository->matching($criteria);
             } else {
                 // couchdb and phpcr unfortunately don't implement that feature,
                 // so all users must be queried and filtered using the array collection
                 $allUsers = new ArrayCollection($repository->findAll());
-                $filteredUsers = $allUsers->matching($filterCriteria);
+                $filteredUsers = $allUsers->matching($criteria);
             }
 
             $processedObjects = 0;
@@ -147,15 +150,6 @@ EOF
 
             // purge filtered users
             foreach ($filteredUsers as $user) {
-                $apiKey = $this->classMetadata->getPropertyValue($user, ClassMetadata::LAST_ACTION_PROPERTY, true);
-                if (empty($apiKey)) {
-                    if (null !== $this->logger) {
-                        $this->logger->notice(sprintf('Skipping unauthorized user "%s"', $user->getUsername()));
-                    }
-
-                    continue;
-                }
-
                 $this->handler->removeSession($user, true);
                 ++$processedObjects;
             }

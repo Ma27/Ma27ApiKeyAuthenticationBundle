@@ -58,10 +58,9 @@ ma27_api_key_authentication:
     user:
         object_manager: om_service
         model_name: 'AppBundle\\Entity\\User'
-        password: {
+        password:
             strategy: crypt,
             phpass_iteration_length: 8
-        },
         api_key_length: 200
     api_key_purge:
         enabled: false

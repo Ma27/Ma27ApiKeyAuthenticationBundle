@@ -36,47 +36,7 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
             $handler,
             new EventDispatcher(),
             'AppBundle:User',
-            'latestActivation'
-        );
-
-        $tester = $this->createApplicationForCommand($cmd);
-
-        $tester->execute(array('command' => $cmd->getName()));
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot remove session of invalid user!
-     */
-    public function testBrokenModel()
-    {
-        $class = new \stdClass();
-        $class->latestActivation = new \DateTime('-6 days');
-        $userList = array($class);
-
-        $repository = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
-        $repository
-            ->expects($this->any())
-            ->method('findAll')
-            ->will($this->returnValue($userList));
-
-        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
-        $om
-            ->expects($this->once())
-            ->method('getRepository')
-            ->will($this->returnValue($repository));
-
-        $om
-            ->expects($this->once())
-            ->method('clear');
-
-        $handler = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\AuthenticationHandlerInterface');
-        $cmd = new SessionCleanupCommand(
-            $om,
-            $handler,
-            new EventDispatcher(),
-            'AppBundle:User',
-            'latestActivation'
+            $this->getMetadata()
         );
 
         $tester = $this->createApplicationForCommand($cmd);
@@ -106,11 +66,6 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
                 ->method('getLatestActivation')
                 ->will($this->returnValue(new \DateTime($expr)));
 
-            $user
-                ->expects($this->any())
-                ->method('getApiKey')
-                ->will($this->returnValue(uniqid()));
-
             $result[] = $user;
         }
 
@@ -130,5 +85,19 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
         $application->add($command);
 
         return new CommandTester($application->find($command->getName()));
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getMetadata()
+    {
+        $metadata = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $metadata
+            ->expects($this->any())
+            ->method('getPropertyName')
+            ->willReturn('latestActivation');
+
+        return $metadata;
     }
 }
