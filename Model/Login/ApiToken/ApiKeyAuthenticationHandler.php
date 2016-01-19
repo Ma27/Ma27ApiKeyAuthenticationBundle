@@ -12,7 +12,6 @@ use Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactoryInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -81,7 +80,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
      */
     public function authenticate(array $credentials)
     {
-        $loginProperty    = $this->classMetadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY);
+        $loginProperty = $this->classMetadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY);
         $passwordProperty = $this->classMetadata->getPropertyName(ClassMetadata::PASSWORD_PROPERTY);
 
         if (!isset($credentials[$passwordProperty])) {

@@ -89,17 +89,18 @@ class ClassMetadata
             $oid = spl_object_hash($user);
             if (isset($this->lazyValueCache[$oid])) {
                 if (isset($this->lazyValueCache[$oid][$property])) {
-                    return $this>$this->lazyValueCache[$oid][$property];
+                    return $this > $this->lazyValueCache[$oid][$property];
                 }
             } else {
                 $this->lazyValueCache[$oid] = array();
             }
 
             $this->properties[$property]->setAccessible(true);
+
             return $this->lazyValueCache[$oid][$property] = $this->properties[$property]->getValue($user);
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -120,7 +121,7 @@ class ClassMetadata
             return $this->lazyPropertyNameCache[$property] = $this->properties[$property]->getName();
         }
 
-        return null;
+        return;
     }
 
     /**

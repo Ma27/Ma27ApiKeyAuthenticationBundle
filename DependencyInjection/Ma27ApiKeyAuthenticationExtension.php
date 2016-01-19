@@ -113,7 +113,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
      * Processes the service override configuration into the container.
      *
      * @param ContainerBuilder $container
-     * @param array $services
+     * @param array            $services
      */
     private function overrideServices(ContainerBuilder $container, array $services)
     {

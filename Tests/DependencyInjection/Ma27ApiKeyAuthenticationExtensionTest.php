@@ -20,7 +20,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
                 'ma27_api_key_authentication' => array(
                     'user' => array(
                         'object_manager' => 'om',
-                        'password' => array(
+                        'password'       => array(
                             'strategy' => 'sha512',
                         ),
                     ),
@@ -73,7 +73,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
                 'ma27_api_key_authentication' => array(
                     'user' => array(
                         'object_manager' => 'om',
-                        'password' => array(
+                        'password'       => array(
                             'strategy'                => $strategyName,
                             'phpass_iteration_length' => 5,
                         ),

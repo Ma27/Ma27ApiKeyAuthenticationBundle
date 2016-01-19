@@ -188,6 +188,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param bool $expectLoginAndPassword
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     private function getMetadata($expectLoginAndPassword = true)
