@@ -4,7 +4,6 @@ namespace Ma27\ApiKeyAuthenticationBundle\Command;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\ExpressionBuilder;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnAfterCleanupEvent;
@@ -14,7 +13,6 @@ use Ma27\ApiKeyAuthenticationBundle\Event\OnSuccessfulCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -121,7 +119,7 @@ EOF
 
             // search query
             $latestActivationPropertyName = $this->classMetadata->getPropertyName(ClassMetadata::LAST_ACTION_PROPERTY);
-            $criteria                     = Criteria::create()
+            $criteria = Criteria::create()
                 ->where(Criteria::expr()->lte($latestActivationPropertyName, new \DateTime('-5 days')))
                 ->andWhere(
                     Criteria::expr()->neq(

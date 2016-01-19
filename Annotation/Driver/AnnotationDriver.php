@@ -117,7 +117,7 @@ final class AnnotationDriver implements ModelConfigurationDriverInterface
     }
 
     /**
-     * Creates the exception when
+     * Creates the exception when.
      *
      * @return \InvalidArgumentException
      */

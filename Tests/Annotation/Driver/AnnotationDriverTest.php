@@ -10,7 +10,7 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 {
     public function testExtractMetadata()
     {
-        $driver   = new AnnotationDriver(new AnnotationReader(), 'Ma27\\ApiKeyAuthenticationBundle\\Tests\\Resources\\Entity\\TestUser');
+        $driver = new AnnotationDriver(new AnnotationReader(), 'Ma27\\ApiKeyAuthenticationBundle\\Tests\\Resources\\Entity\\TestUser');
         $metadata = $driver->getMetadataForUser();
 
         $this->assertSame('username', $metadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY));

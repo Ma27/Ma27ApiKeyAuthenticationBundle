@@ -9,8 +9,8 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 {
     public function testHandleModelProperties()
     {
-        $object   = new TestUser();
-        $class    = get_class($object);
+        $object = new TestUser();
+        $class = get_class($object);
         $metadata = new ClassMetadata(new \ReflectionClass($object), $class, array(
             ClassMetadata::LOGIN_PROPERTY    => new \ReflectionProperty($class, 'username'),
             ClassMetadata::PASSWORD_PROPERTY => new \ReflectionProperty($class, 'password'),
@@ -31,7 +31,7 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
     public function testIncompleteUser()
     {
         $object = new TestUser();
-        $class  = get_class($object);
+        $class = get_class($object);
 
         new ClassMetadata(new \ReflectionClass($object), $class, array(
             ClassMetadata::LOGIN_PROPERTY    => new \ReflectionProperty($class, 'username'),
@@ -45,8 +45,8 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
      */
     public function testModifyInvalidValue()
     {
-        $object   = new TestUser();
-        $class    = get_class($object);
+        $object = new TestUser();
+        $class = get_class($object);
         $metadata = new ClassMetadata(new \ReflectionClass($object), $class, array(
             ClassMetadata::LOGIN_PROPERTY    => new \ReflectionProperty($class, 'username'),
             ClassMetadata::PASSWORD_PROPERTY => new \ReflectionProperty($class, 'password'),
