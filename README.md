@@ -33,10 +33,7 @@ Click [here](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/
 3) Symfony 3.0
 --------------
 
-All versions 0.1.x versions support all Symfony 2.x versions.
-This branch will be still maintained.
-
-The 0.2 versions support all Symfony 3.x versions including Symfony 2.8.
+The 1.0 versions support all Symfony 3.x versions including Symfony 2.8.
 
 4) Contributing
 ---------------

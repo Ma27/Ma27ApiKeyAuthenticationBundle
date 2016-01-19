@@ -50,8 +50,13 @@ class ApiKeyControllerTest extends WebTestCase
         $client->request('POST', '/api-key.json', array('login' => 'Ma27', 'password' => '123456'));
         $response = $client->getResponse();
 
+        $content = json_decode($response->getContent(), true);
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertArrayHasKey('apiKey', json_decode($response->getContent(), true));
+        $this->assertArrayHasKey('apiKey', $content);
+
+        $client->request('GET', '/restricted.html', array(), array(), array('HTTP_'.ApiKeyAuthenticator::API_KEY_HEADER => $content['apiKey']));
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
     public function testLogoutWithMissingApiKey()

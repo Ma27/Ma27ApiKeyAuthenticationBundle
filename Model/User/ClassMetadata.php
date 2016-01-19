@@ -67,7 +67,7 @@ class ClassMetadata
         foreach (self::$necessaryProperties as $propertyIndex => $alias) {
             if (!isset($this->properties[$propertyIndex])) {
                 throw new \InvalidArgumentException(sprintf(
-                    'Missing require property "%s"!',
+                    'Missing required property "%s"!',
                     $alias
                 ));
             }
