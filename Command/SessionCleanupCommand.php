@@ -4,7 +4,6 @@ namespace Ma27\ApiKeyAuthenticationBundle\Command;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\ExpressionBuilder;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnAfterCleanupEvent;
@@ -13,7 +12,7 @@ use Ma27\ApiKeyAuthenticationBundle\Event\OnBeforeSessionCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnSuccessfulCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
+use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -51,9 +50,9 @@ class SessionCleanupCommand extends Command
     private $modelName;
 
     /**
-     * @var string
+     * @var ClassMetadata
      */
-    private $lastActiveProperty;
+    private $classMetadata;
 
     /**
      * Constructor.
@@ -61,16 +60,16 @@ class SessionCleanupCommand extends Command
      * @param ObjectManager                  $om
      * @param AuthenticationHandlerInterface $authenticationHandler
      * @param EventDispatcherInterface       $eventDispatcher
-     * @param $modelName
-     * @param $lastActiveProperty
-     * @param LoggerInterface $logger
+     * @param string                         $modelName
+     * @param ClassMetadata                  $classMetadata
+     * @param LoggerInterface                $logger
      */
     public function __construct(
         ObjectManager $om,
         AuthenticationHandlerInterface $authenticationHandler,
         EventDispatcherInterface $eventDispatcher,
         $modelName,
-        $lastActiveProperty,
+        ClassMetadata $classMetadata,
         LoggerInterface $logger = null
     ) {
         $this->om = $om;
@@ -78,7 +77,7 @@ class SessionCleanupCommand extends Command
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
         $this->modelName = (string) $modelName;
-        $this->lastActiveProperty = (string) $lastActiveProperty;
+        $this->classMetadata = $classMetadata;
 
         parent::__construct();
     }
@@ -119,19 +118,26 @@ EOF
             }
 
             // search query
-            $expressions = new ExpressionBuilder();
-            $expr = $expressions->lte($this->lastActiveProperty, new \DateTime('-5 days'));
+            $latestActivationPropertyName = $this->classMetadata->getPropertyName(ClassMetadata::LAST_ACTION_PROPERTY);
+            $criteria = Criteria::create()
+                ->where(Criteria::expr()->lte($latestActivationPropertyName, new \DateTime('-5 days')))
+                ->andWhere(
+                    Criteria::expr()->neq(
+                        $this->classMetadata->getPropertyName(ClassMetadata::API_KEY_PROPERTY),
+                        null
+                    )
+                );
 
-            $filterCriteria = new Criteria($expr);
             $repository = $this->om->getRepository($this->modelName);
 
             if ($repository instanceof Selectable) {
                 // orm and mongodb have a Selectable implementation, so it is possible to query for old users
-                $filteredUsers = $repository->matching($filterCriteria);
+                $filteredUsers = $repository->matching($criteria);
             } else {
-                // couchdb and phpcr unfortunately don't implement that feature, so all users must be queried and filtered using the array collection
+                // couchdb and phpcr unfortunately don't implement that feature,
+                // so all users must be queried and filtered using the array collection
                 $allUsers = new ArrayCollection($repository->findAll());
-                $filteredUsers = $allUsers->matching($filterCriteria);
+                $filteredUsers = $allUsers->matching($criteria);
             }
 
             $processedObjects = 0;
@@ -142,26 +148,6 @@ EOF
 
             // purge filtered users
             foreach ($filteredUsers as $user) {
-                if (!$user instanceof UserInterface) {
-                    if (null !== $this->logger) {
-                        $this->logger->critical(
-                            sprintf('Broken model found (%s)!', print_r($user, true))
-                        );
-                    }
-
-                    $this->om->clear();
-
-                    throw new \RuntimeException('Cannot remove session of invalid user!');
-                }
-
-                if (!$user->getApiKey()) {
-                    if (null !== $this->logger) {
-                        $this->logger->notice(sprintf('Skipping unauthorized user "%s"', $user->getUsername()));
-                    }
-
-                    continue;
-                }
-
                 $this->handler->removeSession($user, true);
                 ++$processedObjects;
             }

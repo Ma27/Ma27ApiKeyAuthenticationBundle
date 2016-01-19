@@ -26,23 +26,14 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('ma27_api_key_authentication.model_name', $config['user']['model_name']);
-
-        foreach (array('username', 'email', 'apiKey') as $authProperty) {
-            $container->setParameter(
-                sprintf('ma27_api_key_authentication.property.%s', $authProperty),
-                $config['user']['properties'][$authProperty]
-            );
-        }
-
         $container->setParameter('ma27_api_key_authentication.object_manager', $config['user']['object_manager']);
-
         $container->setParameter(
             'ma27_api_key_authentication.property.apiKeyLength',
             intval(floor($config['user']['api_key_length'] / 2))
         );
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $this->loadPassword($container, $config['user']['properties']['password']);
+        $this->loadPassword($container, $config['user']['password']);
         $this->loadServices($loader);
         $this->loadApiKeyPurger($container, $loader, $config['api_key_purge']);
         $this->overrideServices($container, $config['services']);
@@ -56,8 +47,6 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
      */
     private function loadPassword(ContainerBuilder $container, $passwordConfig)
     {
-        $container->setParameter('ma27_api_key_authentication.property.password', $passwordConfig['property']);
-
         $strategyArguments = array();
         switch ($passwordConfig['strategy']) {
             case 'php55':
@@ -94,7 +83,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
      */
     private function loadServices(Loader\YamlFileLoader $loader)
     {
-        foreach (array('security_key', 'authentication', 'security') as $file) {
+        foreach (array('security_key', 'authentication', 'security', 'annotation') as $file) {
             $loader->load(sprintf('%s.yml', $file));
         }
     }
@@ -109,11 +98,6 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
     private function loadApiKeyPurger(ContainerBuilder $container, Loader\YamlFileLoader $loader, array $purgerConfig)
     {
         if ($this->isConfigEnabled($container, $purgerConfig)) {
-            $container->setParameter(
-                'ma27_api_key_authentication.last_activation_parameter',
-                $purgerConfig['last_active_property']
-            );
-
             $loader->load('session_cleanup.yml');
 
             if ($purgerConfig['log_state']) {
@@ -129,7 +113,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
      * Processes the service override configuration into the container.
      *
      * @param ContainerBuilder $container
-     * @param array $services
+     * @param array            $services
      */
     private function overrideServices(ContainerBuilder $container, array $services)
     {

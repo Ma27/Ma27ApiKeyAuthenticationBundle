@@ -4,83 +4,50 @@ namespace Ma27\ApiKeyAuthenticationBundle\Tests\Model\Login\ApiToken;
 
 use Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken\ApiKeyAuthenticationHandler;
 use Ma27\ApiKeyAuthenticationBundle\Model\Password\CryptPasswordHasher;
+use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Username property and email property must not be null!
+     * @expectedExceptionMessage Unable to find login property "login" in credential set!
      */
-    public function testInvalidCredentialParameters()
+    public function testMissingLoginProperty()
     {
-        $fullMock = $this->getMockBuilder(
-            'Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\ApiToken\\ApiKeyAuthenticationHandler'
-        );
+        $metadata = $this->getMetadata();
 
-        $mock = $fullMock->disableOriginalConstructor()->getMockForAbstractClass();
-
-        $mock->authenticate(array());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to required find property "email" in credential array!
-     */
-    public function testMissingEmail()
-    {
         $handler = new ApiKeyAuthenticationHandler(
             $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
-            'password',
-            null,
-            'email'
+            $metadata
         );
 
-        $handler->authenticate(array());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to required find property "username" in credential array!
-     */
-    public function testMissingUsername()
-    {
-        $handler = new ApiKeyAuthenticationHandler(
-            $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
-            new EventDispatcher(),
-            'AppBundle:User',
-            'password',
-            'username',
-            null
-        );
-
-        $handler->authenticate(array());
+        $handler->authenticate(array('password' => 'foo'));
     }
 
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Unable to find password property "password" in credential set!
      */
-    public function testMissingPasswordParam()
+    public function testMissingUsername()
     {
+        $metadata = $this->getMetadata();
+
         $handler = new ApiKeyAuthenticationHandler(
             $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
-            'password',
-            'username',
-            null
+            $metadata
         );
 
-        $handler->authenticate(array('username' => 'Ma27'));
+        $handler->authenticate(array('login' => 'foo'));
     }
 
     /**
@@ -88,11 +55,8 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidCredentials()
     {
-        $user = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\UserInterface');
-        $user
-            ->expects($this->any())
-            ->method('getPassword')
-            ->will($this->returnValue(crypt('foo', '$6$rounds=500$foo$')));
+        $user = new TestUser();
+        $user->setPassword(crypt('foo', '$6$rounds=500$foo$'));
 
         $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $or
@@ -112,28 +76,18 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
-            'password',
-            null,
-            'email'
+            $this->getMetadata()
         );
 
-        $handler->authenticate(array('email' => 'ma27@example.org', 'password' => 'blah'));
+        $handler->authenticate(array('login' => 'ma27@example.org', 'password' => 'blah'));
     }
 
     public function testBuildApiKey()
     {
         $hasher = new CryptPasswordHasher();
         $key = uniqid();
-        $user = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\UserInterface');
-        $user
-            ->expects($this->once())
-            ->method('setApiKey')
-            ->with($key);
-
-        $user
-            ->expects($this->once())
-            ->method('getPassword')
-            ->will($this->returnValue($hasher->generateHash('123456')));
+        $user = new TestUser();
+        $user->setPassword($hasher->generateHash('123456'));
 
         $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $or
@@ -153,27 +107,34 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getKey')
             ->will($this->returnValue($key));
 
+        $metadata = $this->getMetadata();
+        $metadata
+            ->expects($this->once())
+            ->method('modifyProperty')
+            ->with($user, $key, ClassMetadata::API_KEY_PROPERTY);
+
         $handler = new ApiKeyAuthenticationHandler(
             $om,
             $hasher,
             $factory,
             new EventDispatcher(),
             'AppBundle:User',
-            'password',
-            null,
-            'email'
+            $metadata
         );
 
-        $result = $handler->authenticate(array('email' => 'ma27@example.org', 'password' => '123456'));
+        $result = $handler->authenticate(array('login' => 'ma27@example.org', 'password' => '123456'));
         $this->assertSame($user, $result);
     }
 
     public function testLogout()
     {
-        $user = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\UserInterface');
-        $user
+        $user = new TestUser();
+        $metadata = $this->getMetadata(false);
+
+        $metadata
             ->expects($this->once())
-            ->method('removeApiKey');
+            ->method('modifyProperty')
+            ->with($user, null, ClassMetadata::API_KEY_PROPERTY);
 
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
@@ -187,9 +148,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
-            'password',
-            'username',
-            null
+            $metadata
         );
 
         $handler->removeSession($user);
@@ -197,10 +156,13 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testLogoutOnCleanup()
     {
-        $user = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\UserInterface');
-        $user
+        $user = new TestUser();
+        $metadata = $this->getMetadata(false);
+
+        $metadata
             ->expects($this->once())
-            ->method('removeApiKey');
+            ->method('modifyProperty')
+            ->with($user, null, ClassMetadata::API_KEY_PROPERTY);
 
         $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
@@ -218,11 +180,35 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
-            'password',
-            'username',
-            null
+            $metadata
         );
 
         $handler->removeSession($user, true);
+    }
+
+    /**
+     * @param bool $expectLoginAndPassword
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getMetadata($expectLoginAndPassword = true)
+    {
+        $metadata = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\ClassMetadata')->disableOriginalConstructor()->getMock();
+
+        if ($expectLoginAndPassword) {
+            $metadata
+                ->expects($this->at(0))
+                ->method('getPropertyName')
+                ->with(ClassMetadata::LOGIN_PROPERTY)
+                ->willReturn('login');
+
+            $metadata
+                ->expects($this->at(1))
+                ->method('getPropertyName')
+                ->with(ClassMetadata::PASSWORD_PROPERTY)
+                ->willReturn('password');
+        }
+
+        return $metadata;
     }
 }

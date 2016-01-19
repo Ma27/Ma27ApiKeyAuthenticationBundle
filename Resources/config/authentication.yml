@@ -7,6 +7,4 @@ services:
             - "@ma27_api_key_authentication.key_factory"
             - "@event_dispatcher"
             - "%ma27_api_key_authentication.model_name%"
-            - "%ma27_api_key_authentication.property.password%"
-            - "%ma27_api_key_authentication.property.username%"
-            - "%ma27_api_key_authentication.property.email%"
+            - "@ma27_api_key_authentication.class_metadata"

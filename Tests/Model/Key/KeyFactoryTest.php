@@ -3,6 +3,7 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Model\Key;
 
 use Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactory;
+use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
 
 class KeyFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +17,7 @@ class KeyFactoryTest extends \PHPUnit_Framework_TestCase
             ->with('AppBundle:User')
             ->will($this->returnValue($or));
 
-        $factory = new KeyFactory($om, 'AppBundle:User', 'apiKey');
+        $factory = new KeyFactory($om, 'AppBundle:User', $this->getClassMetadata());
         $key = $factory->getKey();
 
         $this->assertSame(400, strlen($key));
@@ -42,7 +43,24 @@ class KeyFactoryTest extends \PHPUnit_Framework_TestCase
             ->with('AppBundle:User')
             ->will($this->returnValue($or));
 
-        $factory = new KeyFactory($om, 'AppBundle:User', 'apiKey');
+        $factory = new KeyFactory($om, 'AppBundle:User', $this->getClassMetadata());
         $factory->getKey();
+    }
+
+    /**
+     * ClassMetadata.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getClassMetadata()
+    {
+        $mock = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $mock
+            ->expects($this->any())
+            ->method('getPropertyName')
+            ->with(ClassMetadata::API_KEY_PROPERTY)
+            ->willReturn('apiKey');
+
+        return $mock;
     }
 }

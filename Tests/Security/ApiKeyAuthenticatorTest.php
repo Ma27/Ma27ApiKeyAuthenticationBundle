@@ -2,7 +2,9 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Security;
 
+use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
 use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
+use Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
@@ -74,7 +76,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testTokenAuthentication($apiKey, $providerKey)
     {
-        $user = $this->getMockForAbstractClass('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\UserInterface');
+        $user = new TestUser();
         $token = $this->getMock('Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface');
 
         $token
@@ -94,7 +96,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->will($this->returnValue($or));
 
-        $authenticator = new ApiKeyAuthenticator($mock, new EventDispatcher(), 'AppBundle:User', 'apiKey');
+        $authenticator = new ApiKeyAuthenticator($mock, new EventDispatcher(), 'AppBundle:User', $this->getClassMetadata());
 
         /** @var PreAuthenticatedToken $token */
         $token = $authenticator->authenticateToken($token, $this->getMock('Symfony\\Component\\Security\\Core\\User\\UserProviderInterface'), $providerKey);
@@ -104,8 +106,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
             $token
         );
 
-        $this->assertSame($user->getUsername(), $token->getUser()->getUsername());
-        $this->assertSame($user->getPassword(), $token->getUser()->getPassword());
+        $this->assertSame($user, $token->getUser());
         $this->assertSame($apiKey, $token->getCredentials());
         $this->assertSame($providerKey, $token->getProviderKey());
     }
@@ -132,7 +133,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->will($this->returnValue($or));
 
-        $authenticator = new ApiKeyAuthenticator($om, new EventDispatcher(), 'AppBundle:User', 'apiKey');
+        $authenticator = new ApiKeyAuthenticator($om, new EventDispatcher(), 'AppBundle:User', $this->getClassMetadata());
         $authenticator->authenticateToken($token, $provider, $providerKey);
     }
 
@@ -172,6 +173,23 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     private function mockAuthenticator()
     {
-        return new ApiKeyAuthenticator($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'), new EventDispatcher(), 'AppBundle:User', 'apiKey');
+        return new ApiKeyAuthenticator($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'), new EventDispatcher(), 'AppBundle:User', $this->getClassMetadata());
+    }
+
+    /**
+     * ClassMetadata.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getClassMetadata()
+    {
+        $mock = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $mock
+            ->expects($this->any())
+            ->method('getPropertyName')
+            ->with(ClassMetadata::API_KEY_PROPERTY)
+            ->willReturn('apiKey');
+
+        return $mock;
     }
 }

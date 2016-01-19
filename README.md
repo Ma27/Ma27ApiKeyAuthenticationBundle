@@ -33,10 +33,7 @@ Click [here](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/
 3) Symfony 3.0
 --------------
 
-All versions 0.1.x versions support all Symfony 2.x versions.
-This branch will be still maintained.
-
-The 0.2 versions support all Symfony 3.x versions including Symfony 2.8.
+The 1.0 versions support all Symfony 3.x versions including Symfony 2.8.
 
 4) Contributing
 ---------------
@@ -69,5 +66,9 @@ See the [Resources/meta/LICENSE](https://github.com/Ma27/Ma27ApiKeyAuthenticatio
 -----------
 
 This software supports all php versions from php-5.3 up to php-7-nightly.
-The supported symfony version are 2.7, 2.6, 2.5 and 2.4.
+The supported symfony version are 2.8 and 3.x
 
+7) BC promise
+-------------
+
+From the *1.x* versions on (so no 0.x versions) backward compat is provided when jumping between minor releases except you try to do stuff with internals such as classes marked with "@internal" or private properties/methods.

@@ -2,7 +2,6 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Event;
 
-use Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -11,16 +10,16 @@ use Symfony\Component\EventDispatcher\Event;
 abstract class AbstractUserEvent extends Event
 {
     /**
-     * @var UserInterface
+     * @var object
      */
     private $user;
 
     /**
      * Constructor.
      *
-     * @param UserInterface $user
+     * @param object $user
      */
-    public function __construct(UserInterface $user = null)
+    public function __construct($user = null)
     {
         $this->user = $user;
     }
@@ -28,7 +27,7 @@ abstract class AbstractUserEvent extends Event
     /**
      * Returns the user.
      *
-     * @return UserInterface
+     * @return object
      */
     public function getUser()
     {

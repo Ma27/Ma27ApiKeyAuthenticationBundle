@@ -13,24 +13,20 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
         $extension = new Ma27ApiKeyAuthenticationExtension();
 
+        $container->setDefinition('annotation_reader', new Definition('Doctrine\\Common\\Annotations\\Reader'));
+
         $extension->load(
             array(
                 'ma27_api_key_authentication' => array(
                     'user' => array(
                         'object_manager' => 'om',
-                        'properties'     => array(
-                            'username' => 'username',
-                            'apiKey'   => 'apiKey',
-                            'password' => array(
-                                'strategy' => 'sha512',
-                                'property' => 'password',
-                            ),
+                        'password'       => array(
+                            'strategy' => 'sha512',
                         ),
                     ),
                     'api_key_purge' => array(
-                        'enabled'              => true,
-                        'last_active_property' => 'lastActivation',
-                        'log_state'            => true,
+                        'enabled'   => true,
+                        'log_state' => true,
                     ),
                     'services' => array(
                         'auth_handler' => 'foo.bar',
@@ -70,19 +66,16 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
         $extension = new Ma27ApiKeyAuthenticationExtension();
 
+        $container->setDefinition('annotation_reader', new Definition('Doctrine\\Common\\Annotations\\Reader'));
+
         $extension->load(
             array(
                 'ma27_api_key_authentication' => array(
                     'user' => array(
                         'object_manager' => 'om',
-                        'properties'     => array(
-                            'username' => 'foo',
-                            'apiKey'   => 'apiKey',
-                            'password' => array(
-                                'strategy'                => $strategyName,
-                                'property'                => 'password',
-                                'phpass_iteration_length' => 5,
-                            ),
+                        'password'       => array(
+                            'strategy'                => $strategyName,
+                            'phpass_iteration_length' => 5,
                         ),
                     ),
                 ),

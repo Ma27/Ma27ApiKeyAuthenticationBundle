@@ -27,15 +27,13 @@ class ApiKeyControllerTest extends WebTestCase
         $em = $container->get('doctrine.orm.default_entity_manager');
         $em->persist($user);
         $em->flush();
-
-        $this->container = $container;
     }
 
     public function testRefusedCredentials()
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api-key.json', array('username' => 'foo', 'password' => 'foo'));
+        $client->request('POST', '/api-key.json', array('login' => 'foo', 'password' => 'foo'));
         $response = $client->getResponse();
 
         $bareResponse = json_decode($response->getContent(), true);
@@ -49,11 +47,16 @@ class ApiKeyControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api-key.json', array('username' => 'Ma27', 'password' => '123456'));
+        $client->request('POST', '/api-key.json', array('login' => 'Ma27', 'password' => '123456'));
         $response = $client->getResponse();
 
+        $content = json_decode($response->getContent(), true);
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertArrayHasKey('apiKey', json_decode($response->getContent(), true));
+        $this->assertArrayHasKey('apiKey', $content);
+
+        $client->request('GET', '/restricted.html', array(), array(), array('HTTP_'.ApiKeyAuthenticator::API_KEY_HEADER => $content['apiKey']));
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
     public function testLogoutWithMissingApiKey()
@@ -73,7 +76,7 @@ class ApiKeyControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api-key.json', array('username' => 'Ma27', 'password' => '123456'));
+        $client->request('POST', '/api-key.json', array('login' => 'Ma27', 'password' => '123456'));
         $response = json_decode($client->getResponse()->getContent(), true);
 
         $apiKey = $response['apiKey'];
