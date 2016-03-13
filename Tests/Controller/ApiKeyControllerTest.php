@@ -89,4 +89,11 @@ class ApiKeyControllerTest extends WebTestCase
 
         $this->assertSame(204, $logoutResponse->getStatusCode());
     }
+
+    public function testLoginWithEmptyCredentials()
+    {
+        $client = static::createClient();
+        $client->request('POST', '/api-key.json', array('login' => null, 'password' => null));
+        $this->assertSame(401, $client->getResponse()->getStatusCode());
+    }
 }

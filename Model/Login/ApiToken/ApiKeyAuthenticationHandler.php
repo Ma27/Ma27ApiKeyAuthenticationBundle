@@ -83,13 +83,13 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
         $loginProperty = $this->classMetadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY);
         $passwordProperty = $this->classMetadata->getPropertyName(ClassMetadata::PASSWORD_PROPERTY);
 
-        if (!isset($credentials[$passwordProperty])) {
+        if (!array_key_exists($passwordProperty, $credentials)) {
             throw new \InvalidArgumentException(
                 sprintf('Unable to find password property "%s" in credential set!', $passwordProperty)
             );
         }
 
-        if (!isset($credentials[$loginProperty])) {
+        if (!array_key_exists($loginProperty, $credentials)) {
             throw new \InvalidArgumentException(
                 sprintf('Unable to find login property "%s" in credential set!', $loginProperty)
             );

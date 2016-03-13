@@ -29,12 +29,12 @@ class ApiKeyController extends Controller
         $metadata = $this->get('ma27_api_key_authentication.class_metadata');
 
         $credentials = array();
-        if ($username = $request->request->get('login')) {
-            $credentials[$metadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY)] = $username;
+        if ($request->request->has('login')) {
+            $credentials[$metadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY)] = $request->request->get('login');
         }
 
-        if ($password = $request->request->get('password')) {
-            $credentials[$metadata->getPropertyName(ClassMetadata::PASSWORD_PROPERTY)] = $password;
+        if ($request->request->has('password')) {
+            $credentials[$metadata->getPropertyName(ClassMetadata::PASSWORD_PROPERTY)] = $request->request->get('password');
         }
 
         try {

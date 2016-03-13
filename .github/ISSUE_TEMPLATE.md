@@ -4,7 +4,7 @@ Place here a short description about what is happening.
 
 ### Steps to reproduce
 
-Place here some steps how to reproduce the bug (some puppet code would be great, too)
+Place here some steps how to reproduce the bug (some code code would be great, too)
 
 ### Expected behavior
 
