@@ -3,6 +3,7 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\DependencyInjection;
 
 use Ma27\ApiKeyAuthenticationBundle\DependencyInjection\Configuration;
+use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
@@ -49,6 +50,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('om', $result['user']['object_manager']);
 
         $this->assertFalse($result['api_key_purge']['enabled']);
+        $this->assertSame($result['key_header'], ApiKeyAuthenticator::API_KEY_HEADER);
 
         foreach ($result['services'] as $service) {
             $this->assertNull($service);

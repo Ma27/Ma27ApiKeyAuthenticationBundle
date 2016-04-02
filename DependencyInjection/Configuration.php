@@ -2,6 +2,7 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\DependencyInjection;
 
+use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -63,6 +64,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('password_hasher')->defaultNull()->end()
                     ->end()
                 ->end()
+                ->scalarNode('key_header')->defaultValue(ApiKeyAuthenticator::API_KEY_HEADER)->end()
             ->end();
 
         return $treeBuilder;

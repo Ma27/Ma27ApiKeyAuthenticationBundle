@@ -6,3 +6,4 @@ services:
             - "@event_dispatcher"
             - "%ma27_api_key_authentication.model_name%"
             - "@ma27_api_key_authentication.class_metadata"
+            - "%ma27_api_key_authentication.key_header%"

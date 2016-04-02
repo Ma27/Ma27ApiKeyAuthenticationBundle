@@ -25,6 +25,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setParameter('ma27_api_key_authentication.key_header', $config['key_header']);
         $container->setParameter('ma27_api_key_authentication.model_name', $config['user']['model_name']);
         $container->setParameter('ma27_api_key_authentication.object_manager', $config['user']['object_manager']);
         $container->setParameter(

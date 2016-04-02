@@ -31,6 +31,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
                     'services' => array(
                         'auth_handler' => 'foo.bar',
                     ),
+                    'key_header' => 'HTTP_HEADER'
                 ),
             ),
             $container
@@ -52,6 +53,10 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertNotNull($container->getDefinition('ma27_api_key_authentication.cleanup_command')->getArgument(0));
+        $this->assertSame($container->getParameter('ma27_api_key_authentication.key_header'), 'HTTP_HEADER');
+
+        $securityDefinition = $container->getDefinition('ma27_api_key_authentication.security.authenticator');
+        $this->assertSame($securityDefinition->getArgument(4), 'HTTP_HEADER');
     }
 
     /**

@@ -69,6 +69,7 @@ ma27_api_key_authentication:
         auth_handler: null
         key_factory: null
         password_hasher: null
+    key_header: X-API-KEY
 ```
 
 3) Basic usage
@@ -131,7 +132,9 @@ We don't need ay user provider, so we just adjust an empty memory provider.
 In that configuration we protected all routes with the url prefix */restricted*.
 It must be stateless since we have to provide the api key all the time and don't use sessions.
 
-Say you have the route */restricted/resource.json*. In order to access it without getting a *401* error, you have to provide the header *X-API-KEY* that contains the api key.
+Say you have the route */restricted/resource.json*.
+In order to access it without getting a *401* error, you have to provide a certain header which name is configured in ``key_header`` that contains the api key.
+The default value of this header is ``X-API-KEY``.
 
 4) Login API
 ------------

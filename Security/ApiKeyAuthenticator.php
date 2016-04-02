@@ -49,19 +49,26 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
     private $metadata;
 
     /**
+     * @var string
+     */
+    private $header;
+
+    /**
      * Constructor.
      *
      * @param ObjectManager            $om
      * @param EventDispatcherInterface $dispatcher
      * @param string                   $modelName
      * @param ClassMetadata            $metadata
+     * @param string                   $header
      */
-    public function __construct(ObjectManager $om, EventDispatcherInterface $dispatcher, $modelName, ClassMetadata $metadata)
+    public function __construct(ObjectManager $om, EventDispatcherInterface $dispatcher, $modelName, ClassMetadata $metadata, $header)
     {
         $this->om = $om;
         $this->dispatcher = $dispatcher;
         $this->modelName = (string) $modelName;
         $this->metadata = $metadata;
+        $this->header = (string) $header;
     }
 
     /**
@@ -141,7 +148,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
      */
     public function createToken(Request $request, $providerKey)
     {
-        $apiKey = $request->headers->get(self::API_KEY_HEADER);
+        $apiKey = $request->headers->get($this->header);
 
         if (!$apiKey) {
             throw new BadCredentialsException('No ApiKey found in request!');

@@ -18,7 +18,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
     public function testCreateToken($apiKey, $providerKey)
     {
         $request = Request::create('/');
-        $request->headers->set(ApiKeyAuthenticator::API_KEY_HEADER, $apiKey);
+        $request->headers->set('HTTP_HEADER', $apiKey);
 
         $apiKeyAuthenticator = $this->mockAuthenticator();
         /** @var PreAuthenticatedToken $token */
@@ -96,7 +96,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->will($this->returnValue($or));
 
-        $authenticator = new ApiKeyAuthenticator($mock, new EventDispatcher(), 'AppBundle:User', $this->getClassMetadata());
+        $authenticator = new ApiKeyAuthenticator($mock, new EventDispatcher(), 'AppBundle:User', $this->getClassMetadata(), 'HTTP_HEADER');
 
         /** @var PreAuthenticatedToken $token */
         $token = $authenticator->authenticateToken($token, $this->getMock('Symfony\\Component\\Security\\Core\\User\\UserProviderInterface'), $providerKey);
@@ -133,7 +133,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->will($this->returnValue($or));
 
-        $authenticator = new ApiKeyAuthenticator($om, new EventDispatcher(), 'AppBundle:User', $this->getClassMetadata());
+        $authenticator = new ApiKeyAuthenticator($om, new EventDispatcher(), 'AppBundle:User', $this->getClassMetadata(), 'HTTP_HEADER');
         $authenticator->authenticateToken($token, $provider, $providerKey);
     }
 
@@ -173,7 +173,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     private function mockAuthenticator()
     {
-        return new ApiKeyAuthenticator($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'), new EventDispatcher(), 'AppBundle:User', $this->getClassMetadata());
+        return new ApiKeyAuthenticator($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'), new EventDispatcher(), 'AppBundle:User', $this->getClassMetadata(), 'HTTP_HEADER');
     }
 
     /**
