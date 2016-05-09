@@ -50,7 +50,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('om', $result['user']['object_manager']);
 
         $this->assertFalse($result['api_key_purge']['enabled']);
-        $this->assertSame($result['key_header'], ApiKeyAuthenticator::API_KEY_HEADER);
+        $this->assertSame($result['key_header'], 'X-API-KEY');
 
         foreach ($result['services'] as $service) {
             $this->assertNull($service);

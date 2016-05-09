@@ -10,7 +10,7 @@ class RestrictedRouteWebTest extends WebTestCase
     public function testInvalidApiKey()
     {
         $client = static::createClient();
-        $client->request('GET', '/restricted.html', array(), array(), array('HTTP_'.ApiKeyAuthenticator::API_KEY_HEADER => 'invalid token'));
+        $client->request('GET', '/restricted.html', array(), array(), array('HTTP_X-API-KEY' => 'invalid token'));
 
         $this->assertSame(401, $client->getResponse()->getStatusCode());
     }

@@ -69,7 +69,7 @@ class ApiKeyController extends Controller
         /** @var ClassMetadata $metadata */
         $metadata = $this->get('ma27_api_key_authentication.class_metadata');
 
-        if (!$header = (string) $request->headers->get(ApiKeyAuthenticator::API_KEY_HEADER)) {
+        if (!$header = (string) $request->headers->get($this->container->getParameter('ma27_api_key_authentication.key_header'))) {
             return new JsonResponse(array('message' => 'Missing api key header!'), 400);
         }
 

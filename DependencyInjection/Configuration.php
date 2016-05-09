@@ -64,7 +64,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('password_hasher')->defaultNull()->end()
                     ->end()
                 ->end()
-                ->scalarNode('key_header')->defaultValue(ApiKeyAuthenticator::API_KEY_HEADER)->end()
+                ->scalarNode('key_header')->defaultValue('X-API-KEY')->end()
             ->end();
 
         return $treeBuilder;

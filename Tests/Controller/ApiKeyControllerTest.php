@@ -54,7 +54,7 @@ class ApiKeyControllerTest extends WebTestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertArrayHasKey('apiKey', $content);
 
-        $client->request('GET', '/restricted.html', array(), array(), array('HTTP_'.ApiKeyAuthenticator::API_KEY_HEADER => $content['apiKey']));
+        $client->request('GET', '/restricted.html', array(), array(), array('HTTP_X-API-KEY' => $content['apiKey']));
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
@@ -80,11 +80,11 @@ class ApiKeyControllerTest extends WebTestCase
         $response = json_decode($client->getResponse()->getContent(), true);
 
         $apiKey = $response['apiKey'];
-        $client->request('GET', '/restricted.html', array(), array(), array('HTTP_'.ApiKeyAuthenticator::API_KEY_HEADER => $apiKey));
+        $client->request('GET', '/restricted.html', array(), array(), array('HTTP_X-API-KEY' => $apiKey));
         $testResponse = $client->getResponse();
         $this->assertSame(200, $testResponse->getStatusCode());
 
-        $client->request('DELETE', '/api-key.json', array(), array(), array('HTTP_'.ApiKeyAuthenticator::API_KEY_HEADER => $apiKey));
+        $client->request('DELETE', '/api-key.json', array(), array(), array('HTTP_X-API-KEY' => $apiKey));
         $logoutResponse = $client->getResponse();
 
         $this->assertSame(204, $logoutResponse->getStatusCode());
