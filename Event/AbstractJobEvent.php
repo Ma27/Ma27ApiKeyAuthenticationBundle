@@ -10,14 +10,14 @@ use Symfony\Component\EventDispatcher\Event;
 abstract class AbstractJobEvent extends Event
 {
     /**
-     * @var \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface[]
+     * @var object[]
      */
     private $affectedUsers = array();
 
     /**
      * Constructor.
      *
-     * @param \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface[] $users
+     * @param object[] $users
      */
     public function __construct(array $users)
     {
@@ -27,7 +27,7 @@ abstract class AbstractJobEvent extends Event
     /**
      * Returns all affected version.
      *
-     * @return \Ma27\ApiKeyAuthenticationBundle\Model\User\UserInterface[]
+     * @return object[]
      */
     public function getAffectedUsers()
     {

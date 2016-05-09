@@ -37,9 +37,8 @@ abstract class AbstractUserEvent extends Event
     /**
      * Checks whether a user is available.
      *
-     * Helpful when writing a subscriber for the auth error (when providing an invalid username, no user can be loaded)
-     *
      * @return bool
+     * @deprecated should be used in the `OnInvalidCredentialsEvent` only, will be removed from here in 2.0
      */
     public function isUserAvailable()
     {
