@@ -7,6 +7,8 @@ use ReflectionProperty;
 
 /**
  * Metadata object that contains the necessary data of the user model.
+ *
+ * @internal This code is part of the internal API to gather the appropriate model information and shouldn't be used for else use-cases
  */
 class ClassMetadata
 {

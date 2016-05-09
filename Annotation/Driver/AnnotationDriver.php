@@ -9,6 +9,8 @@ use ReflectionClass;
 
 /**
  * Annotation driver which parses the annotations of the user model instance.
+ *
+ * @internal This code is part of the internal API to gather the appropriate model information and shouldn't be used for else use-cases
  */
 final class AnnotationDriver implements ModelConfigurationDriverInterface
 {
