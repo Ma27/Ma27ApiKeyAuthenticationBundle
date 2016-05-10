@@ -59,8 +59,8 @@ The functional tests will be executed with the rest of the test suite and requir
 5) LICENSE
 ----------
 
-MIT.
-See the [Resources/meta/LICENSE](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/Resources/meta/LICENSE) file for more information
+The code is published under the MIT LICENSE:.
+See the [Resources/meta/LICENSE](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/LICENSE) file for more information.
 
 6) Support
 -----------
