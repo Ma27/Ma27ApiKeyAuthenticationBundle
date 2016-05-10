@@ -101,8 +101,6 @@ class ClassMetadata
 
             return $this->lazyValueCache[$oid][$property] = $this->properties[$property]->getValue($user);
         }
-
-        return;
     }
 
     /**
@@ -122,8 +120,6 @@ class ClassMetadata
 
             return $this->lazyPropertyNameCache[$property] = $this->properties[$property]->getName();
         }
-
-        return;
     }
 
     /**

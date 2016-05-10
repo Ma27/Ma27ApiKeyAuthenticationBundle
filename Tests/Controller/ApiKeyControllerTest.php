@@ -2,7 +2,6 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Controller;
 
-use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
 use Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

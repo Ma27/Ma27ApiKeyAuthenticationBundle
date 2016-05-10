@@ -4,7 +4,6 @@ namespace Ma27\ApiKeyAuthenticationBundle\Controller;
 
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
-use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

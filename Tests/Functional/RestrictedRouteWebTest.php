@@ -2,7 +2,6 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Functional;
 
-use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class RestrictedRouteWebTest extends WebTestCase

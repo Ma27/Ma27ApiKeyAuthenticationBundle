@@ -2,7 +2,6 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\DependencyInjection;
 
-use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
