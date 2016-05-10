@@ -25,6 +25,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
 {
     /**
      * @var string
+     *
      * @deprecated Deprecated since version 1.1, will be removed in 2.0
      */
     const API_KEY_HEADER = 'X-API-KEY';

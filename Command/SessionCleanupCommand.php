@@ -90,7 +90,7 @@ class SessionCleanupCommand extends Command
         $this
             ->setName('ma27:auth:session-cleanup')
             ->setDescription('Cleans all outdated sessions')
-            ->setHelp(<<<EOF
+            ->setHelp(<<<'EOF'
 The <info>ma27:auth:session-cleanup</info> command purges all api keys of users that were inactive for at least 5 days
 
 The usage is pretty simple:

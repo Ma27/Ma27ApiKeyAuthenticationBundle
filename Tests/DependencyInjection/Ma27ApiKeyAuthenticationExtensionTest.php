@@ -31,7 +31,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
                     'services' => array(
                         'auth_handler' => 'foo.bar',
                     ),
-                    'key_header' => 'HTTP_HEADER'
+                    'key_header' => 'HTTP_HEADER',
                 ),
             ),
             $container
