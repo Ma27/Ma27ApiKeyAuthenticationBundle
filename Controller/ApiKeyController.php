@@ -31,7 +31,7 @@ class ApiKeyController extends Controller
         /** @var ClassMetadata $metadata */
         $metadata = $this->get('ma27_api_key_authentication.class_metadata');
         /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
-        $dispatcher = $this->get('dispatcher');
+        $dispatcher = $this->get('event_dispatcher');
 
         $credentials = array();
         if ($request->request->has('login')) {
