@@ -12,6 +12,8 @@
 
 - [minor] declared parts of the annotation parser implementation as `@internal` as they aren't part of the public API and shouldn't be used anywhere.
 
+- [minor] added a `AssembleResponseEvent` to improve the creation of responses for the API key request (#46)
+
 ## 1.0.1
 
 - [bug] extract credentials properly from an authentication request even if they're empty. (#35)
