@@ -3,6 +3,7 @@ framework:
     test: ~
     router:          { resource: "%kernel.root_dir%/configs/functional_routing.yml" }
     form:            false
+    translator:      { fallbacks: ["en"] }
     csrf_protection: false
     templating:
         engines: ['php']

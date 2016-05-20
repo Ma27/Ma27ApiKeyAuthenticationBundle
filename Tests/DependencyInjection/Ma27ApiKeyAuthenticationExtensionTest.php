@@ -14,6 +14,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $extension = new Ma27ApiKeyAuthenticationExtension();
 
         $container->setDefinition('annotation_reader', new Definition('Doctrine\\Common\\Annotations\\Reader'));
+        $container->setDefinition('translator', new Definition('Symfony\\Component\\Translation\\Translator'));
 
         $extension->load(
             array(
@@ -72,6 +73,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $extension = new Ma27ApiKeyAuthenticationExtension();
 
         $container->setDefinition('annotation_reader', new Definition('Doctrine\\Common\\Annotations\\Reader'));
+        $container->setDefinition('translator', new Definition('Symfony\\Component\\Translation\\Translator'));
 
         $extension->load(
             array(
