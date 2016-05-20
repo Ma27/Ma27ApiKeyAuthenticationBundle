@@ -12,6 +12,7 @@ Table of contents
 - Event system
 - API Key Purger
 - Overriding services
+- Override the response
 
 
 1) Installation
@@ -247,3 +248,40 @@ The overridable services are:
 - password_hasher (Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface)
 
 There's a service section in the bundle config that can be used in order to exchange these services.
+
+9) Override the response
+------------------------
+
+For certain use-cases it is necessary to override the response.
+This can be done by using the ``AssembleResponseEvent``:
+
+``` php
+use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
+use Ma27\ApiKeyAuthenticationBundle\Event\AssembleResponseEvent;
+
+class CustomResponseListener implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents()
+    {
+        return array(Ma27ApiKeyAuthenticationEvents::ASSEMBLE_RESPONSE => 'onResponseCreation');
+    }
+
+    public function onResponseCreation(AssembleResponseEvent $event)
+    {
+        if ($event->isSuccess()) {
+            $user = $event->getUser();
+            // do sth. with $user
+
+            $event->setResponse(array(/* response data */));
+            // propagation must be stopped to avoid calling the
+            // default response listener which would override everything.
+            $event->stopPropagation();
+            return;
+        }
+
+        // handle the error event
+        $exception = $event->getException();
+        $event->setResponse(new JsonResponse(array(/* response data */)));
+    }
+}
+```

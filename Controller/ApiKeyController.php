@@ -2,11 +2,15 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Controller;
 
+use Ma27\ApiKeyAuthenticationBundle\Event\AssembleResponseEvent;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
+use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Controller which is responsible for the authentication routes.
@@ -26,6 +30,8 @@ class ApiKeyController extends Controller
         $authenticationHandler = $this->get('ma27_api_key_authentication.auth_handler');
         /** @var ClassMetadata $metadata */
         $metadata = $this->get('ma27_api_key_authentication.class_metadata');
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
+        $dispatcher = $this->get('dispatcher');
 
         $credentials = array();
         if ($request->request->has('login')) {
@@ -36,20 +42,25 @@ class ApiKeyController extends Controller
             $credentials[$metadata->getPropertyName(ClassMetadata::PASSWORD_PROPERTY)] = $request->request->get('password');
         }
 
+        $exception = null;
+        $user      = null;
         try {
             $user = $authenticationHandler->authenticate($credentials);
         } catch (CredentialException $ex) {
-            /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
-            $translator = $this->get('translator');
-            $errorMessage = $translator->trans($ex->getMessage() ?: 'Credentials refused!');
-
-            return new JsonResponse(
-                array('message' => $errorMessage),
-                401
-            );
+            $exception = $ex;
         }
 
-        return new JsonResponse(array('apiKey' => $metadata->getPropertyValue($user, ClassMetadata::API_KEY_PROPERTY)));
+        /** @var AssembleResponseEvent $result */
+        $result = $dispatcher->dispatch(
+            Ma27ApiKeyAuthenticationEvents::ASSEMBLE_RESPONSE,
+            new AssembleResponseEvent($user, $exception)
+        );
+
+        if (!$response = $result->getResponse()) {
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot assemble the response!');
+        }
+
+        return $response;
     }
 
     /**

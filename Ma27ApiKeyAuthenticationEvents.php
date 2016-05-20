@@ -70,4 +70,11 @@ final class Ma27ApiKeyAuthenticationEvents
      * @var string
      */
     const AFTER_CLEANUP = 'ma27_api_key_authentication.cleanup.complete';
+
+    /**
+     * Event to be triggered to assemble the http response of the API key request.
+     *
+     * @var string
+     */
+    const ASSEMBLE_RESPONSE = 'ma27_api_key_authentication.response.assemble';
 }
