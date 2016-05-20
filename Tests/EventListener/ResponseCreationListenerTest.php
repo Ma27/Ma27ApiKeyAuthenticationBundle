@@ -6,8 +6,6 @@ use Ma27\ApiKeyAuthenticationBundle\Event\AssembleResponseEvent;
 use Ma27\ApiKeyAuthenticationBundle\EventListener\ResponseCreationListener;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,14 +14,14 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
         $user = new \stdClass();
         $key  = uniqid();
 
-        $metadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
+        $metadata = $this->getMockBuilder('Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata')->disableOriginalConstructor()->getMock();
         $metadata->expects($this->once())
             ->method('getPropertyValue')
             ->with($user, ClassMetadata::API_KEY_PROPERTY)
             ->willReturn($key);
 
         $listener = new ResponseCreationListener(
-            $this->getMock(TranslatorInterface::class),
+            $this->getMock('Symfony\Component\Translation\TranslatorInterface'),
             $metadata
         );
 
@@ -32,7 +30,7 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
         $listener->onResponseCreation($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
 
         $data = json_decode($response->getContent(), true);
         $this->assertSame($data['apiKey'], $key);
@@ -45,8 +43,8 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
 
         $translatedIntoGerman = 'Ungültige Zugangsdaten!';
 
-        $metadata   = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
-        $translator = $this->getMock(TranslatorInterface::class);
+        $metadata   = $this->getMockBuilder('Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->once())
             ->method('trans')
             ->with('Invalid username and password!')
@@ -62,7 +60,7 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
         $listener->onResponseCreation($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
 
         $data = json_decode($response->getContent(), true);
         $this->assertSame($translatedIntoGerman, $data['message']);
