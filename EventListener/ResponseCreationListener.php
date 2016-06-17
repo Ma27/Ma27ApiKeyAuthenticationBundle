@@ -27,15 +27,28 @@ class ResponseCreationListener implements EventSubscriberInterface
     private $metadata;
 
     /**
+     * @var string
+     */
+    private $apiKeyValue;
+
+    /**
+     * @var string
+     */
+    private $messageValue;
+
+    /**
      * Constructor.
      *
      * @param TranslatorInterface $translator
      * @param ClassMetadata       $classMetadata
+     * @param array               $resultConfig
      */
-    public function __construct(TranslatorInterface $translator, ClassMetadata $classMetadata)
+    public function __construct(TranslatorInterface $translator, ClassMetadata $classMetadata, array $resultConfig)
     {
-        $this->translator = $translator;
-        $this->metadata   = $classMetadata;
+        $this->translator   = $translator;
+        $this->metadata     = $classMetadata;
+        $this->apiKeyValue  = $resultConfig['api_key_property'];
+        $this->messageValue = $resultConfig['error_property'];
     }
 
     /**
@@ -57,14 +70,14 @@ class ResponseCreationListener implements EventSubscriberInterface
     {
         if ($event->isSuccess()) {
             $event->setResponse(new JsonResponse(array(
-                'apiKey' => $this->metadata->getPropertyValue($event->getUser(), ClassMetadata::API_KEY_PROPERTY)
+                $this->apiKeyValue => $this->metadata->getPropertyValue($event->getUser(), ClassMetadata::API_KEY_PROPERTY)
             )));
 
             return;
         }
 
         $event->setResponse(new JsonResponse(
-            array('message' => $this->translator->trans($event->getException()->getMessage() ?: 'Credentials refused!')),
+            array($this->messageValue => $this->translator->trans($event->getException()->getMessage() ?: 'Credentials refused!')),
             JsonResponse::HTTP_UNAUTHORIZED
         ));
     }

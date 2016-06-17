@@ -13,5 +13,6 @@ services:
         arguments:
             - "@translator"
             - "@ma27_api_key_authentication.class_metadata"
+            - "%ma27_api_key_authentication.response_values%"
         tags:
             - { name: kernel.event_subscriber }

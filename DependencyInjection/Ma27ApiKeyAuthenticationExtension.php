@@ -38,6 +38,8 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $this->loadServices($loader);
         $this->loadApiKeyPurger($container, $loader, $config['api_key_purge']);
         $this->overrideServices($container, $config['services']);
+
+        $container->setParameter('ma27_api_key_authentication.response_values', $config['response']);
     }
 
     /**

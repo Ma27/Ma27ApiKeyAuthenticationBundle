@@ -8,6 +8,8 @@
 
 - [bug] ensure that no api key is generated before a new one will be created (#48)
 
+- [feature] added `response.api_key_property` and `response.error_property` to the configuration to keep the response configurable
+
 ## 1.1.0
 
 - [feature] made api_key header configurable: (#32)

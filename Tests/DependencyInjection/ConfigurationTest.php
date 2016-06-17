@@ -54,5 +54,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         foreach ($result['services'] as $service) {
             $this->assertNull($service);
         }
+
+        $this->assertSame($result['response'], array(
+            'api_key_property' => 'apiKey',
+            'error_property'   => 'message',
+        ));
     }
 }

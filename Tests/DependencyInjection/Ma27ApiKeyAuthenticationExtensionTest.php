@@ -60,6 +60,8 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
 
         $securityDefinition = $container->getDefinition('ma27_api_key_authentication.security.authenticator');
         $this->assertSame($securityDefinition->getArgument(4), 'HTTP_HEADER');
+
+        $this->assertTrue($container->hasParameter('ma27_api_key_authentication.response_values'));
     }
 
     /**

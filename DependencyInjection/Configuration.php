@@ -64,6 +64,13 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->scalarNode('key_header')->defaultValue('X-API-KEY')->end()
+                ->arrayNode('response')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('api_key_property')->defaultValue('apiKey')->end()
+                        ->scalarNode('error_property')->defaultValue('message')->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

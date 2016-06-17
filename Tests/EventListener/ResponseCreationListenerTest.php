@@ -22,7 +22,8 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
 
         $listener = new ResponseCreationListener(
             $this->getMock('Symfony\Component\Translation\TranslatorInterface'),
-            $metadata
+            $metadata,
+            array('api_key_property' => 'apiKey', 'error_property' => 'message')
         );
 
         $event = new AssembleResponseEvent($user);
@@ -52,7 +53,8 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
 
         $listener = new ResponseCreationListener(
             $translator,
-            $metadata
+            $metadata,
+            array('api_key_property' => 'apiKey', 'error_property' => 'message')
         );
 
         $event = new AssembleResponseEvent($user, $ex);
