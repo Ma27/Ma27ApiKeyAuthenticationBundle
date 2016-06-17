@@ -95,4 +95,20 @@ class ApiKeyControllerTest extends WebTestCase
         $client->request('POST', '/api-key.json', array('login' => null, 'password' => null));
         $this->assertSame(401, $client->getResponse()->getStatusCode());
     }
+
+    public function testMultipleLogins()
+    {
+        $client = static::createClient();
+
+        $data = array();
+        for ($i = 0; $i < 2; $i++) {
+            $client->request('POST', '/api-key.json', array('login' => 'Ma27', 'password' => '123456'));
+
+            $response = $client->getResponse();
+            $content = json_decode($response->getContent(), true);
+            $data[] = $content['apiKey'];
+        }
+
+        $this->assertSame($data[0], $data[1]);
+    }
 }

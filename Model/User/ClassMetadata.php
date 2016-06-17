@@ -91,7 +91,7 @@ class ClassMetadata
             $oid = spl_object_hash($user);
             if (isset($this->lazyValueCache[$oid])) {
                 if (isset($this->lazyValueCache[$oid][$property])) {
-                    return $this > $this->lazyValueCache[$oid][$property];
+                    return $this->lazyValueCache[$oid][$property];
                 }
             } else {
                 $this->lazyValueCache[$oid] = array();

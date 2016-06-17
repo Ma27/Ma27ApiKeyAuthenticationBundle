@@ -186,6 +186,52 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $handler->removeSession($user, true);
     }
 
+    public function testAvoidDuplicatedCallsAgainstKeyFactoryIfUserIsLoggedInOnOtherDevice()
+    {
+        $user = new TestUser();
+        $hasher = new CryptPasswordHasher();
+        $metadata = $this->getMetadata();
+
+        $user->setPassword($hasher->generateHash('123456'));
+
+        $metadata
+            ->expects($this->any())
+            ->method('getPropertyValue')
+            ->willReturn('foo');
+
+        $metadata
+            ->expects($this->never())
+            ->method('modifyProperty');
+
+        $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
+        $or
+            ->expects($this->any())
+            ->method('findOneBy')
+            ->will($this->returnValue($user));
+
+        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $om
+            ->expects($this->any())
+            ->method('getRepository')
+            ->will($this->returnValue($or));
+
+        $factory = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface');
+        $factory
+            ->expects($this->never())
+            ->method('getKey');
+
+        $handler = new ApiKeyAuthenticationHandler(
+            $om,
+            $hasher,
+            $factory,
+            new EventDispatcher(),
+            'AppBundle:User',
+            $metadata
+        );
+
+        $handler->authenticate(array('login' => 'ma27@example.org', 'password' => '123456'));
+    }
+
     /**
      * @param bool $expectLoginAndPassword
      *

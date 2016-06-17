@@ -106,7 +106,11 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
 
         $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::AUTHENTICATION, new OnAuthenticationEvent($object));
 
-        $this->classMetadata->modifyProperty($object, $this->keyFactory->getKey(), ClassMetadata::API_KEY_PROPERTY);
+        $key = $this->classMetadata->getPropertyValue($object, ClassMetadata::API_KEY_PROPERTY);
+        if (empty($key)) {
+            $this->classMetadata->modifyProperty($object, $this->keyFactory->getKey(), ClassMetadata::API_KEY_PROPERTY);
+        }
+
         $this->om->persist($object);
 
         $this->om->flush();
