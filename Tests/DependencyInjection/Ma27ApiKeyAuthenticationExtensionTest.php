@@ -2,6 +2,7 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\DependencyInjection;
 
+use Ma27\ApiKeyAuthenticationBundle\DependencyInjection\Compiler\CompileHasherServicesPass;
 use Ma27\ApiKeyAuthenticationBundle\DependencyInjection\Ma27ApiKeyAuthenticationExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -13,6 +14,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
         $extension = new Ma27ApiKeyAuthenticationExtension();
 
+        $container->addCompilerPass(new CompileHasherServicesPass());
         $container->setDefinition('annotation_reader', new Definition('Doctrine\\Common\\Annotations\\Reader'));
         $container->setDefinition('translator', new Definition('Symfony\\Component\\Translation\\Translator'));
 
@@ -50,7 +52,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame((string) $container->getAlias('ma27_api_key_authentication.auth_handler'), 'foo.bar');
         $this->assertSame(
             'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher',
-            $container->getDefinition('ma27_api_key_authentication.password.strategy')->getClass()
+            $container->getDefinition($container->getAlias('ma27_api_key_authentication.password.strategy'))->getClass()
         );
 
         $this->assertNotNull($container->getDefinition('ma27_api_key_authentication.cleanup_command')->getArgument(0));
@@ -72,6 +74,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
         $extension = new Ma27ApiKeyAuthenticationExtension();
 
+        $container->addCompilerPass(new CompileHasherServicesPass());
         $container->setDefinition('annotation_reader', new Definition('Doctrine\\Common\\Annotations\\Reader'));
         $container->setDefinition('translator', new Definition('Symfony\\Component\\Translation\\Translator'));
 
@@ -95,7 +98,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container->compile();
 
-        $definition = $container->getDefinition('ma27_api_key_authentication.password.strategy');
+        $definition = $container->getDefinition($container->getAlias('ma27_api_key_authentication.password.strategy'));
         $this->assertSame($expectedClass, $definition->getClass());
         $this->assertSame($expectedArgs, $definition->getArguments());
     }

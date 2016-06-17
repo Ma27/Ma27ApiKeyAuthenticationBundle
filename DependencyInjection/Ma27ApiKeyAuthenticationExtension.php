@@ -34,7 +34,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         );
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $this->loadPassword($container, $config['user']['password']);
+        $this->loadPassword($container, $config['user']['password'], $loader);
         $this->loadServices($loader);
         $this->loadApiKeyPurger($container, $loader, $config['api_key_purge']);
         $this->overrideServices($container, $config['services']);
@@ -43,37 +43,21 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
     /**
      * Loads the password strategy.
      *
-     * @param ContainerBuilder $container
-     * @param string           $passwordConfig
+     * @param ContainerBuilder      $container
+     * @param string                $passwordConfig
+     * @param Loader\YamlFileLoader $loader
      */
-    private function loadPassword(ContainerBuilder $container, $passwordConfig)
+    private function loadPassword(ContainerBuilder $container, $passwordConfig, Loader\YamlFileLoader $loader)
     {
-        $strategyArguments = array();
-        switch ($passwordConfig['strategy']) {
-            case 'php55':
-                $className = 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PhpPasswordHasher';
+        $container->setParameter(
+            'ma27_api_key_authentication.password_hasher.phpass.iteration_length',
+            isset($passwordConfig['phpass_iteration_length']) ? $passwordConfig['phpass_iteration_length'] : 8
+        );
+        $loader->load('hashers.yml');
 
-                break;
-            case 'crypt':
-                $className = 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\CryptPasswordHasher';
-
-                break;
-            case 'sha512':
-                $className = 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher';
-
-                break;
-            case 'phpass':
-                $className = 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PHPassHasher';
-                $strategyArguments[] = $passwordConfig['phpass_iteration_length'];
-
-                break;
-            default:
-                throw new InvalidConfigurationException('Cannot create password config!');
-        }
-
-        $container->setDefinition(
-            'ma27_api_key_authentication.password.strategy',
-            new Definition($className, $strategyArguments)
+        $container->setParameter(
+            'ma27_api_key_authentication.password_hashing_service',
+            $passwordConfig['strategy']
         );
     }
 

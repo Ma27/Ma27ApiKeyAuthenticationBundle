@@ -1,5 +1,11 @@
 # Changelog for 1.x version
 
+## 1.2.0
+
+- [feature] made hashing services configurable: (#33)
+  - created tag `ma27_api_key_authentication.password_hasher` which allows to create custom services and use them via the configuration
+  - no BC breaks (all currently existing hashers can be used by the same config)
+
 ## 1.1.0
 
 - [feature] made api_key header configurable: (#32)

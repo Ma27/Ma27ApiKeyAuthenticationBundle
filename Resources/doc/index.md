@@ -189,6 +189,49 @@ You can enable them like this:
 
 You have to replace the "strategy" value with one of the above listed hashers
 
+5.1) Custom hasher
+------------------
+
+Custom hashers are easy to create:
+
+1.: create your own hashing class:
+
+``` php
+namespace AppBundle\Hasher;
+
+use Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface;
+
+class CustomHasher implements PasswordHasherInterface
+{
+    public function generateHash($password)
+    {
+        // build the hash by a raw password
+    }
+    public function compareWith($password, $raw)
+    {
+        // compares the hash $password with a raw string
+    }
+}
+```
+
+2.: register it in the container:
+
+``` yaml
+services:
+    app.custom_hasher:
+        class: AppBundle\Hasher\CustomHasher
+        tags:
+            - { name: ma27_api_key_authentication.password_hashing_service, alias: custom }
+```
+
+3.: enable it in the config:
+
+``` php
+ma27_api_key_authentication:
+    password:
+        strategy: custom # value of the `alias` parameter in the tag config
+```
+
 6) Event system
 ---------------
 
