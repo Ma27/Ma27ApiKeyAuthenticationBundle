@@ -45,9 +45,9 @@ class ResponseCreationListener implements EventSubscriberInterface
      */
     public function __construct(TranslatorInterface $translator, ClassMetadata $classMetadata, array $resultConfig)
     {
-        $this->translator   = $translator;
-        $this->metadata     = $classMetadata;
-        $this->apiKeyValue  = $resultConfig['api_key_property'];
+        $this->translator = $translator;
+        $this->metadata = $classMetadata;
+        $this->apiKeyValue = $resultConfig['api_key_property'];
         $this->messageValue = $resultConfig['error_property'];
     }
 
@@ -57,7 +57,7 @@ class ResponseCreationListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(Ma27ApiKeyAuthenticationEvents::ASSEMBLE_RESPONSE => array(
-            array('onResponseCreation', -10)
+            array('onResponseCreation', -10),
         ));
     }
 
@@ -70,7 +70,7 @@ class ResponseCreationListener implements EventSubscriberInterface
     {
         if ($event->isSuccess()) {
             $event->setResponse(new JsonResponse(array(
-                $this->apiKeyValue => $this->metadata->getPropertyValue($event->getUser(), ClassMetadata::API_KEY_PROPERTY)
+                $this->apiKeyValue => $this->metadata->getPropertyValue($event->getUser(), ClassMetadata::API_KEY_PROPERTY),
             )));
 
             return;

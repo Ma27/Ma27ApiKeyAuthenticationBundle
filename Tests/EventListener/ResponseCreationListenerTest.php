@@ -12,7 +12,7 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
     public function testBuildAPIKeyResponse()
     {
         $user = new \stdClass();
-        $key  = uniqid();
+        $key = uniqid();
 
         $metadata = $this->getMockBuilder('Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata')->disableOriginalConstructor()->getMock();
         $metadata->expects($this->once())
@@ -40,11 +40,11 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
     public function testAssembleErrors()
     {
         $user = null;
-        $ex   = new CredentialException('Invalid username and password!');
+        $ex = new CredentialException('Invalid username and password!');
 
         $translatedIntoGerman = 'Ungültige Zugangsdaten!';
 
-        $metadata   = $this->getMockBuilder('Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $metadata = $this->getMockBuilder('Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata')->disableOriginalConstructor()->getMock();
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->once())
             ->method('trans')

@@ -43,7 +43,7 @@ class ApiKeyController extends Controller
         }
 
         $exception = null;
-        $user      = null;
+        $user = null;
         try {
             $user = $authenticationHandler->authenticate($credentials);
         } catch (CredentialException $ex) {

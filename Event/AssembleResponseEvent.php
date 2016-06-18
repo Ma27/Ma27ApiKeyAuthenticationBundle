@@ -37,7 +37,7 @@ class AssembleResponseEvent extends Event
     public function __construct($user = null, CredentialException $exception = null)
     {
         $this->exception = $exception;
-        $this->user      = $user;
+        $this->user = $user;
     }
 
     /**

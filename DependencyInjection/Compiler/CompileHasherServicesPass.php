@@ -56,6 +56,7 @@ class CompileHasherServicesPass implements CompilerPassInterface
 
             if ($tags[0]['alias'] === $alias) {
                 $container->setAlias('ma27_api_key_authentication.password.strategy', $id);
+
                 return;
             }
         }
