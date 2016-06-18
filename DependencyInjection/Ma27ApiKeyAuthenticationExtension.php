@@ -86,6 +86,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
             $loader->load('session_cleanup.yml');
 
             if ($purgerConfig['log_state']) {
+                @trigger_error('The options `api_key_purge.log_state` and the corresponding logger support are deprecated and will be dropped/removed in 2.0!', E_USER_DEPRECATED);
                 $container->setParameter(
                     'ma27_api_key_authentication.logger',
                     $purgerConfig['logger_service']

@@ -111,10 +111,13 @@ EOF
     {
         try {
             $dateTime = new \DateTime();
-            if (null !== $this->logger) {
-                $now = $dateTime->format('m/d/Y H:i:s');
 
-                $this->logger->notice(sprintf('Starting session purge at %s', $now));
+            $now = $dateTime->format('m/d/Y H:i:s');
+            $message = sprintf('Starting session purge at %s', $now);
+            $output->writeln(sprintf('<info>%s</info>', $message));
+            if (null !== $this->logger) {
+                @trigger_error('Logger support is deprecated!', E_USER_DEPRECATED);
+                $this->logger->notice($message);
             }
 
             // search query
@@ -152,8 +155,10 @@ EOF
                 ++$processedObjects;
             }
 
+            $message = sprintf('Processed %d items successfully', $processedObjects);
+            $output->writeln(sprintf('<info>%s</info>', $message));
             if (null !== $this->logger) {
-                $this->logger->notice(sprintf('Processed %d items successfully', $processedObjects));
+                $this->logger->notice($message);
             }
 
             $afterEvent = new OnSuccessfulCleanupEvent($affectedUsers);
@@ -161,13 +166,15 @@ EOF
 
             $this->om->flush();
 
+            $endTime = new \DateTime();
+            $end = $endTime->format('m/d/Y H:i:s');
+
+            $diff = $endTime->getTimestamp() - $dateTime->getTimestamp();
+            $message = sprintf('Stopped cleanup at %s after %d seconds', $end, $diff);
+
+            $output->writeln(sprintf('<info>%s</info>', $message));
             if (null !== $this->logger) {
-                $endTime = new \DateTime();
-                $end = $endTime->format('m/d/Y H:i:s');
-
-                $diff = $endTime->getTimestamp() - $dateTime->getTimestamp();
-
-                $this->logger->notice(sprintf('Stopped cleanup at %s after %d seconds', $end, $diff));
+                $this->logger->notice($message);
             }
         } catch (\Exception $ex) {
             $this->eventDispatcher->dispatch(
