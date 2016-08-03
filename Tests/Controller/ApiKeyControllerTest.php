@@ -46,6 +46,13 @@ class ApiKeyControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
+        // clear the last action to prove that it will be reloaded properly during the login
+        $testUser = $this->getFixtureUser();
+        $testUser->clearLastAction();
+        $em = self::$kernel->getContainer()->get('doctrine')->getManager();
+        $em->persist($testUser);
+        $em->flush();
+
         $client->request('POST', '/api-key.json', array('login' => 'Ma27', 'password' => '123456'));
         $response = $client->getResponse();
 
@@ -56,6 +63,9 @@ class ApiKeyControllerTest extends WebTestCase
         $client->request('GET', '/restricted.html', array(), array(), array('HTTP_X-API-KEY' => $content['apiKey']));
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
+
+        $user = $this->getFixtureUser();
+        $this->assertNotEmpty($user->getLastAction());
     }
 
     public function testLogoutWithMissingApiKey()
@@ -110,5 +120,13 @@ class ApiKeyControllerTest extends WebTestCase
         }
 
         $this->assertSame($data[0], $data[1]);
+    }
+
+    /**
+     * @return \Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser
+     */
+    private function getFixtureUser()
+    {
+        return self::$kernel->getContainer()->get('doctrine')->getManager()->getRepository('Functional:TestUser')->findOneBy(array('username' => 'Ma27'));
     }
 }

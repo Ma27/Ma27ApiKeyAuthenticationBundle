@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\Validator\Tests\Fixtures\Reference;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -28,7 +29,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $container->setParameter('ma27_api_key_authentication.object_manager', $config['user']['object_manager']);
         $container->setParameter(
             'ma27_api_key_authentication.property.apiKeyLength',
-            intval(floor($config['user']['api_key_length'] / 2))
+            (int) floor($config['user']['api_key_length'] / 2)
         );
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -91,6 +92,13 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
                     'ma27_api_key_authentication.logger',
                     $purgerConfig['logger_service']
                 );
+
+                $definition = $container->getDefinition('ma27_api_key_authentication.cleanup_command');
+                $definition->addArgument(new Reference($container->getParameter('ma27_api_key_authentication.logger')));
+            }
+
+            if ($this->isConfigEnabled($container, $purgerConfig['last_action_listener'])) {
+                $loader->load('last_action_listener.yml');
             }
         }
     }

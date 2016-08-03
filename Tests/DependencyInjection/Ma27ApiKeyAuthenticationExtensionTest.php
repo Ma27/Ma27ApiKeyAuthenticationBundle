@@ -46,6 +46,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $container->setDefinition('logger', new Definition(get_class($logger)));
         $container->setDefinition('event_dispatcher', new Definition('Symfony\\Component\\EventDispatcher\\EventDispatcher'));
         $container->setDefinition('om', new Definition(get_class($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
+        $container->setDefinition('request_stack', new Definition(get_class($this->getMock('Symfony\\Component\\HttpFoundation\\RequestStack'))));
 
         $container->compile();
 

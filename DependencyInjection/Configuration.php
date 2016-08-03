@@ -33,13 +33,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('password')
                             ->children()
                                 ->scalarNode('strategy')
-                                    ->validate()
-                                        ->ifNotInArray(array('php55', 'crypt', 'sha512', 'phpass'))
-                                        ->thenInvalid(
-                                            'Invalid password strategy "%s"! '
-                                            .'Allowed strategies are "password", "crypt", "sha512", "phpass"!'
-                                        )
-                                    ->end()
+                                    ->isRequired()
                                 ->end()
                                 ->integerNode('phpass_iteration_length')
                                     ->defaultValue(8)
@@ -53,6 +47,9 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->booleanNode('log_state')->defaultFalse()->end()
                         ->scalarNode('logger_service')->defaultValue('logger')->end()
+                        ->arrayNode('last_action_listener')
+                            ->canBeDisabled()
+                        ->end()
                     ->end()
                 ->end()
                 ->arrayNode('services')

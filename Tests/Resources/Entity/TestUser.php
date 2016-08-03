@@ -41,6 +41,12 @@ class TestUser implements UserInterface
      */
     private $username;
 
+    /**
+     * @ORM\Column(name="last_action", type="datetime", nullable=true)
+     * @Auth\LastAction()
+     */
+    private $lastAction;
+
     public function eraseCredentials()
     {
     }
@@ -97,5 +103,16 @@ class TestUser implements UserInterface
     public function setUsername($username)
     {
         $this->username = $username;
+    }
+
+    public function getLastAction()
+    {
+        return $this->lastAction;
+    }
+
+    public function clearLastAction()
+    {
+        // only for testing reasons
+        $this->lastAction = null;
     }
 }

@@ -37,6 +37,8 @@ ma27_api_key_authentication:
         model_name: Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser
         password:
             strategy: crypt
+    api_key_purge:
+        enabled: true
 
 security:
     providers:

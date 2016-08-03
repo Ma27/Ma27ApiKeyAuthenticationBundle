@@ -10,7 +10,9 @@
 
 - [feature] added `response.api_key_property` and `response.error_property` to the configuration to keep the response configurable (#45)
 
-- [minor] deprecated `api_key_purge.logger_service`, logger support will be removed in 2.0 (#50) 
+- [minor] deprecated `api_key_purge.logger_service`, logger support will be removed in 2.0 (#50)
+
+- [feature] added a listener which updates the `last_action` during the firewall login and after the api key request (#55)
 
 ## 1.1.0
 

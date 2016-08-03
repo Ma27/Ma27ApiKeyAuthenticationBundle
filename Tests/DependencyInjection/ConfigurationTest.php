@@ -7,29 +7,6 @@ use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Invalid configuration for path "ma27_api_key_authentication.user.password.strategy": Invalid password strategy ""md5""! Allowed strategies are "password", "crypt", "sha512", "phpass"!
-     */
-    public function testInvalidPasswordAlgorithm()
-    {
-        $config = array(
-            'ma27_api_key_authentication' => array(
-                'user' => array(
-                    'object_manager' => 'om',
-                    'password'       => array(
-                        'strategy' => 'md5',
-                    ),
-                ),
-            ),
-        );
-
-        $configuration = new Configuration();
-        $processor = new Processor();
-
-        $processor->processConfiguration($configuration, $config);
-    }
-
     public function testDefaultConfig()
     {
         $config = array(
@@ -58,6 +35,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($result['response'], array(
             'api_key_property' => 'apiKey',
             'error_property'   => 'message',
+        ));
+
+        $this->assertSame($result['api_key_purge']['last_action_listener'], array(
+            'enabled' => true,
         ));
     }
 }

@@ -1,0 +1,9 @@
+services:
+    ma27_api_key_authentication.api_key_purge.last_action_refresh_listener:
+        class: Ma27\ApiKeyAuthenticationBundle\EventListener\UpdateLastActionFieldListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments:
+            - "@=service(parameter('ma27_api_key_authentication.object_manager'))"
+            - "@ma27_api_key_authentication.class_metadata"
+            - "@request_stack"
