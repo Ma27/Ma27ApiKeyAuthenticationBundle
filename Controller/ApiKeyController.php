@@ -50,7 +50,7 @@ class ApiKeyController extends Controller
         try {
             $user = $authenticationHandler->authenticate($credentials);
         } catch (CredentialException $ex) {
-            $dispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CREDENTIAL_EXCEPTION_THROWN, new OnCredentialExceptionThrownEvent($user));
+            $dispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CREDENTIAL_EXCEPTION_THROWN, new OnCredentialExceptionThrownEvent($ex, $user));
 
             $exception = $ex;
         }
