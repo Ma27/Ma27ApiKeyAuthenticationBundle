@@ -3,6 +3,7 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Controller;
 
 use Ma27\ApiKeyAuthenticationBundle\Event\AssembleResponseEvent;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnCredentialExceptionThrownEvent;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
@@ -23,6 +24,8 @@ class ApiKeyController extends Controller
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws HttpException If the login fails.
      */
     public function requestApiKeyAction(Request $request)
     {
@@ -47,6 +50,8 @@ class ApiKeyController extends Controller
         try {
             $user = $authenticationHandler->authenticate($credentials);
         } catch (CredentialException $ex) {
+            $dispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CREDENTIAL_EXCEPTION_THROWN, new OnCredentialExceptionThrownEvent($user));
+
             $exception = $ex;
         }
 
@@ -57,7 +62,7 @@ class ApiKeyController extends Controller
         );
 
         if (!$response = $result->getResponse()) {
-            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot assemble the response!');
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot assemble the response!', $exception);
         }
 
         return $response;

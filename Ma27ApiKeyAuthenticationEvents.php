@@ -44,6 +44,13 @@ final class Ma27ApiKeyAuthenticationEvents
     const CREDENTIAL_FAILURE = 'ma27_api_key_authentication.credential_failure';
 
     /**
+     * Event to be triggered if a `CredentialException` has been thrown.
+     *
+     * @var string
+     */
+    const CREDENTIAL_EXCEPTION_THROWN = 'ma27_api_key_authentication.credential_exception_thrown';
+
+    /**
      * Event to be triggered if the firewall (pre authenticator) refuses access.
      *
      * @var string
