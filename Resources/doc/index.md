@@ -2,17 +2,17 @@ Ma27ApiKeyAuthenticationBundle
 ==============================
 
 Table of contents
---------------------
+-----------------
 
-- Installation
-- Configuration
-- Basic usage
-- Login API
-- Password Hasher
-- Event system
-- API Key Purger
-- Overriding services
-- Override the response
+- [Installation](#1-installation)
+- [Configuration](#2-configuration)
+- [Basic usage](#3-basic-usage)
+- [Login API](#4-login-api)
+- [Password Hasher](#5-password-hasher)
+- [Event system](#6-event-system)
+- [API Key Purger](#7-api-key-purger)
+- [Overriding services](#8-overriding-services)
+- [Override the response](#9-override-the-response)
 
 
 1) Installation
@@ -23,7 +23,7 @@ This bundle can be simply added using composer:
 ``` json
 {
     "require": {
-        "ma27/api-key-authentication-bundle": "^1.0"
+        "ma27/api-key-authentication-bundle": "^1.2"
     }
 }
 ```
@@ -51,54 +51,61 @@ class AppKernel extends Kernel
 2) Configuration
 ----------------
 
-Here you can see the full configuration of the bundle
+Here you can see the default configuration of the API key bundle.
 
 ``` yaml
-# Current configuration for "Ma27ApiKeyAuthenticationBundle"
+# Default configuration for "Ma27ApiKeyAuthenticationBundle"
 ma27_api_key_authentication:
     user:
-        object_manager: om_service
-        model_name: 'AppBundle\\Entity\\User'
+        api_key_length:       200
+        object_manager:       ~ # Required
+        model_name:           AppBundle\Entity\User
         password:
-            strategy: crypt,
-            phpass_iteration_length: 8
-        api_key_length: 200
+            strategy:             ~ # Required
+            phpass_iteration_length:  8 # only needed for the PHPass strategy
     api_key_purge:
-        enabled: false
-        log_state: false
+        enabled:              false
+        log_state:            false
+        logger_service:       logger
+        last_action_listener:
+            enabled:              true
     services:
-        auth_handler: null
-        key_factory: null
-        password_hasher: null
-    key_header: X-API-KEY
+        auth_handler:         null
+        key_factory:          null
+        password_hasher:      null
+    key_header:           X-API-KEY
+    response:
+        api_key_property:     apiKey
+        error_property:       message
 ```
 
 3) Basic usage
 --------------
 
-In order to handle the authentication, you need to provide a model that implements *Symfony\Component\Security\Core\UserInterface* as such classes are required for the authentication.
+In order to handle the authentication, you need to provide a model that implements *Symfony\Component\Security\Core\User\UserInterface* as this interfaces is required for Symfony
+as it needs this interface for the authentication and authorization process.
 
-Now your user must contain the "login" (may be username or email or something else) and "password" property
+Now your user must contain a "login" (may be username or email or something else) and "password" property
 that will be used by doctrine in order to find and validate the user.
 
-Now you have to provide the doctrine manager service. When using the *doctrine-orm* package, it is usually the service __doctrine.orm.default_entity_manager__.
-You also have to provide the doctrine model name.
+After that you have to provide the doctrine manager service. When using the *doctrine-orm* package, it is usually the service __doctrine.orm.default_entity_manager__.
+You also have to provide the FQCN of the user entity.
 
 This must be done in the configuration:
 
 ``` yaml
     # ...
     object_manager: object_manager_service_name
-    model_name: 'AppBundle\\Entity\\User'
+    model_name: AppBundle\Entity\User
 ```
 
-In order to tell this bundle which properties should be used, annotations must be attached at the model:
+In order to tell this bundle which properties should be used for login, password and api key, annotations must be attached at the model:
 
 ``` php
 namespace AppBundle\Entity;
 
 use Ma27\ApiKeyAuthenticationBundle\Annotation as Auth;
-use Symfony\Component\Security\Core\UserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class User implements UserInterface {
   /** @Auth\Login */
@@ -108,7 +115,7 @@ class User implements UserInterface {
   /** @Auth\ApiKey */
   private $apiKey; // for authentication using the api key
   /** @Auth\LastAction */
-  private $lastAction; // only necessary when using purger feature
+  private $lastAction; // only necessary when using purger feature, see the section about the API key purger
 }
 ```
 
@@ -131,16 +138,17 @@ security:
 We don't need ay user provider, so we just adjust an empty memory provider.
 
 In that configuration we protected all routes with the url prefix */restricted*.
-It must be stateless since we have to provide the api key all the time and don't use sessions.
+This API key authenticator adopts the concept of stateless authenticators which don't rely on a session storage, but run the authentication always when a URL protected by the firewall
+is accessed, so the API key will always be validated.
 
 Say you have the route */restricted/resource.json*.
 In order to access it without getting a *401* error, you have to provide a certain header which name is configured in ``key_header`` that contains the api key.
-The default value of this header is ``X-API-KEY``.
+The default value of this header is ``X-API-KEY``, but can be changed in the config (refer to the [configuration reference](#2-configuration) for further information).
 
 4) Login API
 ------------
 
-With your configuration it is possible now to protect some routes. But how to get the api key?
+With your configuration it is possible now to protect certain routes matched by the firewall. But how to get the api key?
 
 At first we need to enable the routes of the login api:
 
@@ -175,7 +183,7 @@ Every hasher must implement the interface *Ma27\ApiKeyAuthenticationBundle\Model
 Currently are the following algorithms available:
 
 - sha512
-- php55 (php's internal hashing api)
+- php55 (php's internal hashing api, `passwod_hash`)
 - phpass
 - crypt
 
@@ -189,8 +197,7 @@ You can enable them like this:
 
 You have to replace the "strategy" value with one of the above listed hashers
 
-5.1) Custom hasher
-------------------
+### 5.1) Custom hasher
 
 Custom hashers are easy to create:
 
@@ -266,6 +273,8 @@ When the latest activation is 5 days ago, the user can be removed using the api 
         enabled: true
         log_state: false
         logger_service: logger
+        last_action_listener:
+            enabled:              true
 ```
 
 Here you have to adjust a property of the domain model that shows you the latest activation as timestamp.
@@ -282,6 +291,11 @@ It is recommended to use this as a cronjob:
     crontab -e
     @midnight /usr/bin/php /path/to/application/app/console ma27:auth:session-cleanup
 
+__Please keep in mind that the logger support is deprecated. The API key purger provides a lot of events that can be used to implement a custom logger.__
+
+The `last_action_listener` updates the last action property after the API key request and whenever a user authenticates on a route protected by a firewall using the `ApiKeyAuthenticator`.
+It's enabled by the default and can be disabled by setting `last_action_listener.enabled` to `false`.
+
 8) Overriding services
 ----------------------
 
@@ -295,11 +309,15 @@ The overridable services are:
 
 There's a service section in the bundle config that can be used in order to exchange these services.
 
+Please keep in mind that `password_hasher` is obsolete as you can use custom password hashers.
+
 9) Override the response
 ------------------------
 
-For certain use-cases it is necessary to override the response.
+For certain use-cases it is necessary to override the response of the login.
 This can be done by using the ``AssembleResponseEvent``:
+
+__NOTE: this feature is only available for the login route as the logout returns a 204, so no customization is needed right now.__
 
 ``` php
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
@@ -331,3 +349,5 @@ class CustomResponseListener implements EventSubscriberInterface
     }
 }
 ```
+
+Now this subscriber must be registered and tagged as `kernel.event_subscriber` and you can override this response.

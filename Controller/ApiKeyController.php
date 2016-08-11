@@ -23,9 +23,9 @@ class ApiKeyController extends Controller
      *
      * @param Request $request
      *
-     * @return JsonResponse
-     *
      * @throws HttpException If the login fails.
+     *
+     * @return JsonResponse
      */
     public function requestApiKeyAction(Request $request)
     {

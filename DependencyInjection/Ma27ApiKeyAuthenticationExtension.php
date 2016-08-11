@@ -29,7 +29,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $container->setParameter('ma27_api_key_authentication.object_manager', $config['user']['object_manager']);
         $container->setParameter(
             'ma27_api_key_authentication.property.apiKeyLength',
-            (int) floor($config['user']['api_key_length'] / 2)
+            (int) floor($config['user']['api_key_length'] / 2) // TODO to be moved to the `KeyFactory`
         );
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -50,6 +50,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
      */
     private function loadPassword(ContainerBuilder $container, $passwordConfig, Loader\YamlFileLoader $loader)
     {
+        // TODO refactor this, the `phpass_iteration_length` is specific for a single strategy and therefore it shouldn't be present in the semantic configuration.
         $container->setParameter(
             'ma27_api_key_authentication.password_hasher.phpass.iteration_length',
             isset($passwordConfig['phpass_iteration_length']) ? $passwordConfig['phpass_iteration_length'] : 8
@@ -118,6 +119,10 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
                 'key_factory'     => 'ma27_api_key_authentication.key_factory',
                 'password_hasher' => 'ma27_api_key_authentication.password.strategy',
             );
+
+            if (isset($services['password_hasher'])) {
+                @trigger_error('The option `services.password_hasher` is deprecated, to be removed in 2.0, create a custom hasher instead!', E_USER_DEPRECATED);
+            }
 
             foreach ($serviceConfig as $configIndex => $replaceableServiceId) {
                 if (!isset($semanticServiceReplacements[$configIndex])

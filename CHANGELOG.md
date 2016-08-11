@@ -16,6 +16,8 @@
 
 - [feature] added an event `ma27_api_key_authentication.credential_exception_thrown` that will be always triggered when a `CredentialException` is thrown (#56)
 
+- [minor] deprecated `services.password_hasher`, instead a custom password hasher should be created.
+
 ## 1.1.0
 
 - [feature] made api_key header configurable: (#32)

@@ -41,4 +41,27 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'enabled' => true,
         ));
     }
+
+    /**
+     * Avoid further regressions as #57
+     */
+    public function testCustomHasherService()
+    {
+        $config = array(
+            'ma27_api_key_authentication' => array(
+                'user' => array(
+                    'object_manager' => 'om',
+                    'password'       => array(
+                        'strategy' => 'custom',
+                    ),
+                ),
+            ),
+        );
+
+        $configuration = new Configuration();
+        $processor = new Processor();
+
+        $result = $processor->processConfiguration($configuration, $config);
+        self::assertSame('custom', $result['user']['password']['strategy']);
+    }
 }
