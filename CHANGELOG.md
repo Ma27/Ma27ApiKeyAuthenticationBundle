@@ -14,6 +14,8 @@
 
 - [feature] added a listener which updates the `last_action` during the firewall login and after the api key request (#55)
 
+- [feature] added an event `ma27_api_key_authentication.credential_exception_thrown` that will be always triggered when a `CredentialException` is thrown (#56)
+
 ## 1.1.0
 
 - [feature] made api_key header configurable: (#32)
