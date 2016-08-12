@@ -27,10 +27,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $container->setParameter('ma27_api_key_authentication.key_header', $config['key_header']);
         $container->setParameter('ma27_api_key_authentication.model_name', $config['user']['model_name']);
         $container->setParameter('ma27_api_key_authentication.object_manager', $config['user']['object_manager']);
-        $container->setParameter(
-            'ma27_api_key_authentication.property.apiKeyLength',
-            $config['user']['api_key_length']
-        );
+        $container->setParameter('ma27_api_key_authentication.property.apiKeyLength', $config['user']['api_key_length']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $this->loadPassword($container, $config['user']['password'], $loader);
@@ -50,13 +47,9 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
      */
     private function loadPassword(ContainerBuilder $container, $passwordConfig, Loader\YamlFileLoader $loader)
     {
+        $container->setParameter('ma27_api_key_authentication.password_hashing_service', $passwordConfig['strategy']);
         $container->setParameter('ma27_api_key_authentication.password_hasher.phpass.iteration_length', 8);
         $loader->load('hashers.yml');
-
-        $container->setParameter(
-            'ma27_api_key_authentication.password_hashing_service',
-            $passwordConfig['strategy']
-        );
     }
 
     /**
@@ -111,19 +104,12 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $semanticServiceReplacements = array_filter($services);
         if (!empty($semanticServiceReplacements)) {
             $serviceConfig = array(
-                'auth_handler'    => 'ma27_api_key_authentication.auth_handler',
-                'key_factory'     => 'ma27_api_key_authentication.key_factory',
-                'password_hasher' => 'ma27_api_key_authentication.password.strategy',
+                'auth_handler' => 'ma27_api_key_authentication.auth_handler',
+                'key_factory'  => 'ma27_api_key_authentication.key_factory',
             );
 
-            if (isset($services['password_hasher'])) {
-                @trigger_error('The option `services.password_hasher` is deprecated, to be removed in 2.0, create a custom hasher instead!', E_USER_DEPRECATED);
-            }
-
             foreach ($serviceConfig as $configIndex => $replaceableServiceId) {
-                if (!isset($semanticServiceReplacements[$configIndex])
-                    || null === $serviceId = $semanticServiceReplacements[$configIndex]
-                ) {
+                if (!isset($semanticServiceReplacements[$configIndex]) || null === $serviceId = $semanticServiceReplacements[$configIndex]) {
                     continue;
                 }
 

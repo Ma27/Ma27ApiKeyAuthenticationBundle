@@ -54,7 +54,6 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('auth_handler')->defaultNull()->end()
                         ->scalarNode('key_factory')->defaultNull()->end()
-                        ->scalarNode('password_hasher')->defaultNull()->end()
                     ->end()
                 ->end()
                 ->scalarNode('key_header')->defaultValue('X-API-KEY')->end()
