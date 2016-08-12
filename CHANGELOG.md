@@ -6,6 +6,8 @@
 
 - [minor] The length computation `actual_length / 2` for the random key will be done in the `KeyFactory` instead of the extension.
 
+- [minor] Removed the configuration option `password.phpass_iteration_length`. Instead the parameter `ma27_api_key_authentication.password_hasher.phpass.iteration_length` should be modified manually.
+
 ## 1.2.0
 
 - [feature] made hashing services configurable: (#33)

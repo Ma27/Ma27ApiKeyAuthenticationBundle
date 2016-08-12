@@ -87,8 +87,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
                     'user' => array(
                         'object_manager' => 'om',
                         'password'       => array(
-                            'strategy'                => $strategyName,
-                            'phpass_iteration_length' => 5,
+                            'strategy' => $strategyName,
                         ),
                     ),
                 ),
@@ -113,7 +112,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
             array('crypt', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\CryptPasswordHasher', array()),
             array('php55', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PhpPasswordHasher', array()),
             array('sha512', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher', array()),
-            array('phpass', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PHPassHasher', array(5)),
+            array('phpass', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PHPassHasher', array(8)),
         );
     }
 }

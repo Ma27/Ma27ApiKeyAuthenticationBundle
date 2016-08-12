@@ -62,7 +62,6 @@ ma27_api_key_authentication:
         model_name:           AppBundle\Entity\User
         password:
             strategy:             ~ # Required
-            phpass_iteration_length:  8 # only needed for the PHPass strategy
     api_key_purge:
         enabled:              false
         log_state:            false
