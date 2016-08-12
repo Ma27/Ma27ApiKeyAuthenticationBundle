@@ -29,7 +29,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $container->setParameter('ma27_api_key_authentication.object_manager', $config['user']['object_manager']);
         $container->setParameter(
             'ma27_api_key_authentication.property.apiKeyLength',
-            (int) floor($config['user']['api_key_length'] / 2) // TODO to be moved to the `KeyFactory`
+            $config['user']['api_key_length']
         );
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));

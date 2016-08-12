@@ -20,7 +20,7 @@ class KeyFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new KeyFactory($om, 'AppBundle:User', $this->getClassMetadata());
         $key = $factory->getKey();
 
-        $this->assertSame(400, strlen($key));
+        $this->assertSame(200, strlen($key));
     }
 
     /**

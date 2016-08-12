@@ -10,6 +10,8 @@ use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
  */
 class KeyFactory implements KeyFactoryInterface
 {
+    const MAX_API_KEY_GENERATION_ATTEMPTS = 200;
+
     /**
      * @var ObjectManager
      */
@@ -43,23 +45,27 @@ class KeyFactory implements KeyFactoryInterface
         $this->om = $om;
         $this->modelName = (string) $modelName;
         $this->metadata = $metadata;
-        $this->keyLength = (int) $keyLength;
+        $this->keyLength = (int) floor($keyLength / 2);
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \RuntimeException If no unique key can be created.
      */
     public function getKey()
     {
         $repository = $this->om->getRepository($this->modelName);
-        $max = 200;
         $count = 0;
 
         do {
             ++$count;
 
-            if ($count > $max) {
-                throw new \RuntimeException('Unable to generate a new api key, stopping after 200 tries!');
+            if ($count > static::MAX_API_KEY_GENERATION_ATTEMPTS) {
+                throw new \RuntimeException(sprintf(
+                    'Unable to generate a new api key, stopping after %d tries!',
+                    static::MAX_API_KEY_GENERATION_ATTEMPTS
+                ));
             }
 
             $key = $this->doGenerate();
@@ -113,7 +119,7 @@ class KeyFactory implements KeyFactoryInterface
      *
      * @return string
      */
-    private function doGenerate()
+    protected function doGenerate()
     {
         return bin2hex(openssl_random_pseudo_bytes($this->keyLength));
     }

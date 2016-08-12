@@ -104,6 +104,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $definition = $container->getDefinition($container->getAlias('ma27_api_key_authentication.password.strategy'));
         $this->assertSame($expectedClass, $definition->getClass());
         $this->assertSame($expectedArgs, $definition->getArguments());
+        $this->assertSame(200, $container->getParameter('ma27_api_key_authentication.property.apiKeyLength', 200));
     }
 
     public function hashStrategyProvider()
