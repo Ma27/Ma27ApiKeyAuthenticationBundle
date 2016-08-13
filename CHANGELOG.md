@@ -10,6 +10,10 @@
 
 - [breaking] Removed the configuration option `services.password_hasher`. Create a custom hasher via DI tags instead.
 
+- [breaking] Removed the `sha512` strategy and the `Ma27\ApiKeyAuthenticationBundle\Model\Password\Sha512PasswordHasher` as it didn't provide an appropriate salting strategy which made the whole implementation fragile.
+
+- [minor] Added the `ma27_api_key_authentication.password_hasher.php55.cost`
+
 ## 1.2.0
 
 - [feature] made hashing services configurable: (#33)

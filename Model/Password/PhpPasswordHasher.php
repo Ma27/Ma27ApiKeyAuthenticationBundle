@@ -8,9 +8,16 @@ namespace Ma27\ApiKeyAuthenticationBundle\Model\Password;
 class PhpPasswordHasher implements PasswordHasherInterface
 {
     /**
-     * Constructor.
+     * @var int
      */
-    public function __construct()
+    private $cost;
+
+    /**
+     * Constructor.
+     *
+     * @param int $cost
+     */
+    public function __construct($cost = 12)
     {
         if (!function_exists('password_hash')) {
             throw new \RuntimeException(
@@ -18,6 +25,8 @@ class PhpPasswordHasher implements PasswordHasherInterface
                 'or upgrade your php version to 5.5 or higher!'
             );
         }
+
+        $this->cost = (int) $cost;
     }
 
     /**
@@ -25,7 +34,7 @@ class PhpPasswordHasher implements PasswordHasherInterface
      */
     public function generateHash($password)
     {
-        return password_hash($password, PASSWORD_BCRYPT, array('cost' => 12));
+        return password_hash($password, PASSWORD_BCRYPT, array('cost' => $this->cost));
     }
 
     /**

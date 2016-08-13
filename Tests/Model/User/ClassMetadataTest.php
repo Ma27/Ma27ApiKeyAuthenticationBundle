@@ -11,7 +11,7 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
     {
         $object = new TestUser();
         $class = get_class($object);
-        $metadata = new ClassMetadata(new \ReflectionClass($object), $class, array(
+        $metadata = new ClassMetadata(array(
             ClassMetadata::LOGIN_PROPERTY    => new \ReflectionProperty($class, 'username'),
             ClassMetadata::PASSWORD_PROPERTY => new \ReflectionProperty($class, 'password'),
             ClassMetadata::API_KEY_PROPERTY  => new \ReflectionProperty($class, 'apiKey'),
@@ -33,7 +33,7 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $object = new TestUser();
         $class = get_class($object);
 
-        new ClassMetadata(new \ReflectionClass($object), $class, array(
+        new ClassMetadata(array(
             ClassMetadata::LOGIN_PROPERTY    => new \ReflectionProperty($class, 'username'),
             ClassMetadata::PASSWORD_PROPERTY => new \ReflectionProperty($class, 'password'),
         ));
@@ -47,7 +47,7 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
     {
         $object = new TestUser();
         $class = get_class($object);
-        $metadata = new ClassMetadata(new \ReflectionClass($object), $class, array(
+        $metadata = new ClassMetadata(array(
             ClassMetadata::LOGIN_PROPERTY    => new \ReflectionProperty($class, 'username'),
             ClassMetadata::PASSWORD_PROPERTY => new \ReflectionProperty($class, 'password'),
             ClassMetadata::API_KEY_PROPERTY  => new \ReflectionProperty($class, 'apiKey'),

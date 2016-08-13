@@ -181,7 +181,6 @@ Every hasher must implement the interface *Ma27\ApiKeyAuthenticationBundle\Model
 
 Currently are the following algorithms available:
 
-- sha512
 - php55 (php's internal hashing api, `passwod_hash`)
 - phpass
 - crypt

@@ -84,11 +84,7 @@ final class AnnotationDriver implements ModelConfigurationDriverInterface
                             $lastActionProperty = $reflectionProperty;
                     }
 
-                    if ($loginProperty
-                        && $passwordProperty
-                        && $apiKeyProperty
-                        && $lastActionProperty
-                    ) {
+                    if ($loginProperty && $passwordProperty && $apiKeyProperty && $lastActionProperty) {
                         break;
                     }
 
@@ -106,16 +102,12 @@ final class AnnotationDriver implements ModelConfigurationDriverInterface
             ));
         }
 
-        return new ClassMetadata(
-            $reflection,
-            $this->userClass,
-            array(
-                ClassMetadata::LOGIN_PROPERTY       => $loginProperty,
-                ClassMetadata::PASSWORD_PROPERTY    => $passwordProperty,
-                ClassMetadata::API_KEY_PROPERTY     => $apiKeyProperty,
-                ClassMetadata::LAST_ACTION_PROPERTY => $lastActionProperty,
-            )
-        );
+        return new ClassMetadata(array(
+            ClassMetadata::LOGIN_PROPERTY       => $loginProperty,
+            ClassMetadata::PASSWORD_PROPERTY    => $passwordProperty,
+            ClassMetadata::API_KEY_PROPERTY     => $apiKeyProperty,
+            ClassMetadata::LAST_ACTION_PROPERTY => $lastActionProperty,
+        ));
     }
 
     /**

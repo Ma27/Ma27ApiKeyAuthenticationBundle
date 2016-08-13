@@ -12,9 +12,7 @@ class CryptPasswordHasher implements PasswordHasherInterface
      */
     public function generateHash($password)
     {
-        $salt = '$6$rounds=3000$'.base64_encode(uniqid()).'$';
-
-        return crypt($password, $salt);
+        return crypt($password, sprintf('$6$rounds=3000$%s$', $this->generateSalt()));
     }
 
     /**
@@ -23,5 +21,15 @@ class CryptPasswordHasher implements PasswordHasherInterface
     public function compareWith($password, $raw)
     {
         return crypt($raw, $password) === $password;
+    }
+
+    /**
+     * Generates a salt using the openssl API.
+     *
+     * @return string
+     */
+    protected function generateSalt()
+    {
+        return bin2hex(openssl_random_pseudo_bytes(10));
     }
 }

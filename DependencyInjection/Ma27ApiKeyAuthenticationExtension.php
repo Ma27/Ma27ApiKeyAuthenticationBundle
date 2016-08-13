@@ -28,14 +28,14 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $container->setParameter('ma27_api_key_authentication.model_name', $config['user']['model_name']);
         $container->setParameter('ma27_api_key_authentication.object_manager', $config['user']['object_manager']);
         $container->setParameter('ma27_api_key_authentication.property.apiKeyLength', $config['user']['api_key_length']);
+        $container->setParameter('ma27_api_key_authentication.response_values', $config['response']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+
         $this->loadPassword($container, $config['user']['password'], $loader);
         $this->loadServices($loader);
         $this->loadApiKeyPurger($container, $loader, $config['api_key_purge']);
         $this->overrideServices($container, $config['services']);
-
-        $container->setParameter('ma27_api_key_authentication.response_values', $config['response']);
     }
 
     /**
@@ -49,6 +49,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
     {
         $container->setParameter('ma27_api_key_authentication.password_hashing_service', $passwordConfig['strategy']);
         $container->setParameter('ma27_api_key_authentication.password_hasher.phpass.iteration_length', 8);
+        $container->setParameter('ma27_api_key_authentication.password_hasher.php55.cost', 12);
         $loader->load('hashers.yml');
     }
 

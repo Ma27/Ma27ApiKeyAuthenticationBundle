@@ -27,16 +27,6 @@ class ClassMetadata
     );
 
     /**
-     * @var ReflectionClass
-     */
-    private $reflectionInstance;
-
-    /**
-     * @var string
-     */
-    private $className;
-
-    /**
      * @var ReflectionProperty[]
      */
     private $properties = array();
@@ -54,16 +44,12 @@ class ClassMetadata
     /**
      * Constructor.
      *
-     * @param ReflectionClass      $reflection
-     * @param string               $className
      * @param ReflectionProperty[] $properties
      *
      * @throws \InvalidArgumentException If one necessary property is missing
      */
-    public function __construct(ReflectionClass $reflection, $className, array $properties)
+    public function __construct(array $properties)
     {
-        $this->reflectionInstance = $reflection;
-        $this->className = (string) $className;
         $this->properties = $properties;
 
         foreach (self::$necessaryProperties as $propertyIndex => $alias) {
