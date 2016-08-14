@@ -9,10 +9,6 @@ services:
         class: Ma27\ApiKeyAuthenticationBundle\Model\Password\CryptPasswordHasher
         tags:
             - { name: ma27_api_key_authentication.password_hasher, alias: crypt }
-    ma27_api_key_authentication.password_hasher.sha512:
-        class: Ma27\ApiKeyAuthenticationBundle\Model\Password\Sha512PasswordHasher
-        tags:
-            - { name: ma27_api_key_authentication.password_hasher, alias: sha512 }
     ma27_api_key_authentication.password_hasher.phpass:
         class: Ma27\ApiKeyAuthenticationBundle\Model\Password\PHPassHasher
         tags:

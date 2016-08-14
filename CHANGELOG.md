@@ -14,6 +14,14 @@
 
 - [minor] Added the `ma27_api_key_authentication.password_hasher.php55.cost`
 
+- [breaking] removed `Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator::API_KEY_HEADER`. The API key header is configurable, so no constant is needed anymore.
+
+- [breaking] removed `Ma27\ApiKeyAuthenticationBundle\Event\AbstractUserEvent::isUserAvailable`. The method is only available in the subclass `Ma27\ApiKeyAuthenticationBundle\Event\OnInvalidCredentialsEvent` and in other events not needed.
+
+- [breaking] removed the configuration option `api_key_purge.log_state` and `api_key_purge.logger`. In order to tackle logger support, please use custom event hooks.
+
+- [feature] `user.password` configuration can be omitted if the `php55` strategy is used.
+
 ## 1.2.0
 
 - [feature] made hashing services configurable: (#33)

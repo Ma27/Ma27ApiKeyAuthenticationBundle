@@ -42,6 +42,24 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         ));
     }
 
+    public function testOmitPasswordConfiguration()
+    {
+        $config = array(
+            'ma27_api_key_authentication' => array(
+                'user' => array(
+                    'object_manager' => 'om',
+                ),
+            ),
+        );
+
+        $configuration = new Configuration();
+        $processor = new Processor();
+
+        $result = $processor->processConfiguration($configuration, $config);
+
+        $this->assertSame('php55', $result['user']['password']['strategy']);
+    }
+
     /**
      * Avoid further regressions as #57
      */

@@ -24,12 +24,11 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
                     'user' => array(
                         'object_manager' => 'om',
                         'password'       => array(
-                            'strategy' => 'sha512',
+                            'strategy' => 'crypt',
                         ),
                     ),
                     'api_key_purge' => array(
-                        'enabled'   => true,
-                        'log_state' => true,
+                        'enabled' => true,
                     ),
                     'services' => array(
                         'auth_handler' => 'foo.bar',
@@ -40,10 +39,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
             $container
         );
 
-        $logger = $this->getMock('Psr\\Log\\LogInterface');
-
         $container->setDefinition('foo.bar', new Definition('stdClass'));
-        $container->setDefinition('logger', new Definition(get_class($logger)));
         $container->setDefinition('event_dispatcher', new Definition('Symfony\\Component\\EventDispatcher\\EventDispatcher'));
         $container->setDefinition('om', new Definition(get_class($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
         $container->setDefinition('request_stack', new Definition(get_class($this->getMock('Symfony\\Component\\HttpFoundation\\RequestStack'))));
@@ -52,9 +48,11 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame((string) $container->getAlias('ma27_api_key_authentication.auth_handler'), 'foo.bar');
         $this->assertSame(
-            'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\Sha512PasswordHasher',
+            'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\CryptPasswordHasher',
             $container->getDefinition($container->getAlias('ma27_api_key_authentication.password.strategy'))->getClass()
         );
+
+        $this->assertTrue($container->hasDefinition('ma27_api_key_authentication.api_key_purge.last_action_refresh_listener'));
 
         $this->assertNotNull($container->getDefinition('ma27_api_key_authentication.cleanup_command')->getArgument(0));
         $this->assertSame($container->getParameter('ma27_api_key_authentication.key_header'), 'HTTP_HEADER');
@@ -63,6 +61,33 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($securityDefinition->getArgument(4), 'HTTP_HEADER');
 
         $this->assertTrue($container->hasParameter('ma27_api_key_authentication.response_values'));
+    }
+
+    public function testDisabledPurger()
+    {
+        $container = new ContainerBuilder();
+        $extension = new Ma27ApiKeyAuthenticationExtension();
+
+        $container->addCompilerPass(new CompileHasherServicesPass());
+        $container->setDefinition('annotation_reader', new Definition('Doctrine\\Common\\Annotations\\Reader'));
+        $container->setDefinition('translator', new Definition('Symfony\\Component\\Translation\\Translator'));
+
+        $extension->load(array(
+            'ma27_api_key_authentication' => array(
+                'user'          => array('object_manager' => 'om'),
+                'api_key_purge' => array('enabled' => false),
+            ),
+        ), $container);
+
+        $container->setDefinition('foo.bar', new Definition('stdClass'));
+        $container->setDefinition('event_dispatcher', new Definition('Symfony\\Component\\EventDispatcher\\EventDispatcher'));
+        $container->setDefinition('om', new Definition(get_class($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
+        $container->setDefinition('request_stack', new Definition(get_class($this->getMock('Symfony\\Component\\HttpFoundation\\RequestStack'))));
+
+        $container->compile();
+
+        $this->assertFalse($container->hasDefinition('ma27_api_key_authentication.cleanup_command'));
+        $this->assertFalse($container->hasDefinition('ma27_api_key_authentication.api_key_purge.last_action_refresh_listener'));
     }
 
     /**

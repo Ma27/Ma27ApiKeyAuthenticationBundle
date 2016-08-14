@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -34,8 +33,15 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
 
         $this->loadPassword($container, $config['user']['password'], $loader);
         $this->loadServices($loader);
-        $this->loadApiKeyPurger($container, $loader, $config['api_key_purge']);
-        $this->overrideServices($container, $config['services']);
+
+        if ($this->isConfigEnabled($container, $config['api_key_purge'])) {
+            $this->loadApiKeyPurger($container, $loader, $config['api_key_purge']);
+        }
+
+        $services = array_filter($config['services']);
+        if (!empty($services)) {
+            $this->overrideServices($container, $services);
+        }
     }
 
     /**
@@ -50,6 +56,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $container->setParameter('ma27_api_key_authentication.password_hashing_service', $passwordConfig['strategy']);
         $container->setParameter('ma27_api_key_authentication.password_hasher.phpass.iteration_length', 8);
         $container->setParameter('ma27_api_key_authentication.password_hasher.php55.cost', 12);
+
         $loader->load('hashers.yml');
     }
 
@@ -74,23 +81,10 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
      */
     private function loadApiKeyPurger(ContainerBuilder $container, Loader\YamlFileLoader $loader, array $purgerConfig)
     {
-        if ($this->isConfigEnabled($container, $purgerConfig)) {
-            $loader->load('session_cleanup.yml');
+        $loader->load('session_cleanup.yml');
 
-            if ($purgerConfig['log_state']) {
-                @trigger_error('The options `api_key_purge.log_state` and the corresponding logger support are deprecated and will be dropped/removed in 2.0!', E_USER_DEPRECATED);
-                $container->setParameter(
-                    'ma27_api_key_authentication.logger',
-                    $purgerConfig['logger_service']
-                );
-
-                $definition = $container->getDefinition('ma27_api_key_authentication.cleanup_command');
-                $definition->addArgument(new Reference($container->getParameter('ma27_api_key_authentication.logger')));
-            }
-
-            if ($this->isConfigEnabled($container, $purgerConfig['last_action_listener'])) {
-                $loader->load('last_action_listener.yml');
-            }
+        if ($this->isConfigEnabled($container, $purgerConfig['last_action_listener'])) {
+            $loader->load('last_action_listener.yml');
         }
     }
 
@@ -102,21 +96,18 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
      */
     private function overrideServices(ContainerBuilder $container, array $services)
     {
-        $semanticServiceReplacements = array_filter($services);
-        if (!empty($semanticServiceReplacements)) {
-            $serviceConfig = array(
-                'auth_handler' => 'ma27_api_key_authentication.auth_handler',
-                'key_factory'  => 'ma27_api_key_authentication.key_factory',
-            );
+        $serviceConfig = array(
+            'auth_handler' => 'ma27_api_key_authentication.auth_handler',
+            'key_factory'  => 'ma27_api_key_authentication.key_factory',
+        );
 
-            foreach ($serviceConfig as $configIndex => $replaceableServiceId) {
-                if (!isset($semanticServiceReplacements[$configIndex]) || null === $serviceId = $semanticServiceReplacements[$configIndex]) {
-                    continue;
-                }
-
-                $container->removeDefinition($replaceableServiceId);
-                $container->setAlias($replaceableServiceId, new Alias($serviceId));
+        foreach ($serviceConfig as $configIndex => $replaceableServiceId) {
+            if (!isset($services[$configIndex]) || null === $serviceId = $services[$configIndex]) {
+                continue;
             }
+
+            $container->removeDefinition($replaceableServiceId);
+            $container->setAlias($replaceableServiceId, new Alias($serviceId));
         }
     }
 }

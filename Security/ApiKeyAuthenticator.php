@@ -24,13 +24,6 @@ use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterfa
 class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
 {
     /**
-     * @var string
-     *
-     * @deprecated Deprecated since version 1.1, will be removed in 2.0
-     */
-    const API_KEY_HEADER = 'X-API-KEY';
-
-    /**
      * @var ObjectManager
      */
     private $om;

@@ -35,11 +35,6 @@ class SessionCleanupCommand extends Command
     private $handler;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
@@ -62,19 +57,16 @@ class SessionCleanupCommand extends Command
      * @param EventDispatcherInterface       $eventDispatcher
      * @param string                         $modelName
      * @param ClassMetadata                  $classMetadata
-     * @param LoggerInterface                $logger
      */
     public function __construct(
         ObjectManager $om,
         AuthenticationHandlerInterface $authenticationHandler,
         EventDispatcherInterface $eventDispatcher,
         $modelName,
-        ClassMetadata $classMetadata,
-        LoggerInterface $logger = null
+        ClassMetadata $classMetadata
     ) {
         $this->om = $om;
         $this->handler = $authenticationHandler;
-        $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
         $this->modelName = (string) $modelName;
         $this->classMetadata = $classMetadata;
@@ -109,16 +101,13 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // TODO add stats to the event structure
         try {
             $dateTime = new \DateTime();
 
             $now = $dateTime->format('m/d/Y H:i:s');
             $message = sprintf('Starting session purge at %s', $now);
             $output->writeln(sprintf('<info>%s</info>', $message));
-            if (null !== $this->logger) {
-                @trigger_error('Logger support is deprecated!', E_USER_DEPRECATED);
-                $this->logger->notice($message);
-            }
 
             // search query
             $latestActivationPropertyName = $this->classMetadata->getPropertyName(ClassMetadata::LAST_ACTION_PROPERTY);
@@ -157,9 +146,6 @@ EOF
 
             $message = sprintf('Processed %d items successfully', $processedObjects);
             $output->writeln(sprintf('<info>%s</info>', $message));
-            if (null !== $this->logger) {
-                $this->logger->notice($message);
-            }
 
             $afterEvent = new OnSuccessfulCleanupEvent($affectedUsers);
             $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CLEANUP_SUCCESS, $afterEvent);
@@ -170,12 +156,7 @@ EOF
             $end = $endTime->format('m/d/Y H:i:s');
 
             $diff = $endTime->getTimestamp() - $dateTime->getTimestamp();
-            $message = sprintf('Stopped cleanup at %s after %d seconds', $end, $diff);
-
-            $output->writeln(sprintf('<info>%s</info>', $message));
-            if (null !== $this->logger) {
-                $this->logger->notice($message);
-            }
+            $output->writeln(sprintf('<info>%s</info>', sprintf('Stopped cleanup at %s after %d seconds', $end, $diff)));
         } catch (\Exception $ex) {
             $this->eventDispatcher->dispatch(
                 Ma27ApiKeyAuthenticationEvents::CLEANUP_ERROR,
