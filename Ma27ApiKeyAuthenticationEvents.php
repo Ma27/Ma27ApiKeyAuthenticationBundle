@@ -72,13 +72,6 @@ final class Ma27ApiKeyAuthenticationEvents
     const CLEANUP_ERROR = 'ma27_api_key_authentication.cleanup.error';
 
     /**
-     * Event to be triggered if all changed objects were commited and the whole cleanup is complete.
-     *
-     * @var string
-     */
-    const AFTER_CLEANUP = 'ma27_api_key_authentication.cleanup.complete';
-
-    /**
      * Event to be triggered to assemble the http response of the API key request.
      *
      * @var string

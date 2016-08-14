@@ -42,6 +42,30 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         ));
     }
 
+    public function testApiKeyPurgeEnabled()
+    {
+        $config = array(
+            'ma27_api_key_authentication' => array(
+                'user'          => array(
+                    'object_manager' => 'om',
+                ),
+                'api_key_purge' => array(
+                    'enabled'       => true,
+                    'outdated_rule' => '-2 hours',
+                ),
+            ),
+        );
+
+        $configuration = new Configuration();
+        $processor = new Processor();
+
+        $result = $processor->processConfiguration($configuration, $config);
+
+        $this->assertTrue($result['api_key_purge']['enabled']);
+        $this->assertTrue($result['api_key_purge']['last_action_listener']['enabled']);
+        $this->assertSame($result['api_key_purge']['outdated_rule'], '-2 hours');
+    }
+
     public function testOmitPasswordConfiguration()
     {
         $config = array(

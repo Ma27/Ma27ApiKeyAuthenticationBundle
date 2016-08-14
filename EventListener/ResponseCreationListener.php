@@ -2,7 +2,7 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\EventListener;
 
-use Ma27\ApiKeyAuthenticationBundle\Event\AssembleResponseEvent;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnAssembleResponseEvent;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -64,9 +64,9 @@ class ResponseCreationListener implements EventSubscriberInterface
     /**
      * Assembles the response.
      *
-     * @param AssembleResponseEvent $event
+     * @param OnAssembleResponseEvent $event
      */
-    public function onResponseCreation(AssembleResponseEvent $event)
+    public function onResponseCreation(OnAssembleResponseEvent $event)
     {
         if ($event->isSuccess()) {
             $event->setResponse(new JsonResponse(array(

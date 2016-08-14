@@ -81,6 +81,7 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
      */
     private function loadApiKeyPurger(ContainerBuilder $container, Loader\YamlFileLoader $loader, array $purgerConfig)
     {
+        $container->setParameter('ma27_api_key_authentication.cleanup_command.date_time_rule', $purgerConfig['outdated_rule']);
         $loader->load('session_cleanup.yml');
 
         if ($this->isConfigEnabled($container, $purgerConfig['last_action_listener'])) {

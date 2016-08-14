@@ -1,6 +1,7 @@
 services:
     ma27_api_key_authentication.annotation_driver:
         class: Ma27\ApiKeyAuthenticationBundle\Annotation\Driver\AnnotationDriver
+        public: false
         arguments:
             - "@annotation_reader"
             - "%ma27_api_key_authentication.model_name%"

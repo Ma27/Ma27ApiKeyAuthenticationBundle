@@ -6,14 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
-use Ma27\ApiKeyAuthenticationBundle\Event\OnAfterCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnApiKeyCleanupErrorEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnBeforeSessionCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnSuccessfulCleanupEvent;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -50,6 +48,11 @@ class SessionCleanupCommand extends Command
     private $classMetadata;
 
     /**
+     * @var string
+     */
+    private $dateTimeRule;
+
+    /**
      * Constructor.
      *
      * @param ObjectManager                  $om
@@ -57,19 +60,22 @@ class SessionCleanupCommand extends Command
      * @param EventDispatcherInterface       $eventDispatcher
      * @param string                         $modelName
      * @param ClassMetadata                  $classMetadata
+     * @param string                         $dateTimeRule
      */
     public function __construct(
         ObjectManager $om,
         AuthenticationHandlerInterface $authenticationHandler,
         EventDispatcherInterface $eventDispatcher,
         $modelName,
-        ClassMetadata $classMetadata
+        ClassMetadata $classMetadata,
+        $dateTimeRule
     ) {
         $this->om = $om;
         $this->handler = $authenticationHandler;
         $this->eventDispatcher = $eventDispatcher;
         $this->modelName = (string) $modelName;
         $this->classMetadata = $classMetadata;
+        $this->dateTimeRule = (string) $dateTimeRule;
 
         parent::__construct();
     }
@@ -101,37 +107,8 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // TODO add stats to the event structure
         try {
-            $dateTime = new \DateTime();
-
-            $now = $dateTime->format('m/d/Y H:i:s');
-            $message = sprintf('Starting session purge at %s', $now);
-            $output->writeln(sprintf('<info>%s</info>', $message));
-
-            // search query
-            $latestActivationPropertyName = $this->classMetadata->getPropertyName(ClassMetadata::LAST_ACTION_PROPERTY);
-            $criteria = Criteria::create()
-                ->where(Criteria::expr()->lte($latestActivationPropertyName, new \DateTime('-5 days')))
-                ->andWhere(
-                    Criteria::expr()->neq(
-                        $this->classMetadata->getPropertyName(ClassMetadata::API_KEY_PROPERTY),
-                        null
-                    )
-                );
-
-            $repository = $this->om->getRepository($this->modelName);
-
-            if ($repository instanceof Selectable) {
-                // orm and mongodb have a Selectable implementation, so it is possible to query for old users
-                $filteredUsers = $repository->matching($criteria);
-            } else {
-                // couchdb and phpcr unfortunately don't implement that feature,
-                // so all users must be queried and filtered using the array collection
-                $allUsers = new ArrayCollection($repository->findAll());
-                $filteredUsers = $allUsers->matching($criteria);
-            }
-
+            $filteredUsers = $this->searchUsers();
             $processedObjects = 0;
 
             $affectedUsers = $filteredUsers->toArray();
@@ -144,19 +121,12 @@ EOF
                 ++$processedObjects;
             }
 
-            $message = sprintf('Processed %d items successfully', $processedObjects);
-            $output->writeln(sprintf('<info>%s</info>', $message));
+            $this->displaySuccess($processedObjects, $output);
 
             $afterEvent = new OnSuccessfulCleanupEvent($affectedUsers);
             $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CLEANUP_SUCCESS, $afterEvent);
 
             $this->om->flush();
-
-            $endTime = new \DateTime();
-            $end = $endTime->format('m/d/Y H:i:s');
-
-            $diff = $endTime->getTimestamp() - $dateTime->getTimestamp();
-            $output->writeln(sprintf('<info>%s</info>', sprintf('Stopped cleanup at %s after %d seconds', $end, $diff)));
         } catch (\Exception $ex) {
             $this->eventDispatcher->dispatch(
                 Ma27ApiKeyAuthenticationEvents::CLEANUP_ERROR,
@@ -166,11 +136,49 @@ EOF
             throw $ex;
         }
 
-        $this->eventDispatcher->dispatch(
-            Ma27ApiKeyAuthenticationEvents::AFTER_CLEANUP,
-            new OnAfterCleanupEvent($affectedUsers)
-        );
-
         return 0;
+    }
+
+    /**
+     * Search query for users with outdated api keys.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    private function searchUsers()
+    {
+        $latestActivationPropertyName = $this->classMetadata->getPropertyName(ClassMetadata::LAST_ACTION_PROPERTY);
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->lte($latestActivationPropertyName, new \DateTime($this->dateTimeRule)))
+            ->andWhere(
+                Criteria::expr()->neq(
+                    $this->classMetadata->getPropertyName(ClassMetadata::API_KEY_PROPERTY),
+                    null
+                )
+            );
+
+        $repository = $this->om->getRepository($this->modelName);
+
+        if ($repository instanceof Selectable) {
+            // orm and mongodb have a Selectable implementation, so it is possible to query for old users
+            $filteredUsers = $repository->matching($criteria);
+        } else {
+            // couchdb and phpcr unfortunately don't implement that feature,
+            // so all users must be queried and filtered using the array collection
+            $allUsers = new ArrayCollection($repository->findAll());
+            $filteredUsers = $allUsers->matching($criteria);
+        }
+
+        return $filteredUsers;
+    }
+
+    /**
+     * Outputs the suces after the cleanup.
+     *
+     * @param                 $processed
+     * @param OutputInterface $output
+     */
+    private function displaySuccess($processed, OutputInterface $output)
+    {
+        $output->writeln(sprintf('<info>Processed %d items successfully</info>', $processed));
     }
 }

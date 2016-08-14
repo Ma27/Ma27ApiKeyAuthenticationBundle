@@ -61,6 +61,8 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($securityDefinition->getArgument(4), 'HTTP_HEADER');
 
         $this->assertTrue($container->hasParameter('ma27_api_key_authentication.response_values'));
+
+        $this->assertSame($container->getParameter('ma27_api_key_authentication.cleanup_command.date_time_rule'), '-5 days');
     }
 
     public function testDisabledPurger()

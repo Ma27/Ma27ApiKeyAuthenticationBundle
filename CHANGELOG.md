@@ -22,6 +22,12 @@
 
 - [feature] `user.password` configuration can be omitted if the `php55` strategy is used.
 
+- [feature] the datetime expression for the session cleanup can be configured with the configuration option `api_key_purge.outdated_rule`.
+
+- [breaking] renamed `Ma27\ApiKeyAuthenticationBundle\Event\AssembleResponseEvent` to `Ma27\ApiKeyAuthenticationBundle\Event\OnAssembleResponseEvent` to keep the naming convention for event objects.
+
+- [breaking] removed the `ma27_api_key_authentication.cleanup.complete` event as it will be called right after the success event and has no real benefit.
+
 ## 1.2.0
 
 - [feature] made hashing services configurable: (#33)

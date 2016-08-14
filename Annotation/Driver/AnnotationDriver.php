@@ -56,31 +56,19 @@ final class AnnotationDriver implements ModelConfigurationDriverInterface
                 if ($annotationObject) {
                     switch ($annotation) {
                         case 'login':
-                            if (!empty($loginProperty)) {
-                                throw $this->createDuplicateAnnotationException();
-                            }
-
+                            $this->assertUnique($loginProperty);
                             $loginProperty = $reflectionProperty;
                             break;
                         case 'password':
-                            if (!empty($passwordProperty)) {
-                                throw $this->createDuplicateAnnotationException();
-                            }
-
+                            $this->assertUnique($passwordProperty);
                             $passwordProperty = $reflectionProperty;
                             break;
                         case 'apiKey':
-                            if (!empty($apiKeyProperty)) {
-                                throw $this->createDuplicateAnnotationException();
-                            }
-
+                            $this->assertUnique($apiKeyProperty);
                             $apiKeyProperty = $reflectionProperty;
                             break;
                         case 'lastAction':
-                            if (!empty($lastActionProperty)) {
-                                throw $this->createDuplicateAnnotationException();
-                            }
-
+                            $this->assertUnique($lastActionProperty);
                             $lastActionProperty = $reflectionProperty;
                     }
 
@@ -108,6 +96,18 @@ final class AnnotationDriver implements ModelConfigurationDriverInterface
             ClassMetadata::API_KEY_PROPERTY     => $apiKeyProperty,
             ClassMetadata::LAST_ACTION_PROPERTY => $lastActionProperty,
         ));
+    }
+
+    /**
+     * Checks whether a property is already set.
+     *
+     * @param \ReflectionProperty $property
+     */
+    private function assertUnique(\ReflectionProperty $property = null)
+    {
+        if (!empty($property)) {
+            throw $this->createDuplicateAnnotationException();
+        }
     }
 
     /**

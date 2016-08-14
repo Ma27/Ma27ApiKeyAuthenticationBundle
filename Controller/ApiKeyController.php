@@ -2,7 +2,7 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Controller;
 
-use Ma27\ApiKeyAuthenticationBundle\Event\AssembleResponseEvent;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnAssembleResponseEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnCredentialExceptionThrownEvent;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
@@ -55,12 +55,8 @@ class ApiKeyController extends Controller
             $exception = $ex;
         }
 
-        /** @var AssembleResponseEvent $result */
-        $result = $dispatcher->dispatch(
-            Ma27ApiKeyAuthenticationEvents::ASSEMBLE_RESPONSE,
-            new AssembleResponseEvent($user, $exception)
-        );
-
+        /** @var OnAssembleResponseEvent $result */
+        $result = $dispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::ASSEMBLE_RESPONSE, new OnAssembleResponseEvent($user, $exception));
         if (!$response = $result->getResponse()) {
             throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot assemble the response!', $exception);
         }

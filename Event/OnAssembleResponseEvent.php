@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  *
  * Event which handles response creation.
  */
-class AssembleResponseEvent extends Event
+class OnAssembleResponseEvent extends Event
 {
     /**
      * @var CredentialException

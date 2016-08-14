@@ -2,7 +2,7 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\EventListener;
 
-use Ma27\ApiKeyAuthenticationBundle\Event\AssembleResponseEvent;
+use Ma27\ApiKeyAuthenticationBundle\Event\OnAssembleResponseEvent;
 use Ma27\ApiKeyAuthenticationBundle\EventListener\ResponseCreationListener;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
 use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
@@ -26,7 +26,7 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
             array('api_key_property' => 'apiKey', 'error_property' => 'message')
         );
 
-        $event = new AssembleResponseEvent($user);
+        $event = new OnAssembleResponseEvent($user);
 
         $listener->onResponseCreation($event);
         $response = $event->getResponse();
@@ -57,7 +57,7 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
             array('api_key_property' => 'apiKey', 'error_property' => 'message')
         );
 
-        $event = new AssembleResponseEvent($user, $ex);
+        $event = new OnAssembleResponseEvent($user, $ex);
 
         $listener->onResponseCreation($event);
         $response = $event->getResponse();

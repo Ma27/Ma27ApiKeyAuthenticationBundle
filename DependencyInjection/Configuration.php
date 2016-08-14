@@ -46,6 +46,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('last_action_listener')
                             ->canBeDisabled()
                         ->end()
+                        ->scalarNode('outdated_rule')->defaultValue('-5 days')->end()
                     ->end()
                 ->end()
                 ->arrayNode('services')

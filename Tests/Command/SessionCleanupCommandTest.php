@@ -36,7 +36,8 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
             $handler,
             new EventDispatcher(),
             'AppBundle:User',
-            $this->getMetadata()
+            $this->getMetadata(),
+            '-5 days'
         );
 
         $tester = $this->createApplicationForCommand($cmd);
