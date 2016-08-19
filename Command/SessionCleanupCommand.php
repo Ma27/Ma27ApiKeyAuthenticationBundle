@@ -111,8 +111,7 @@ EOF
             $filteredUsers = $this->searchUsers();
             $processedObjects = 0;
 
-            $affectedUsers = $filteredUsers->toArray();
-            $event = new OnBeforeSessionCleanupEvent($affectedUsers);
+            $event = new OnBeforeSessionCleanupEvent($filteredUsers);
             $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::BEFORE_CLEANUP, $event);
 
             // purge filtered users
@@ -123,7 +122,7 @@ EOF
 
             $this->displaySuccess($processedObjects, $output);
 
-            $afterEvent = new OnSuccessfulCleanupEvent($affectedUsers);
+            $afterEvent = new OnSuccessfulCleanupEvent($filteredUsers);
             $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CLEANUP_SUCCESS, $afterEvent);
 
             $this->om->flush();
@@ -142,13 +141,15 @@ EOF
     /**
      * Search query for users with outdated api keys.
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return object[]
      */
     private function searchUsers()
     {
-        $latestActivationPropertyName = $this->classMetadata->getPropertyName(ClassMetadata::LAST_ACTION_PROPERTY);
         $criteria = Criteria::create()
-            ->where(Criteria::expr()->lte($latestActivationPropertyName, new \DateTime($this->dateTimeRule)))
+            ->where(Criteria::expr()->lte(
+                $this->classMetadata->getPropertyName(ClassMetadata::LAST_ACTION_PROPERTY),
+                new \DateTime($this->dateTimeRule))
+            )
             ->andWhere(
                 Criteria::expr()->neq(
                     $this->classMetadata->getPropertyName(ClassMetadata::API_KEY_PROPERTY),
@@ -156,19 +157,7 @@ EOF
                 )
             );
 
-        $repository = $this->om->getRepository($this->modelName);
-
-        if ($repository instanceof Selectable) {
-            // orm and mongodb have a Selectable implementation, so it is possible to query for old users
-            $filteredUsers = $repository->matching($criteria);
-        } else {
-            // couchdb and phpcr unfortunately don't implement that feature,
-            // so all users must be queried and filtered using the array collection
-            $allUsers = new ArrayCollection($repository->findAll());
-            $filteredUsers = $allUsers->matching($criteria);
-        }
-
-        return $filteredUsers;
+        return $this->getUsersByCriteria($criteria);
     }
 
     /**
@@ -180,5 +169,31 @@ EOF
     private function displaySuccess($processed, OutputInterface $output)
     {
         $output->writeln(sprintf('<info>Processed %d items successfully</info>', $processed));
+    }
+
+    /**
+     * Simple utility to query users by a given criteria.
+     *
+     * As there's no unified query language defined in doctrine/common, the criteria tool of doctrine/collections
+     * should help. The ORM and Mongo-ODM support the `Selectable` API which means that they can build native
+     * DB queries for their database based on a criteria object. The other official implementations PHPCR and CouchDB-ODM
+     * don't support that, so they have to be evaluated manually.
+     *
+     * @param Criteria $criteria
+     *
+     * @return object[]
+     */
+    private function getUsersByCriteria(Criteria $criteria)
+    {
+        $repository = $this->om->getRepository($this->modelName);
+
+        if ($repository instanceof Selectable) {
+            $filteredUsers = $repository->matching($criteria);
+        } else {
+            $allUsers = new ArrayCollection($repository->findAll());
+            $filteredUsers = $allUsers->matching($criteria);
+        }
+
+        return $filteredUsers->toArray();
     }
 }
