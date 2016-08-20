@@ -6,7 +6,7 @@ use Ma27\ApiKeyAuthenticationBundle\Event\OnAssembleResponseEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnCredentialExceptionThrownEvent;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +29,7 @@ class ApiKeyController extends Controller
      */
     public function requestApiKeyAction(Request $request)
     {
-        /** @var \Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface $authenticationHandler */
+        /** @var \Ma27\ApiKeyAuthenticationBundle\Service\Auth\AuthenticationHandlerInterface $authenticationHandler */
         $authenticationHandler = $this->get('ma27_api_key_authentication.auth_handler');
         /** @var ClassMetadata $metadata */
         $metadata = $this->get('ma27_api_key_authentication.class_metadata');
@@ -73,7 +73,7 @@ class ApiKeyController extends Controller
      */
     public function removeSessionAction(Request $request)
     {
-        /** @var \Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface $authenticationHandler */
+        /** @var \Ma27\ApiKeyAuthenticationBundle\Service\Auth\AuthenticationHandlerInterface $authenticationHandler */
         $authenticationHandler = $this->get('ma27_api_key_authentication.auth_handler');
         /** @var \Doctrine\Common\Persistence\ObjectManager $om */
         $om = $this->get($this->container->getParameter('ma27_api_key_authentication.object_manager'));

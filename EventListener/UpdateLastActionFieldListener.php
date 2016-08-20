@@ -7,7 +7,7 @@ use Ma27\ApiKeyAuthenticationBundle\Event\AbstractUserEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnAuthenticationEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnFirewallAuthenticationEvent;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 

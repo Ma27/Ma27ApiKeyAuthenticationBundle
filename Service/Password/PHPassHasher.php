@@ -1,6 +1,6 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Model\Password;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Password;
 
 use Hautelook\Phpass\PasswordHash;
 

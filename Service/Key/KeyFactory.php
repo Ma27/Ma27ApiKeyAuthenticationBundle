@@ -1,9 +1,9 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Model\Key;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Key;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 
 /**
  * Factory which generates the api keys.

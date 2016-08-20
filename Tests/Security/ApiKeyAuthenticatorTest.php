@@ -2,7 +2,7 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Security;
 
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 use Ma27\ApiKeyAuthenticationBundle\Security\ApiKeyAuthenticator;
 use Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -183,7 +183,7 @@ class ApiKeyAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     private function getClassMetadata()
     {
-        $mock = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $mock = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\ClassMetadata')->disableOriginalConstructor()->getMock();
         $mock
             ->expects($this->any())
             ->method('getPropertyName')

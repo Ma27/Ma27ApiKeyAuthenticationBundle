@@ -48,7 +48,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame((string) $container->getAlias('ma27_api_key_authentication.auth_handler'), 'foo.bar');
         $this->assertSame(
-            'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\CryptPasswordHasher',
+            'Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\CryptPasswordHasher',
             $container->getDefinition($container->getAlias('ma27_api_key_authentication.password.strategy'))->getClass()
         );
 
@@ -136,9 +136,9 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
     public function hashStrategyProvider()
     {
         return array(
-            array('crypt', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\CryptPasswordHasher', array()),
-            array('php55', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PhpPasswordHasher', array(12)),
-            array('phpass', 'Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PHPassHasher', array(8)),
+            array('crypt', 'Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\CryptPasswordHasher', array()),
+            array('php55', 'Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PHPPasswordHasher', array(12)),
+            array('phpass', 'Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PHPassHasher', array(8)),
         );
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Model\Password;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Password;
 
 /**
  * Concrete hasher that uses the php 5.5 api.
  */
-class PhpPasswordHasher implements PasswordHasherInterface
+class PHPPasswordHasher implements PasswordHasherInterface
 {
     /**
      * @var int

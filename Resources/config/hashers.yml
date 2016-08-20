@@ -1,16 +1,16 @@
 services:
     ma27_api_key_authentication.password_hasher.php55:
-        class: Ma27\ApiKeyAuthenticationBundle\Model\Password\PhpPasswordHasher
+        class: Ma27\ApiKeyAuthenticationBundle\Service\Password\PHPPasswordHasher
         arguments:
             - "%ma27_api_key_authentication.password_hasher.php55.cost%"
         tags:
             - { name: ma27_api_key_authentication.password_hasher, alias: php55 }
     ma27_api_key_authentication.password_hasher.crypt:
-        class: Ma27\ApiKeyAuthenticationBundle\Model\Password\CryptPasswordHasher
+        class: Ma27\ApiKeyAuthenticationBundle\Service\Password\CryptPasswordHasher
         tags:
             - { name: ma27_api_key_authentication.password_hasher, alias: crypt }
     ma27_api_key_authentication.password_hasher.phpass:
-        class: Ma27\ApiKeyAuthenticationBundle\Model\Password\PHPassHasher
+        class: Ma27\ApiKeyAuthenticationBundle\Service\Password\PHPassHasher
         tags:
             - { name: ma27_api_key_authentication.password_hasher, alias: phpass }
         arguments:

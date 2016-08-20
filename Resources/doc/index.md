@@ -177,7 +177,7 @@ __NOTE__: you have to send the api key as header when calling the logout route.
 
 As there are many password hashing algorithms, I decided to use the [Strategy Pattern](https://en.wikipedia.org/wiki/Strategy_pattern) for the password hasing api.
 
-Every hasher must implement the interface *Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface* that contains the methods *generateHash* and *compareHash*.
+Every hasher must implement the interface *Ma27\ApiKeyAuthenticationBundle\Service\Password\PasswordHasherInterface* that contains the methods *generateHash* and *compareHash*.
 
 Currently are the following algorithms available:
 
@@ -204,7 +204,7 @@ Custom hashers are easy to create:
 ``` php
 namespace AppBundle\Hasher;
 
-use Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface;
+use Ma27\ApiKeyAuthenticationBundle\Service\Password\PasswordHasherInterface;
 
 class CustomHasher implements PasswordHasherInterface
 {
@@ -301,9 +301,9 @@ It is possible to override the services, too.
 
 The overridable services are:
 
-- auth_handler (Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiKey\ApiKeyAuthenticationHandler)
-- key_factory (Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactory)
-- password_hasher (Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface)
+- auth_handler (Ma27\ApiKeyAuthenticationBundle\Service\Auth\ApiKeyAuthenticationHandler)
+- key_factory (Ma27\ApiKeyAuthenticationBundle\Service\Key\KeyFactory)
+- password_hasher (Ma27\ApiKeyAuthenticationBundle\Service\Password\PasswordHasherInterface)
 
 There's a service section in the bundle config that can be used in order to exchange these services.
 

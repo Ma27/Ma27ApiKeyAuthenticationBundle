@@ -1,6 +1,6 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Model\Password;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Password;
 
 /**
  * Hasher which uses the crypt algorithm.

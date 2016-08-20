@@ -26,7 +26,7 @@ class UpdateLastActionFieldListenerTest extends \PHPUnit_Framework_TestCase
             ->expects($assertPersistence ? $this->once() : $this->never())
             ->method('flush');
 
-        $classMetadata = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $classMetadata = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\ClassMetadata')->disableOriginalConstructor()->getMock();
         $classMetadata
             ->expects($this->once())
             ->method('modifyProperty');

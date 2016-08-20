@@ -1,6 +1,6 @@
 services:
     ma27_api_key_authentication.auth_handler:
-        class: Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken\ApiKeyAuthenticationHandler
+        class: Ma27\ApiKeyAuthenticationBundle\Service\Auth\ApiKeyAuthenticationHandler
         arguments:
             - "@=service(parameter('ma27_api_key_authentication.object_manager'))"
             - "@ma27_api_key_authentication.password.strategy"

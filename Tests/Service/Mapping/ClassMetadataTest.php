@@ -1,8 +1,8 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Tests\Model\User;
+namespace Ma27\ApiKeyAuthenticationBundle\Tests\Service\Mapping;
 
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 use Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser;
 
 class ClassMetadataTest extends \PHPUnit_Framework_TestCase

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Model\Key;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Key;
 
 /**
  * Factory that generates api keys.

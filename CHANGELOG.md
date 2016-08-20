@@ -28,6 +28,18 @@
 
 - [breaking] removed the `ma27_api_key_authentication.cleanup.complete` event as it will be called right after the success event and has no real benefit.
 
+- [breaking] moved model classes to a new namespace:
+  - `Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactory` => `Ma27\ApiKeyAuthenticationBundle\Service\Key\KeyFactory`
+  - `Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactoryInterface` => `Ma27\ApiKeyAuthenticationBundle\Service\Key\KeyFactoryInterface`
+  - `Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken\ApiKeyAuthenticationHandler` => `Ma27\ApiKeyAuthenticationBundle\Service\Auth\ApiKeyAuthenticationBundle`
+  - `Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface` => `Ma27\ApiKeyAuthenticationBundle\Service\Auth\AuthenticationHandlerInterface`
+  - `Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata` => `Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata`
+  - `Ma27\ApiKeyAuthenticationBundle\Model\User\ModelConfigurationDriverInterface` => `Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ModelConfigurationDriverInterface`
+  - `Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface` => `Ma27\ApiKeyAuthenticationBundle\Service\Password\PasswordHasherInterface`
+  - `Ma27\ApiKeyAuthenticationBundle\Model\Password\CryptPasswordHasher` => `Ma27\ApiKeyAuthenticationBundle\Service\Password\CryptPasswordHasher`
+  - `Ma27\ApiKeyAuthenticationBundle\Model\Password\PHPassHasher` => `Ma27\ApiKeyAuthenticationBundle\Service\Password\PHPassHasher`
+  - `Ma27\ApiKeyAuthenticationBundle\Model\Password\PhpPasswordHasher` => `Ma27\ApiKeyAuthenticationBundle\Service\Password\PHPPasswordHasher`
+
 ## 1.2.0
 
 - [feature] made hashing services configurable: (#33)

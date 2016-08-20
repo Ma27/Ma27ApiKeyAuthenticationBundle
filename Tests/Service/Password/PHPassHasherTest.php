@@ -1,14 +1,14 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Tests\Model\Password;
+namespace Ma27\ApiKeyAuthenticationBundle\Tests\Service\Password;
 
-use Ma27\ApiKeyAuthenticationBundle\Model\Password\CryptPasswordHasher;
+use Ma27\ApiKeyAuthenticationBundle\Service\Password\PHPassHasher;
 
-class CryptPasswordHasherTest extends \PHPUnit_Framework_TestCase
+class PHPassHasherTest extends \PHPUnit_Framework_TestCase
 {
     public function testCompareHashes()
     {
-        $hasher = new CryptPasswordHasher();
+        $hasher = new PHPassHasher();
         $password = '123456';
         $hash = $hasher->generateHash($password);
 

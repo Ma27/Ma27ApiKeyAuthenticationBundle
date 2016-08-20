@@ -7,7 +7,7 @@ services:
             - "%ma27_api_key_authentication.model_name%"
 
     ma27_api_key_authentication.class_metadata:
-        class: Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata
+        class: Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata
         factory:
             - "@ma27_api_key_authentication.annotation_driver"
             - "getMetadataForUser"

@@ -1,9 +1,9 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Tests\Model\Key;
+namespace Ma27\ApiKeyAuthenticationBundle\Tests\Service\Key;
 
-use Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactory;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Key\KeyFactory;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 
 class KeyFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,7 +29,7 @@ class KeyFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testKeyGenerationFailure()
     {
-        $userMock = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\UserInterface');
+        $userMock = new \stdClass();
         $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $or
             ->expects($this->any())
@@ -54,7 +54,7 @@ class KeyFactoryTest extends \PHPUnit_Framework_TestCase
      */
     private function getClassMetadata()
     {
-        $mock = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $mock = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\ClassMetadata')->disableOriginalConstructor()->getMock();
         $mock
             ->expects($this->any())
             ->method('getPropertyName')

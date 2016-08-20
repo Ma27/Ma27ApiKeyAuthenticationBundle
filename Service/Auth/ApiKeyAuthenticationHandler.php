@@ -1,6 +1,6 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Auth;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnAuthenticationEvent;
@@ -8,10 +8,9 @@ use Ma27\ApiKeyAuthenticationBundle\Event\OnInvalidCredentialsEvent;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnLogoutEvent;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
-use Ma27\ApiKeyAuthenticationBundle\Model\Key\KeyFactoryInterface;
-use Ma27\ApiKeyAuthenticationBundle\Model\Login\AuthenticationHandlerInterface;
-use Ma27\ApiKeyAuthenticationBundle\Model\Password\PasswordHasherInterface;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Key\KeyFactoryInterface;
+use Ma27\ApiKeyAuthenticationBundle\Service\Password\PasswordHasherInterface;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**

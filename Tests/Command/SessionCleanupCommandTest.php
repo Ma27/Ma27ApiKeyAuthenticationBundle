@@ -26,7 +26,7 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->will($this->returnValue($repository));
 
-        $handler = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Login\\AuthenticationHandlerInterface');
+        $handler = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Auth\\AuthenticationHandlerInterface');
         $handler
             ->expects($this->exactly(3))
             ->method('removeSession');
@@ -93,7 +93,7 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
      */
     private function getMetadata()
     {
-        $metadata = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $metadata = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\ClassMetadata')->disableOriginalConstructor()->getMock();
         $metadata
             ->expects($this->any())
             ->method('getPropertyName')

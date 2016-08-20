@@ -1,6 +1,6 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Model\User;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Mapping;
 
 /**
  * Generic provider which creates metadata objects for the user model.

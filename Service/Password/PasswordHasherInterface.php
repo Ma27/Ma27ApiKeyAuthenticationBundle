@@ -1,6 +1,6 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Model\Password;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Password;
 
 /**
  * Model that provides method for a password hasher.

@@ -4,7 +4,7 @@ namespace Ma27\ApiKeyAuthenticationBundle\Tests\Annotation\Driver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Ma27\ApiKeyAuthenticationBundle\Annotation\Driver\AnnotationDriver;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 
 class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 {

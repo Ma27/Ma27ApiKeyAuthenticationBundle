@@ -1,10 +1,10 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Tests\Model\Login\ApiToken;
+namespace Ma27\ApiKeyAuthenticationBundle\Tests\Service\Auth;
 
-use Ma27\ApiKeyAuthenticationBundle\Model\Login\ApiToken\ApiKeyAuthenticationHandler;
-use Ma27\ApiKeyAuthenticationBundle\Model\Password\CryptPasswordHasher;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Auth\ApiKeyAuthenticationHandler;
+use Ma27\ApiKeyAuthenticationBundle\Service\Password\CryptPasswordHasher;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 use Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -20,8 +20,8 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 
         $handler = new ApiKeyAuthenticationHandler(
             $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
+            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
+            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
             $metadata
@@ -40,8 +40,8 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 
         $handler = new ApiKeyAuthenticationHandler(
             $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
+            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
+            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
             $metadata
@@ -73,7 +73,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $handler = new ApiKeyAuthenticationHandler(
             $om,
             new CryptPasswordHasher(),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
+            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
             $this->getMetadata()
@@ -101,7 +101,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->will($this->returnValue($or));
 
-        $factory = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface');
+        $factory = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface');
         $factory
             ->expects($this->any())
             ->method('getKey')
@@ -144,8 +144,8 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 
         $handler = new ApiKeyAuthenticationHandler(
             $om,
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
+            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
+            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
             $metadata
@@ -176,8 +176,8 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 
         $handler = new ApiKeyAuthenticationHandler(
             $om,
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Password\\PasswordHasherInterface'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface'),
+            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
+            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
             $metadata
@@ -215,7 +215,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->will($this->returnValue($or));
 
-        $factory = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Model\\Key\\KeyFactoryInterface');
+        $factory = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface');
         $factory
             ->expects($this->never())
             ->method('getKey');
@@ -239,7 +239,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
      */
     private function getMetadata($expectLoginAndPassword = true)
     {
-        $metadata = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Model\\User\\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $metadata = $this->getMockBuilder('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\ClassMetadata')->disableOriginalConstructor()->getMock();
 
         if ($expectLoginAndPassword) {
             $metadata

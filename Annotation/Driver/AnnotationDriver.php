@@ -3,8 +3,8 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Annotation\Driver;
 
 use Doctrine\Common\Annotations\Reader;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ModelConfigurationDriverInterface;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ModelConfigurationDriverInterface;
 use ReflectionClass;
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Model\Login;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Auth;
 
 /**
  * Interface of a handler that executes the authorization.

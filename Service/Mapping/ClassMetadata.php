@@ -1,8 +1,7 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Model\User;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Mapping;
 
-use ReflectionClass;
 use ReflectionProperty;
 
 /**

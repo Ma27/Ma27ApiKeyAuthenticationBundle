@@ -5,7 +5,7 @@ namespace Ma27\ApiKeyAuthenticationBundle\Tests\EventListener;
 use Ma27\ApiKeyAuthenticationBundle\Event\OnAssembleResponseEvent;
 use Ma27\ApiKeyAuthenticationBundle\EventListener\ResponseCreationListener;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
-use Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 
 class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +14,7 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
         $user = new \stdClass();
         $key = uniqid();
 
-        $metadata = $this->getMockBuilder('Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $metadata = $this->getMockBuilder('Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata')->disableOriginalConstructor()->getMock();
         $metadata->expects($this->once())
             ->method('getPropertyValue')
             ->with($user, ClassMetadata::API_KEY_PROPERTY)
@@ -44,7 +44,7 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
 
         $translatedIntoGerman = 'Ungültige Zugangsdaten!';
 
-        $metadata = $this->getMockBuilder('Ma27\ApiKeyAuthenticationBundle\Model\User\ClassMetadata')->disableOriginalConstructor()->getMock();
+        $metadata = $this->getMockBuilder('Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata')->disableOriginalConstructor()->getMock();
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->once())
             ->method('trans')
