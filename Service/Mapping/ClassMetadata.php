@@ -74,12 +74,8 @@ class ClassMetadata
     {
         if ($this->checkProperty($property, $strict)) {
             $oid = spl_object_hash($user);
-            if (isset($this->lazyValueCache[$oid])) {
-                if (isset($this->lazyValueCache[$oid][$property])) {
-                    return $this->lazyValueCache[$oid][$property];
-                }
-            } else {
-                $this->lazyValueCache[$oid] = array();
+            if (null !== $cacheHit = $this->resolveCache($oid, $property)) {
+                return $cacheHit;
             }
 
             $this->properties[$property]->setAccessible(true);
@@ -122,7 +118,12 @@ class ClassMetadata
         $propertyObject->setAccessible(true);
         $propertyObject->setValue($user, $newValue);
 
-        unset($this->lazyValueCache[spl_object_hash($user)]);
+        $oid = spl_object_hash($user);
+        if (!array_key_exists($oid, $this->lazyValueCache)) {
+            $this->lazyValueCache[$oid] = array();
+        }
+
+        $this->lazyValueCache[$oid][$property] = $newValue;
     }
 
     /**
@@ -147,5 +148,26 @@ class ClassMetadata
         }
 
         return true;
+    }
+
+    /**
+     * Resolves the lazy value cache.
+     *
+     * @param $oid
+     * @param $property
+     *
+     * @return mixed|null
+     */
+    private function resolveCache($oid, $property)
+    {
+        if (isset($this->lazyValueCache[$oid])) {
+            if (isset($this->lazyValueCache[$oid][$property])) {
+                return $this->lazyValueCache[$oid][$property];
+            }
+
+            return;
+        }
+
+        $this->lazyValueCache[$oid] = array();
     }
 }
