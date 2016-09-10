@@ -33,11 +33,6 @@ final class ClassMetadataFactory
     private $cacheFile;
 
     /**
-     * @var string
-     */
-    private $classname;
-
-    /**
      * Constructor.
      *
      * @param ModelConfigurationDriverInterface $driver
@@ -45,13 +40,12 @@ final class ClassMetadataFactory
      * @param bool                              $isCacheEnabled
      * @param string                            $cacheFile
      */
-    public function __construct(ModelConfigurationDriverInterface $driver, Filesystem $filesystem, $isCacheEnabled, $cacheFile, $className)
+    public function __construct(ModelConfigurationDriverInterface $driver, Filesystem $filesystem, $isCacheEnabled, $cacheFile)
     {
         $this->driver = $driver;
         $this->filesystem = $filesystem;
         $this->isCacheEnabled = (bool) $isCacheEnabled;
         $this->cacheFile = $cacheFile;
-        $this->classname = $className;
     }
 
     /**
@@ -92,26 +86,6 @@ final class ClassMetadataFactory
             ));
         }
 
-        return $this->wakeupReflection(unserialize(file_get_contents($this->cacheFile)));
-    }
-
-    /**
-     * Wakes up the cached data and connects it with the reflection API.
-     *
-     * @param array $cacheData
-     *
-     * @return \ReflectionProperty[]
-     */
-    private function wakeupReflection(array $cacheData)
-    {
-        $className = $this->classname;
-
-        // TODO metadata should be able to deal with strings, too.
-        return array_combine(
-            $cacheData[0],
-            array_map(function ($property) use ($className) {
-                return new \ReflectionProperty($className, $property);
-            }, $cacheData[1])
-        );
+        return unserialize(file_get_contents($this->cacheFile));
     }
 }

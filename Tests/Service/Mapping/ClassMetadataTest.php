@@ -22,6 +22,7 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 
         $metadata->modifyProperty($object, 'foo', ClassMetadata::LOGIN_PROPERTY);
         $this->assertSame('foo', $metadata->getPropertyValue($object, ClassMetadata::LOGIN_PROPERTY));
+        self::assertSame('foo', $object->getUsername());
     }
 
     /**
@@ -54,5 +55,23 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         ));
 
         $metadata->modifyProperty($object, 'foo', 7);
+    }
+
+    public function testUseStringsAndInitializeReflectionLazily()
+    {
+        $object = new TestUser();
+        $metadata = new ClassMetadata(array(
+            ClassMetadata::LOGIN_PROPERTY    => 'username',
+            ClassMetadata::PASSWORD_PROPERTY => 'password',
+            ClassMetadata::API_KEY_PROPERTY  => 'apiKey',
+        ));
+
+        self::assertSame('username', $metadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY));
+        self::assertNull($metadata->getPropertyValue($object, ClassMetadata::LOGIN_PROPERTY));
+
+        $metadata->modifyProperty($object, 'foo', ClassMetadata::LOGIN_PROPERTY);
+        self::assertSame('foo', $metadata->getPropertyValue($object, ClassMetadata::LOGIN_PROPERTY));
+
+        self::assertSame('foo', $object->getUsername());
     }
 }

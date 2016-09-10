@@ -49,7 +49,7 @@ class ClassMetadataFactoryTest extends \PHPUnit_Framework_TestCase
         $file = __DIR__ . '/../../Fixture/cache/dump';
 
         $fs->touch($file);
-        $fs->dumpFile($file, serialize(array(array(ClassMetadata::LOGIN_PROPERTY, ClassMetadata::PASSWORD_PROPERTY, ClassMetadata::API_KEY_PROPERTY), array('username', 'password', 'apiKey'))));
+        $fs->dumpFile($file, serialize(array(ClassMetadata::LOGIN_PROPERTY => 'username', ClassMetadata::PASSWORD_PROPERTY => 'password', ClassMetadata::API_KEY_PROPERTY => 'apiKey')));
 
         $factory = new ClassMetadataFactory($driver, $fs, true, $file, 'Ma27\\ApiKeyAuthenticationBundle\\Tests\\Resources\\Entity\\TestUser');
         $metadata = $factory->createMetadataObject();

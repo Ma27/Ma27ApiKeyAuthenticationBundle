@@ -40,6 +40,9 @@
   - `Ma27\ApiKeyAuthenticationBundle\Model\Password\PHPassHasher` => `Ma27\ApiKeyAuthenticationBundle\Service\Password\PHPassHasher`
   - `Ma27\ApiKeyAuthenticationBundle\Model\Password\PhpPasswordHasher` => `Ma27\ApiKeyAuthenticationBundle\Service\Password\PHPPasswordHasher`
 
+- [feature] added `user.metadata_cache` option which can be used to enable a cache for the metadata.
+  (__NOTE:__ certain implementation details of the metadata API were changed, but not listed as the whole metadata API is private and tagged with the `@internal` tag)
+
 ## 1.2.0
 
 - [feature] made hashing services configurable: (#33)

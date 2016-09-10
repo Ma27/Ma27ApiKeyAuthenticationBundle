@@ -43,7 +43,7 @@ class ClassMetadata
     /**
      * Constructor.
      *
-     * @param ReflectionProperty[] $properties
+     * @param ReflectionProperty|string[] $properties
      *
      * @throws \InvalidArgumentException If one necessary property is missing
      */
@@ -65,7 +65,7 @@ class ClassMetadata
      * Gets the value of the given property.
      *
      * @param object $user
-     * @param int    $property
+     * @param string $property
      * @param bool   $strict
      *
      * @return mixed
@@ -78,6 +78,9 @@ class ClassMetadata
                 return $cacheHit;
             }
 
+            if (is_string($this->properties[$property])) {
+                $this->properties[$property] = new ReflectionProperty($user, $this->properties[$property]);
+            }
             $this->properties[$property]->setAccessible(true);
 
             return $this->lazyValueCache[$oid][$property] = $this->properties[$property]->getValue($user);
@@ -87,14 +90,17 @@ class ClassMetadata
     /**
      * Gets the name of a specific property by its metadata constant.
      *
-     * @param int  $property
-     * @param bool $strict
+     * @param string $property
+     * @param bool   $strict
      *
      * @return null|string
      */
     public function getPropertyName($property = self::LOGIN_PROPERTY, $strict = false)
     {
         if ($this->checkProperty($property, $strict)) {
+            if (is_string($this->properties[$property])) {
+                return $this->properties[$property];
+            }
             if (isset($this->lazyPropertyNameCache[$property])) {
                 return $this->lazyPropertyNameCache[$property];
             }
@@ -108,13 +114,17 @@ class ClassMetadata
      *
      * @param object $user
      * @param mixed  $newValue
-     * @param int    $property
+     * @param string $property
      */
     public function modifyProperty($user, $newValue, $property = self::LOGIN_PROPERTY)
     {
         $this->checkProperty($property, true);
 
         $propertyObject = $this->properties[$property];
+        if (is_string($propertyObject)) {
+            $this->properties[$property] = $propertyObject = new ReflectionProperty($user, $propertyObject);
+        }
+
         $propertyObject->setAccessible(true);
         $propertyObject->setValue($user, $newValue);
 
@@ -129,8 +139,8 @@ class ClassMetadata
     /**
      * Validates a property.
      *
-     * @param int  $property
-     * @param bool $strict
+     * @param string $property
+     * @param bool   $strict
      *
      * @return bool
      */
@@ -153,8 +163,8 @@ class ClassMetadata
     /**
      * Resolves the lazy value cache.
      *
-     * @param $oid
-     * @param $property
+     * @param string $oid
+     * @param string $property
      *
      * @return mixed|null
      */

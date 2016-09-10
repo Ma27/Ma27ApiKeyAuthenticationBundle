@@ -22,7 +22,7 @@ class ClassMetadataPropertiesCacheWarmerTest extends \PHPUnit_Framework_TestCase
             ->with('/var/www/app/ma27_api_key_authentication/metadata_dump');
         $filesystem->expects(self::once())
             ->method('dumpFile')
-            ->with('/var/www/app/ma27_api_key_authentication/metadata_dump', 'a:2:{i:0;a:1:{i:0;s:4:"test";}i:1;a:1:{i:0;s:6:"values";}}');
+            ->with('/var/www/app/ma27_api_key_authentication/metadata_dump', 'a:1:{s:4:"test";s:6:"values";}');
 
         $cacheWarmer = new ClassMetadataPropertiesCacheWarmer($driver, $filesystem);
 
