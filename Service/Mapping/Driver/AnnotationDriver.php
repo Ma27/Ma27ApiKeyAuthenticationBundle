@@ -1,10 +1,9 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Annotation\Driver;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Mapping\Driver;
 
 use Doctrine\Common\Annotations\Reader;
 use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
-use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ModelConfigurationDriverInterface;
 use ReflectionClass;
 
 /**
@@ -90,12 +89,12 @@ final class AnnotationDriver implements ModelConfigurationDriverInterface
             ));
         }
 
-        return new ClassMetadata(array(
+        return array(
             ClassMetadata::LOGIN_PROPERTY       => $loginProperty,
             ClassMetadata::PASSWORD_PROPERTY    => $passwordProperty,
             ClassMetadata::API_KEY_PROPERTY     => $apiKeyProperty,
             ClassMetadata::LAST_ACTION_PROPERTY => $lastActionProperty,
-        ));
+        );
     }
 
     /**

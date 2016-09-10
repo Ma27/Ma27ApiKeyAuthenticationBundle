@@ -63,6 +63,44 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container->hasParameter('ma27_api_key_authentication.response_values'));
 
         $this->assertSame($container->getParameter('ma27_api_key_authentication.cleanup_command.date_time_rule'), '-5 days');
+
+        // metadata cache
+        self::assertFalse($container->getParameter('ma27_api_key_authentication.metadata_cache_enabled'));
+        self::assertFalse($container->hasDefinition('ma27_api_key_authentication.cache_warmer.metadata_cache'));
+    }
+
+    public function testMetadataCacheEnabled()
+    {
+        $container = new ContainerBuilder();
+        $extension = new Ma27ApiKeyAuthenticationExtension();
+
+        $container->addCompilerPass(new CompileHasherServicesPass());
+        $container->setDefinition('annotation_reader', new Definition('Doctrine\\Common\\Annotations\\Reader'));
+        $container->setDefinition('translator', new Definition('Symfony\\Component\\Translation\\Translator'));
+        $container->setParameter('kernel.cache_dir', '/var/www/app/cache');
+
+        $extension->load(array(
+            'ma27_api_key_authentication' => array(
+                'user' => array('object_manager' => 'om', 'metadata_cache' => true),
+            ),
+        ), $container);
+
+        $container->setDefinition('foo.bar', new Definition('stdClass'));
+        $container->setDefinition('event_dispatcher', new Definition('Symfony\\Component\\EventDispatcher\\EventDispatcher'));
+        $container->setDefinition('om', new Definition(get_class($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
+        $container->setDefinition('request_stack', new Definition(get_class($this->getMock('Symfony\\Component\\HttpFoundation\\RequestStack'))));
+        $container->setDefinition('filesystem', new Definition(get_class($this->getMock('Symfony\\Component\\Filesystem\\Filesystem'))));
+
+        $container->compile();
+
+        $factory = $container->getDefinition('ma27_api_key_authentication.class_metadata')->getFactory();
+
+        self::assertTrue($container->getParameter('ma27_api_key_authentication.metadata_cache_enabled'));
+        self::assertTrue($container->hasDefinition('ma27_api_key_authentication.cache_warmer.metadata_cache'));
+        self::assertSame(
+            '/var/www/app/cache/ma27_api_key_authentication/metadata_dump',
+            $factory[0]->getArgument(3)
+        );
     }
 
     public function testDisabledPurger()

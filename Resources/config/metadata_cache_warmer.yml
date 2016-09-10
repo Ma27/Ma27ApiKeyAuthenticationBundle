@@ -1,0 +1,8 @@
+services:
+    ma27_api_key_authentication.cache_warmer.metadata_cache:
+        class: Ma27\ApiKeyAuthenticationBundle\CacheWarmer\ClassMetadataPropertiesCacheWarmer
+        arguments:
+            - "@ma27_api_key_authentication.annotation_driver" # TODO refactor, should be configured in the extension
+            - "@filesystem"
+        tags:
+            - { name: kernel.cache_warmer }

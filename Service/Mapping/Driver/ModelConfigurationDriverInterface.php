@@ -1,6 +1,6 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Service\Mapping;
+namespace Ma27\ApiKeyAuthenticationBundle\Service\Mapping\Driver;
 
 /**
  * Generic provider which creates metadata objects for the user model.
@@ -10,7 +10,7 @@ namespace Ma27\ApiKeyAuthenticationBundle\Service\Mapping;
 interface ModelConfigurationDriverInterface
 {
     /**
-     * @return ClassMetadata
+     * @return \ReflectionProperty[]
      */
     public function getMetadataForUser();
 }

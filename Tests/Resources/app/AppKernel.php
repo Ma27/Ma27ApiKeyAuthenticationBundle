@@ -26,5 +26,8 @@ class AppKernel extends \Symfony\Component\HttpKernel\Kernel
     public function registerContainerConfiguration(\Symfony\Component\Config\Loader\LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/configs/functional.yml');
+        if ($this->environment === 'cache') {
+            $loader->load(__DIR__.'/configs/cache.yml');
+        }
     }
 }

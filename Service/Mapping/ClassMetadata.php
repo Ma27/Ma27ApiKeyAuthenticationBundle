@@ -11,18 +11,18 @@ use ReflectionProperty;
  */
 class ClassMetadata
 {
-    const LOGIN_PROPERTY = 1;
-    const PASSWORD_PROPERTY = 2;
-    const API_KEY_PROPERTY = 3;
-    const LAST_ACTION_PROPERTY = 4;
+    const LOGIN_PROPERTY = 'login';
+    const PASSWORD_PROPERTY = 'password';
+    const API_KEY_PROPERTY = 'apiKey';
+    const LAST_ACTION_PROPERTY = 'lastAction';
 
     /**
      * @var int[]
      */
-    private static $necessaryProperties = array(
-        self::LOGIN_PROPERTY    => 'login',
-        self::PASSWORD_PROPERTY => 'password',
-        self::API_KEY_PROPERTY  => 'apiKey',
+    private static $requiredProperties = array(
+        self::LOGIN_PROPERTY,
+        self::PASSWORD_PROPERTY,
+        self::API_KEY_PROPERTY,
     );
 
     /**
@@ -51,11 +51,11 @@ class ClassMetadata
     {
         $this->properties = $properties;
 
-        foreach (self::$necessaryProperties as $propertyIndex => $alias) {
-            if (!isset($this->properties[$propertyIndex])) {
+        foreach (self::$requiredProperties as $property) {
+            if (!isset($this->properties[$property])) {
                 throw new \InvalidArgumentException(sprintf(
                     'Missing required property "%s"!',
-                    $alias
+                    $property
                 ));
             }
         }

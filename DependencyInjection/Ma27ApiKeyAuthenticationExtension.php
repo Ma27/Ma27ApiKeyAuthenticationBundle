@@ -24,14 +24,11 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('ma27_api_key_authentication.key_header', $config['key_header']);
-        $container->setParameter('ma27_api_key_authentication.model_name', $config['user']['model_name']);
-        $container->setParameter('ma27_api_key_authentication.object_manager', $config['user']['object_manager']);
-        $container->setParameter('ma27_api_key_authentication.property.apiKeyLength', $config['user']['api_key_length']);
         $container->setParameter('ma27_api_key_authentication.response_values', $config['response']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        $this->loadPassword($container, $config['user']['password'], $loader);
+        $this->loadCore($container, $loader, $config['user']);
         $this->loadServices($loader);
 
         if ($this->isConfigEnabled($container, $config['api_key_purge'])) {
@@ -42,6 +39,36 @@ class Ma27ApiKeyAuthenticationExtension extends Extension
         if (!empty($services)) {
             $this->overrideServices($container, $services);
         }
+
+        if ($config['user']['metadata_cache']) {
+            $cacheDir = $container->getParameter('kernel.cache_dir');
+
+            $container->getDefinition('ma27_api_key_authentication.class_metadata_factory')
+                ->replaceArgument(3, sprintf('%s/ma27_api_key_authentication/metadata_dump', $cacheDir));
+        }
+    }
+
+    /**
+     * Loads the user and core related stuff of the bundle.
+     *
+     * @param ContainerBuilder      $container
+     * @param Loader\YamlFileLoader $loader
+     * @param array                 $config
+     */
+    private function loadCore(ContainerBuilder $container, Loader\YamlFileLoader $loader, $config)
+    {
+        $isCacheEnabled = $config['metadata_cache'];
+
+        $container->setParameter('ma27_api_key_authentication.model_name', $config['model_name']);
+        $container->setParameter('ma27_api_key_authentication.object_manager', $config['object_manager']);
+        $container->setParameter('ma27_api_key_authentication.property.apiKeyLength', $config['api_key_length']);
+        $container->setParameter('ma27_api_key_authentication.metadata_cache_enabled', $isCacheEnabled);
+
+        if ($isCacheEnabled) {
+            $loader->load('metadata_cache_warmer.yml');
+        }
+
+        $this->loadPassword($container, $config['password'], $loader);
     }
 
     /**

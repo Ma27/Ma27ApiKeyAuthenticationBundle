@@ -38,6 +38,7 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
+                        ->scalarNode('metadata_cache')->defaultFalse()->end()
                     ->end()
                 ->end()
                 ->arrayNode('api_key_purge')

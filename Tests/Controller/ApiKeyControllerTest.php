@@ -3,34 +3,17 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Controller;
 
 use Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Ma27\ApiKeyAuthenticationBundle\Tests\WebTestCase;
 
 class ApiKeyControllerTest extends WebTestCase
 {
-    protected function setUp()
+    /**
+     * @dataProvider getEnvs
+     */
+    public function testRefusedCredentials($env)
     {
-        $login = 'Ma27';
-        $password = '123456';
-
-        $kernel = static::createKernel();
-        $kernel->boot();
-
-        $container = $kernel->getContainer();
-        $container->get('doctrine.dbal.default_connection')->exec('DELETE FROM TestUser');
-
-        $user = new TestUser();
-        $user->setUsername($login);
-        $user->setPassword($container->get('ma27_api_key_authentication.password.strategy')->generateHash($password));
-        $user->setEmail('foo@example.org');
-
-        $em = $container->get('doctrine.orm.default_entity_manager');
-        $em->persist($user);
-        $em->flush();
-    }
-
-    public function testRefusedCredentials()
-    {
-        $client = static::createClient();
+        $this->prepare($env);
+        $client = $this->client($env);
 
         $client->request('POST', '/api-key.json', array('login' => 'foo', 'password' => 'foo'));
         $response = $client->getResponse();
@@ -42,9 +25,13 @@ class ApiKeyControllerTest extends WebTestCase
         $this->assertSame($bareResponse['message'], 'Credentials refused!');
     }
 
-    public function testLogin()
+    /**
+     * @dataProvider getEnvs
+     */
+    public function testLogin($env)
     {
-        $client = static::createClient();
+        $this->prepare($env);
+        $client = $this->client($env);
 
         // clear the last action to prove that it will be reloaded properly during the login
         $testUser = $this->getFixtureUser();
@@ -68,9 +55,13 @@ class ApiKeyControllerTest extends WebTestCase
         $this->assertNotEmpty($user->getLastAction());
     }
 
-    public function testLogoutWithMissingApiKey()
+    /**
+     * @dataProvider getEnvs
+     */
+    public function testLogoutWithMissingApiKey($env)
     {
-        $client = static::createClient();
+        $this->prepare($env);
+        $client = $this->client($env);
 
         $client->request('DELETE', '/api-key.json');
         $response = $client->getResponse();
@@ -81,9 +72,13 @@ class ApiKeyControllerTest extends WebTestCase
         $this->assertSame('Missing api key header!', $bareResponse['message']);
     }
 
-    public function testLogout()
+    /**
+     * @dataProvider getEnvs
+     */
+    public function testLogout($env)
     {
-        $client = static::createClient();
+        $this->prepare($env);
+        $client = $this->client($env);
 
         $client->request('POST', '/api-key.json', array('login' => 'Ma27', 'password' => '123456'));
         $response = json_decode($client->getResponse()->getContent(), true);
@@ -99,16 +94,25 @@ class ApiKeyControllerTest extends WebTestCase
         $this->assertSame(204, $logoutResponse->getStatusCode());
     }
 
-    public function testLoginWithEmptyCredentials()
+    /**
+     * @dataProvider getEnvs
+     */
+    public function testLoginWithEmptyCredentials($env)
     {
-        $client = static::createClient();
+        $this->prepare($env);
+
+        $client = static::createClient(array('environment' => $env));
         $client->request('POST', '/api-key.json', array('login' => null, 'password' => null));
         $this->assertSame(401, $client->getResponse()->getStatusCode());
     }
 
-    public function testMultipleLogins()
+    /**
+     * @dataProvider getEnvs
+     */
+    public function testMultipleLogins($env)
     {
-        $client = static::createClient();
+        $this->prepare($env);
+        $client = $this->client($env);
 
         $data = array();
         for ($i = 0; $i < 2; $i++) {
@@ -123,10 +127,28 @@ class ApiKeyControllerTest extends WebTestCase
     }
 
     /**
-     * @return \Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser
+     * Prepares the kernel.
+     *
+     * @param string $env
      */
-    private function getFixtureUser()
+    private function prepare($env)
     {
-        return self::$kernel->getContainer()->get('doctrine')->getManager()->getRepository('Functional:TestUser')->findOneBy(array('username' => 'Ma27'));
+        $login = 'Ma27';
+        $password = '123456';
+
+        $kernel = static::createKernel(array('environment' => $env));
+        $kernel->boot();
+
+        $container = $kernel->getContainer();
+        $container->get('doctrine.dbal.default_connection')->exec('DELETE FROM TestUser');
+
+        $user = new TestUser();
+        $user->setUsername($login);
+        $user->setPassword($container->get('ma27_api_key_authentication.password.strategy')->generateHash($password));
+        $user->setEmail('foo@example.org');
+
+        $em = $container->get('doctrine.orm.default_entity_manager');
+        $em->persist($user);
+        $em->flush();
     }
 }

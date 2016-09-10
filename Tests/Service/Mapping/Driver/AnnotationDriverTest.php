@@ -1,9 +1,9 @@
 <?php
 
-namespace Ma27\ApiKeyAuthenticationBundle\Tests\Annotation\Driver;
+namespace Ma27\ApiKeyAuthenticationBundle\Tests\Service\Mapping\Driver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Ma27\ApiKeyAuthenticationBundle\Annotation\Driver\AnnotationDriver;
+use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\Driver\AnnotationDriver;
 use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 
 class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
@@ -13,9 +13,11 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $driver = new AnnotationDriver(new AnnotationReader(), 'Ma27\\ApiKeyAuthenticationBundle\\Tests\\Resources\\Entity\\TestUser');
         $metadata = $driver->getMetadataForUser();
 
-        $this->assertSame('username', $metadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY));
-        $this->assertSame('password', $metadata->getPropertyName(ClassMetadata::PASSWORD_PROPERTY));
-        $this->assertSame('apiKey', $metadata->getPropertyName(ClassMetadata::API_KEY_PROPERTY));
+        self::assertCount(4, $metadata);
+        self::assertSame('username', $metadata[ClassMetadata::LOGIN_PROPERTY]->getName());
+        self::assertSame('password', $metadata[ClassMetadata::PASSWORD_PROPERTY]->getName());
+        self::assertSame('apiKey', $metadata[ClassMetadata::API_KEY_PROPERTY]->getName());
+        self::assertSame('lastAction', $metadata[ClassMetadata::LAST_ACTION_PROPERTY]->getName());
     }
 
     /**

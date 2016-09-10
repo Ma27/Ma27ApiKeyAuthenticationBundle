@@ -40,6 +40,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($result['api_key_purge']['last_action_listener'], array(
             'enabled' => true,
         ));
+
+        self::assertFalse($result['user']['metadata_cache']);
     }
 
     public function testApiKeyPurgeEnabled()

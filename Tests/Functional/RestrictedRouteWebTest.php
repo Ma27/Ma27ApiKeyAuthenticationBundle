@@ -2,21 +2,27 @@
 
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Functional;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Ma27\ApiKeyAuthenticationBundle\Tests\WebTestCase;
 
 class RestrictedRouteWebTest extends WebTestCase
 {
-    public function testInvalidApiKey()
+    /**
+     * @dataProvider getEnvs
+     */
+    public function testInvalidApiKey($env)
     {
-        $client = static::createClient();
+        $client = $this->client($env);
         $client->request('GET', '/restricted.html', array(), array(), array('HTTP_X-API-KEY' => 'invalid token'));
 
         $this->assertSame(401, $client->getResponse()->getStatusCode());
     }
 
-    public function testAppropriateWorkflow()
+    /**
+     * @dataProvider getEnvs
+     */
+    public function testAppropriateWorkflow($env)
     {
-        $client = static::createClient();
+        $client = $this->client($env);
         $client->request('POST', '/api-key.json', array('login' => 'Ma27', 'password' => '123456'));
         $response = $client->getResponse();
         $content = json_decode($response->getContent(), true);
@@ -34,13 +40,5 @@ class RestrictedRouteWebTest extends WebTestCase
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $user = $this->getFixtureUser();
         $this->assertNotEmpty($user->getLastAction());
-    }
-
-    /**
-     * @return \Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser
-     */
-    private function getFixtureUser()
-    {
-        return self::$kernel->getContainer()->get('doctrine')->getManager()->getRepository('Functional:TestUser')->findOneBy(array('username' => 'Ma27'));
     }
 }
