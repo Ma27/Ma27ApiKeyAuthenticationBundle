@@ -65,11 +65,10 @@ class ClassMetadataPropertiesCacheWarmer implements CacheWarmerInterface
     {
         $metadata = $this->driver->getMetadataForUser();
 
-        return serialize(array_combine(
-            array_keys($metadata),
-            array_values(array_map(function (\ReflectionProperty $property) {
+        return serialize(
+            array_map(function (\ReflectionProperty $property) {
                 return $property->getName();
-            }, $metadata))
-        ));
+            }, $metadata)
+        );
     }
 }
