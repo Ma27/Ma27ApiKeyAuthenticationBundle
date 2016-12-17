@@ -2,6 +2,8 @@
 
 ## 2.0.0
 
+- [breaking] dropped support for `hhvm` and all PHP versions lower than PHP 7.1
+
 - [feature] Made `KeyFactory#doGenerate` protected in order to override only the generation part.
 
 - [minor] The length computation `actual_length / 2` for the random key will be done in the `KeyFactory` instead of the extension.
