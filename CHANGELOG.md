@@ -1,5 +1,9 @@
 # Changelog for 1.x version
 
+## 1.2.1
+
+- [bug] `33e4bfe` invalid import leads to issues when dumping the DI graph
+
 ## 1.2.0
 
 - [feature] made hashing services configurable: (#33)
