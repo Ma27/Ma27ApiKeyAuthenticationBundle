@@ -8,5 +8,5 @@
 # PhpStorm
 /.idea/
 
-# Cache
-/Tests/Resources/app/cache/
+# Ignore cache
+/Tests/Resources/app/cache
