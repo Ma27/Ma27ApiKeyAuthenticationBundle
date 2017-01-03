@@ -29,8 +29,6 @@ class ApiKeyController extends Controller
      */
     public function requestApiKeyAction(Request $request)
     {
-        /** @var \Ma27\ApiKeyAuthenticationBundle\Service\Auth\AuthenticationHandlerInterface $authenticationHandler */
-        $authenticationHandler = $this->get('ma27_api_key_authentication.auth_handler');
         /** @var ClassMetadata $metadata */
         $metadata = $this->get('ma27_api_key_authentication.class_metadata');
         /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
@@ -40,25 +38,24 @@ class ApiKeyController extends Controller
         if ($request->request->has('login')) {
             $credentials[$metadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY)] = $request->request->get('login');
         }
-
         if ($request->request->has('password')) {
             $credentials[$metadata->getPropertyName(ClassMetadata::PASSWORD_PROPERTY)] = $request->request->get('password');
         }
 
-        $exception = null;
-        $user = null;
-        try {
-            $user = $authenticationHandler->authenticate($credentials);
-        } catch (CredentialException $ex) {
-            $dispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CREDENTIAL_EXCEPTION_THROWN, new OnCredentialExceptionThrownEvent($ex, $user));
-
-            $exception = $ex;
-        }
+        [$user, $exception] = $this->processAuthentication($credentials);
 
         /** @var OnAssembleResponseEvent $result */
-        $result = $dispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::ASSEMBLE_RESPONSE, new OnAssembleResponseEvent($user, $exception));
+        $result = $dispatcher->dispatch(
+            Ma27ApiKeyAuthenticationEvents::ASSEMBLE_RESPONSE,
+            new OnAssembleResponseEvent($user, $exception)
+        );
+
         if (!$response = $result->getResponse()) {
-            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot assemble the response!', $exception);
+            throw new HttpException(
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+                'Cannot assemble the response!',
+                $exception
+            );
         }
 
         return $response;
@@ -90,5 +87,34 @@ class ApiKeyController extends Controller
         $authenticationHandler->removeSession($user);
 
         return new JsonResponse(array(), 204);
+    }
+
+    /**
+     * Internal utility to handle the authentication process based on the credentials.
+     *
+     * @param array $credentials
+     *
+     * @return array
+     */
+    private function processAuthentication(array $credentials)
+    {
+        /** @var \Ma27\ApiKeyAuthenticationBundle\Service\Auth\AuthenticationHandlerInterface $authenticationHandler */
+        $authenticationHandler = $this->get('ma27_api_key_authentication.auth_handler');
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
+        $dispatcher = $this->get('event_dispatcher');
+
+        try {
+            $user = $authenticationHandler->authenticate($credentials);
+        } catch (CredentialException $ex) {
+            $userOrNull = $user ?? null;
+            $dispatcher->dispatch(
+                Ma27ApiKeyAuthenticationEvents::CREDENTIAL_EXCEPTION_THROWN,
+                new OnCredentialExceptionThrownEvent($ex, $userOrNull)
+            );
+
+            return [$userOrNull, $ex];
+        }
+
+        return [$user, null];
     }
 }
