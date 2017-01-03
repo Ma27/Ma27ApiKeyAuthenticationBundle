@@ -6,69 +6,57 @@ Ma27ApiKeyAuthenticationBundle
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Ma27/Ma27ApiKeyAuthenticationBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Ma27/Ma27ApiKeyAuthenticationBundle/?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/3d8e18e2-06b5-407d-9c6a-47245882d8d8/mini.png)](https://insight.sensiolabs.com/projects/3d8e18e2-06b5-407d-9c6a-47245882d8d8)
 [![Latest Stable Version](https://poser.pugx.org/ma27/api-key-authentication-bundle/v/stable)](https://packagist.org/packages/ma27/api-key-authentication-bundle)
-[![Latest Unstable Version](https://poser.pugx.org/ma27/api-key-authentication-bundle/v/unstable)](https://packagist.org/packages/ma27/api-key-authentication-bundle)
 [![License](https://poser.pugx.org/ma27/api-key-authentication-bundle/license)](https://packagist.org/packages/ma27/api-key-authentication-bundle)
-[![PHP 7 ready](http://php7ready.timesplinter.ch/Ma27/Ma27ApiKeyAuthenticationBundle/badge.svg)](https://travis-ci.org/Ma27/Ma27ApiKeyAuthenticationBundle)
 
-This bundle provides a way of restful authentication using api keys.
+Symfony Bundle which provides an approach to authenticate users with API tokens.
 
 1) About
 --------
 
 This bundle applies the concept of a stateless user authenticator as described in the [Symfony CookBook](http://symfony.com/doc/current/cookbook/security/api_key_authentication.html).
-This bundle has some extra features:
 
-- RESTful actions in order to get the api key and for the logout
-- API key generator
-- abstract model (it is possible to use any doctrine implementation like Doctrine-ODM-MongoDB or Doctrine-ODM-PHPCR)
-- powerful event handling system (it is possible to hook into all important processes)
-- strategy for password hashing
-- session purger
+Furthermore it contains some extra features:
+
+- RESTful actions in order to generate its own api key and for the logout
+- Generator for safe API keys
+- Abstract model based on `doctrine/common` (it is possible to use any Doctrine implementation like `doctrine/mongodb-odm` or `doctrine/phpcr-odm`)
+- Powerful event system (it is possible to hook into all important processes)
+- Implementation to manage password hashing using different strategies
+- Command which purges API keys that weren't used for a certain time
 
 2) Documentation
 ----------------
 
-Click [here](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/Resources/doc/index.md) in order to view the current docs.
+### Basic introduction
 
-3) Symfony 3.0
---------------
+To get a basic idea of how this bundle works, please refer to the following `medium.com` blogposts:
 
-The 1.0 versions support all Symfony 3.x versions including Symfony 2.8.
+- [Authenticate users with API keys using Symfony and Doctrine](https://medium.com/@_Ma27_/authenticate-users-with-api-keys-using-symfony-and-doctrine-b2270752261a#.it9rtcrq7)
+- [How to block users with the Ma27ApiKeyAuthenticationBundle](https://medium.com/@_Ma27_/how-to-block-users-with-the-ma27apikeyauthenticationbundle-5e71dc087b7d#.adfp9rpfn)
 
-4) Contributing
----------------
+### Official documentation
 
-####There's a short instruction for contributing:
+In order to read the official documentation, please refer to the [Resources/doc/index.md](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/Resources/doc/index.md) file.
 
-- Fork the project
-- Create a new local branch called *topic_<name_of_your_branch>*
-- Open a PR (Pull Request)
+3) Support and BC promise
+-------------------------
 
-####Devtools
+For changes in newly release versions please review the [CHANGELOG.md](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/CHANGELOG.md).
+To get more information about how to contribute please refer to the [CONTRIBUTING.md](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/.github/CONTRIBUTING.md).
 
-There's a simple vagrant box that can be used when contributing:
+### 1.2.x
 
-    vagrant up
-    vagrant ssh
-    cd /vagrant/auth-bundle
+Version `1.2` is the latest `1.x` release and will experience support for one year after the final `2.0.0` release came out.
+The `1.2` version still supports a lot of legacy PHP versions (`hhvm` and PHP from `5.3.9`).
 
-####Functional Tests
+### 2.x
 
-The functional tests will be executed with the rest of the test suite and require mysql (which will be installed when using vagrant)
+Version `2.0` dropped support for each PHP and HHVM versions except PHP 7.1.
+The support Symfony versions are `2.8` and all `3.x` versions.
 
-5) LICENSE
-----------
+### Handling BC breaks
 
-The code is published under the MIT LICENSE:.
-See the [Resources/meta/LICENSE](https://github.com/Ma27/Ma27ApiKeyAuthenticationBundle/blob/master/LICENSE) file for more information.
+The ancient, unsupported development versions (all `0.x` versions) were experimental development versions and contained BC breaks.
 
-6) Support
------------
-
-This software supports all php versions from php-5.3 up to php-7-nightly.
-The supported symfony version are 2.8 and 3.x
-
-7) BC promise
--------------
-
-From the *1.x* versions on (so no 0.x versions) backward compat is provided when jumping between minor releases except you try to do stuff with internals such as classes marked with "@internal" or private properties/methods.
+From the `1.x` versions on backward compatibility is provided when jumping between minor releases.
+This rule doesn't apply to internals of the codebase (these internals are marked with the `@internal` annotation or have a `private` visibility modifier).
