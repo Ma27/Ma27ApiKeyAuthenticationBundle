@@ -14,19 +14,19 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
     {
         $userList = $this->getSampleUsers();
 
-        $repository = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
+        $repository = $this->createMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $repository
             ->expects($this->any())
             ->method('findAll')
             ->will($this->returnValue($userList));
 
-        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $om = $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->once())
             ->method('getRepository')
             ->will($this->returnValue($repository));
 
-        $handler = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Auth\\AuthenticationHandlerInterface');
+        $handler = $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Auth\\AuthenticationHandlerInterface');
         $handler
             ->expects($this->exactly(3))
             ->method('removeSession');
@@ -54,7 +54,7 @@ class SessionCleanupCommandTest extends \PHPUnit_Framework_TestCase
     {
         $result = array();
         for ($i = 0; $i < 5; $i++) {
-            $user = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Tests\\Fixture\\TestUserInterface');
+            $user = $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Tests\\Fixture\\TestUserInterface');
 
             if ($i % 2 === 0) {
                 $expr = '-6 days';

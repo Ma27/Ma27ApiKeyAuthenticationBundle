@@ -87,7 +87,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Avoid further regressions as #57
+     * Avoid further regressions as #57.
      */
     public function testCustomHasherService()
     {

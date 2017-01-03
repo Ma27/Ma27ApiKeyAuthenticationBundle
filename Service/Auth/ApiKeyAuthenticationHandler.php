@@ -9,8 +9,8 @@ use Ma27\ApiKeyAuthenticationBundle\Event\OnLogoutEvent;
 use Ma27\ApiKeyAuthenticationBundle\Exception\CredentialException;
 use Ma27\ApiKeyAuthenticationBundle\Ma27ApiKeyAuthenticationEvents;
 use Ma27\ApiKeyAuthenticationBundle\Service\Key\KeyFactoryInterface;
-use Ma27\ApiKeyAuthenticationBundle\Service\Password\PasswordHasherInterface;
 use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Password\PasswordHasherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**

@@ -21,7 +21,7 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($key);
 
         $listener = new ResponseCreationListener(
-            $this->getMock('Symfony\Component\Translation\TranslatorInterface'),
+            $this->createMock('Symfony\Component\Translation\TranslatorInterface'),
             $metadata,
             array('api_key_property' => 'apiKey', 'error_property' => 'message')
         );
@@ -45,7 +45,7 @@ class ResponseCreationListenerTest extends \PHPUnit_Framework_TestCase
         $translatedIntoGerman = 'Ungültige Zugangsdaten!';
 
         $metadata = $this->getMockBuilder('Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata')->disableOriginalConstructor()->getMock();
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->once())
             ->method('trans')
             ->with('Invalid username and password!')

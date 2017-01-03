@@ -28,7 +28,7 @@ class ClassMetadataPropertiesCacheWarmer implements CacheWarmerInterface
      * Constructor.
      *
      * @param ModelConfigurationDriverInterface $driver
-     * @param Filesystem $filesystem
+     * @param Filesystem                        $filesystem
      */
     public function __construct(ModelConfigurationDriverInterface $driver, Filesystem $filesystem)
     {

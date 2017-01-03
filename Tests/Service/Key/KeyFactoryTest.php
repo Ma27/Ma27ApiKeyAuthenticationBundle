@@ -9,8 +9,8 @@ class KeyFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testGenerateKey()
     {
-        $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
-        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $or = $this->createMock('Doctrine\\Common\\Persistence\\ObjectRepository');
+        $om = $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->any())
             ->method('getRepository')
@@ -30,13 +30,13 @@ class KeyFactoryTest extends \PHPUnit_Framework_TestCase
     public function testKeyGenerationFailure()
     {
         $userMock = new \stdClass();
-        $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
+        $or = $this->createMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $or
             ->expects($this->any())
             ->method('findOneBy')
             ->will($this->returnValue($userMock));
 
-        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $om = $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->any())
             ->method('getRepository')

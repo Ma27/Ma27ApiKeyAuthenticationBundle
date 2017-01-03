@@ -18,7 +18,7 @@ abstract class WebTestCase extends BaseWebTestCase
     {
         return array(
             array('dev'),
-            array('cache')
+            array('cache'),
         );
     }
 

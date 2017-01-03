@@ -3,8 +3,8 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Tests\Service\Auth;
 
 use Ma27\ApiKeyAuthenticationBundle\Service\Auth\ApiKeyAuthenticationHandler;
-use Ma27\ApiKeyAuthenticationBundle\Service\Password\CryptPasswordHasher;
 use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
+use Ma27\ApiKeyAuthenticationBundle\Service\Password\CryptPasswordHasher;
 use Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -19,9 +19,9 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $metadata = $this->getMetadata();
 
         $handler = new ApiKeyAuthenticationHandler(
-            $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
+            $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager'),
+            $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
+            $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
             $metadata
@@ -39,9 +39,9 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $metadata = $this->getMetadata();
 
         $handler = new ApiKeyAuthenticationHandler(
-            $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
+            $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager'),
+            $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
+            $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
             $metadata
@@ -58,13 +58,13 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $user = new TestUser();
         $user->setPassword(crypt('foo', '$6$rounds=500$foo$'));
 
-        $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
+        $or = $this->createMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $or
             ->expects($this->any())
             ->method('findOneBy')
             ->will($this->returnValue($user));
 
-        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $om = $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->any())
             ->method('getRepository')
@@ -73,7 +73,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $handler = new ApiKeyAuthenticationHandler(
             $om,
             new CryptPasswordHasher(),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
+            $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
             $this->getMetadata()
@@ -89,19 +89,19 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
         $user = new TestUser();
         $user->setPassword($hasher->generateHash('123456'));
 
-        $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
+        $or = $this->createMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $or
             ->expects($this->any())
             ->method('findOneBy')
             ->will($this->returnValue($user));
 
-        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $om = $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->any())
             ->method('getRepository')
             ->will($this->returnValue($or));
 
-        $factory = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface');
+        $factory = $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface');
         $factory
             ->expects($this->any())
             ->method('getKey')
@@ -136,7 +136,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('modifyProperty')
             ->with($user, null, ClassMetadata::API_KEY_PROPERTY);
 
-        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $om = $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->once())
             ->method('persist')
@@ -144,8 +144,8 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 
         $handler = new ApiKeyAuthenticationHandler(
             $om,
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
+            $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
+            $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
             $metadata
@@ -164,7 +164,7 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('modifyProperty')
             ->with($user, null, ClassMetadata::API_KEY_PROPERTY);
 
-        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $om = $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->once())
             ->method('persist')
@@ -176,8 +176,8 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
 
         $handler = new ApiKeyAuthenticationHandler(
             $om,
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
-            $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
+            $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Password\\PasswordHasherInterface'),
+            $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface'),
             new EventDispatcher(),
             'AppBundle:User',
             $metadata
@@ -203,19 +203,19 @@ class ApiKeyAuthenticationHandlerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('modifyProperty');
 
-        $or = $this->getMock('Doctrine\\Common\\Persistence\\ObjectRepository');
+        $or = $this->createMock('Doctrine\\Common\\Persistence\\ObjectRepository');
         $or
             ->expects($this->any())
             ->method('findOneBy')
             ->will($this->returnValue($user));
 
-        $om = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $om = $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $om
             ->expects($this->any())
             ->method('getRepository')
             ->will($this->returnValue($or));
 
-        $factory = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface');
+        $factory = $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Key\\KeyFactoryInterface');
         $factory
             ->expects($this->never())
             ->method('getKey');

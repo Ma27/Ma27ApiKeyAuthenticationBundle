@@ -12,7 +12,7 @@ class ClassMetadataFactoryTest extends \PHPUnit_Framework_TestCase
     public function testResolveWithoutCache()
     {
         $user = new TestUser();
-        $driver = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\Driver\\ModelConfigurationDriverInterface');
+        $driver = $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\Driver\\ModelConfigurationDriverInterface');
         $driver->expects(self::once())
             ->method('getMetadataForUser')
             ->willReturn(array(
@@ -33,7 +33,7 @@ class ClassMetadataFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveIncompleteCache()
     {
-        $driver = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\Driver\\ModelConfigurationDriverInterface');
+        $driver = $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\Driver\\ModelConfigurationDriverInterface');
         $factory = new ClassMetadataFactory($driver, new Filesystem(), true, '/invalid/cache', 'Ma27\\ApiKeyAuthenticationBundle\\Tests\\Resources\\Entity\\TestUser');
 
         $factory->createMetadataObject();
@@ -41,12 +41,12 @@ class ClassMetadataFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveCache()
     {
-        $driver = $this->getMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\Driver\\ModelConfigurationDriverInterface');
+        $driver = $this->createMock('Ma27\\ApiKeyAuthenticationBundle\\Service\\Mapping\\Driver\\ModelConfigurationDriverInterface');
         $driver->expects(self::never())
             ->method('getMetadataForUser');
 
         $fs = new Filesystem();
-        $file = __DIR__ . '/../../Fixture/cache/dump';
+        $file = __DIR__.'/../../Fixture/cache/dump';
 
         $fs->touch($file);
         $fs->dumpFile($file, serialize(array(ClassMetadata::LOGIN_PROPERTY => 'username', ClassMetadata::PASSWORD_PROPERTY => 'password', ClassMetadata::API_KEY_PROPERTY => 'apiKey')));

@@ -41,8 +41,8 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container->setDefinition('foo.bar', new Definition('stdClass'));
         $container->setDefinition('event_dispatcher', new Definition('Symfony\\Component\\EventDispatcher\\EventDispatcher'));
-        $container->setDefinition('om', new Definition(get_class($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
-        $container->setDefinition('request_stack', new Definition(get_class($this->getMock('Symfony\\Component\\HttpFoundation\\RequestStack'))));
+        $container->setDefinition('om', new Definition(get_class($this->createMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
+        $container->setDefinition('request_stack', new Definition(get_class($this->createMock('Symfony\\Component\\HttpFoundation\\RequestStack'))));
 
         $container->compile();
 
@@ -87,9 +87,9 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container->setDefinition('foo.bar', new Definition('stdClass'));
         $container->setDefinition('event_dispatcher', new Definition('Symfony\\Component\\EventDispatcher\\EventDispatcher'));
-        $container->setDefinition('om', new Definition(get_class($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
-        $container->setDefinition('request_stack', new Definition(get_class($this->getMock('Symfony\\Component\\HttpFoundation\\RequestStack'))));
-        $container->setDefinition('filesystem', new Definition(get_class($this->getMock('Symfony\\Component\\Filesystem\\Filesystem'))));
+        $container->setDefinition('om', new Definition(get_class($this->createMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
+        $container->setDefinition('request_stack', new Definition(get_class($this->createMock('Symfony\\Component\\HttpFoundation\\RequestStack'))));
+        $container->setDefinition('filesystem', new Definition(get_class($this->createMock('Symfony\\Component\\Filesystem\\Filesystem'))));
 
         $container->compile();
 
@@ -121,8 +121,8 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container->setDefinition('foo.bar', new Definition('stdClass'));
         $container->setDefinition('event_dispatcher', new Definition('Symfony\\Component\\EventDispatcher\\EventDispatcher'));
-        $container->setDefinition('om', new Definition(get_class($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
-        $container->setDefinition('request_stack', new Definition(get_class($this->getMock('Symfony\\Component\\HttpFoundation\\RequestStack'))));
+        $container->setDefinition('om', new Definition(get_class($this->createMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
+        $container->setDefinition('request_stack', new Definition(get_class($this->createMock('Symfony\\Component\\HttpFoundation\\RequestStack'))));
 
         $container->compile();
 
@@ -160,7 +160,7 @@ class Ma27ApiKeyAuthenticationExtensionTest extends \PHPUnit_Framework_TestCase
             $container
         );
 
-        $container->setDefinition('om', new Definition(get_class($this->getMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
+        $container->setDefinition('om', new Definition(get_class($this->createMock('Doctrine\\Common\\Persistence\\ObjectManager'))));
         $container->setDefinition('event_dispatcher', new Definition('Symfony\\Component\\EventDispatcher\\EventDispatcher'));
 
         $container->compile();

@@ -1,12 +1,6 @@
-# VM
-/.vagrant/
-
 # Symfony
 /composer.lock
 /vendor/
-
-# PhpStorm
-/.idea/
 
 # Ignore cache
 /Tests/Resources/app/cache

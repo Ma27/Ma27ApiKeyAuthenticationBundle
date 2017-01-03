@@ -18,7 +18,7 @@ class UpdateLastActionFieldListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testModifyProperty($event, $assertPersistence, $method)
     {
-        $objectManager = $this->getMock('Doctrine\\Common\\Persistence\\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\\Common\\Persistence\\ObjectManager');
         $objectManager
             ->expects($assertPersistence ? $this->once() : $this->never())
             ->method('persist');
