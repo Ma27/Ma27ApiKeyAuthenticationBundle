@@ -71,13 +71,13 @@ class ApiKeyController extends Controller
         $om = $this->get($this->container->getParameter('ma27_api_key_authentication.object_manager'));
 
         if (!$header = (string) $request->headers->get($this->container->getParameter('ma27_api_key_authentication.key_header'))) {
-            return new JsonResponse(array('message' => 'Missing api key header!'), 400);
+            return new JsonResponse(['message' => 'Missing api key header!'], 400);
         }
 
         $user = $om
             ->getRepository($this->container->getParameter('ma27_api_key_authentication.model_name'))
             ->findOneBy([
-                $this->getPropertyName(ClassMetadata::API_KEY_PROPERTY) => $header
+                $this->getPropertyName(ClassMetadata::API_KEY_PROPERTY) => $header,
             ]);
 
         $this->get('ma27_api_key_authentication.auth_handler')->removeSession($user);
