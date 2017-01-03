@@ -29,19 +29,16 @@ class ApiKeyController extends Controller
      */
     public function requestApiKeyAction(Request $request)
     {
-        /** @var ClassMetadata $metadata */
-        $metadata = $this->get('ma27_api_key_authentication.class_metadata');
         /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
         $dispatcher = $this->get('event_dispatcher');
 
-        $credentials = array();
+        $credentials = [];
         if ($request->request->has('login')) {
-            $credentials[$metadata->getPropertyName(ClassMetadata::LOGIN_PROPERTY)] = $request->request->get('login');
+            $credentials[$this->getPropertyName(ClassMetadata::LOGIN_PROPERTY)] = $request->request->get('login');
         }
         if ($request->request->has('password')) {
-            $credentials[$metadata->getPropertyName(ClassMetadata::PASSWORD_PROPERTY)] = $request->request->get('password');
+            $credentials[$this->getPropertyName(ClassMetadata::PASSWORD_PROPERTY)] = $request->request->get('password');
         }
-
         [$user, $exception] = $this->processAuthentication($credentials);
 
         /** @var OnAssembleResponseEvent $result */
@@ -70,23 +67,22 @@ class ApiKeyController extends Controller
      */
     public function removeSessionAction(Request $request)
     {
-        /** @var \Ma27\ApiKeyAuthenticationBundle\Service\Auth\AuthenticationHandlerInterface $authenticationHandler */
-        $authenticationHandler = $this->get('ma27_api_key_authentication.auth_handler');
         /** @var \Doctrine\Common\Persistence\ObjectManager $om */
         $om = $this->get($this->container->getParameter('ma27_api_key_authentication.object_manager'));
-        /** @var ClassMetadata $metadata */
-        $metadata = $this->get('ma27_api_key_authentication.class_metadata');
 
         if (!$header = (string) $request->headers->get($this->container->getParameter('ma27_api_key_authentication.key_header'))) {
             return new JsonResponse(array('message' => 'Missing api key header!'), 400);
         }
 
-        $repository = $om->getRepository($this->container->getParameter('ma27_api_key_authentication.model_name'));
-        $user = $repository->findOneBy(array($metadata->getPropertyName(ClassMetadata::API_KEY_PROPERTY) => (string) $header));
+        $user = $om
+            ->getRepository($this->container->getParameter('ma27_api_key_authentication.model_name'))
+            ->findOneBy([
+                $this->getPropertyName(ClassMetadata::API_KEY_PROPERTY) => $header
+            ]);
 
-        $authenticationHandler->removeSession($user);
+        $this->get('ma27_api_key_authentication.auth_handler')->removeSession($user);
 
-        return new JsonResponse(array(), 204);
+        return new JsonResponse([], 204);
     }
 
     /**
@@ -116,5 +112,17 @@ class ApiKeyController extends Controller
         }
 
         return [$user, null];
+    }
+
+    /**
+     * Returns the actual property name by the given metadata alias.
+     *
+     * @param string $internalMetadataAlias
+     *
+     * @return string
+     */
+    private function getPropertyName($internalMetadataAlias)
+    {
+        return $this->get('ma27_api_key_authentication.class_metadata')->getPropertyName($internalMetadataAlias);
     }
 }
