@@ -76,6 +76,9 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \InvalidArgumentException If the `login` or `password` property is missing.
+     * @throws CredentialException If the credentials couldn't be validated.
      */
     public function authenticate(array $credentials)
     {
@@ -83,35 +86,34 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
         $passwordProperty = $this->classMetadata->getPropertyName(ClassMetadata::PASSWORD_PROPERTY);
 
         if (!array_key_exists($passwordProperty, $credentials)) {
-            throw new \InvalidArgumentException(
-                sprintf('Unable to find password property "%s" in credential set!', $passwordProperty)
-            );
+            throw new \InvalidArgumentException(sprintf(
+                'Unable to find password property "%s" in credential set!',
+                $passwordProperty
+            ));
         }
 
         if (!array_key_exists($loginProperty, $credentials)) {
-            throw new \InvalidArgumentException(
-                sprintf('Unable to find login property "%s" in credential set!', $loginProperty)
-            );
+            throw new \InvalidArgumentException(sprintf(
+                'Unable to find login property "%s" in credential set!',
+                $loginProperty
+            ));
         }
 
-        $objectRepository = $this->om->getRepository($this->modelName);
-        $object = $objectRepository->findOneBy(array($loginProperty => $credentials[$loginProperty]));
+        $object = $this->resolveObject($loginProperty, $credentials);
 
-        if (null === $object || !$this->passwordHasher->compareWith($object->getPassword(), $credentials[$passwordProperty])) {
-            $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::CREDENTIAL_FAILURE, new OnInvalidCredentialsEvent($object));
+        if (!$this->validateCredentials($object, $credentials[$passwordProperty])) {
+            $this->eventDispatcher->dispatch(
+                Ma27ApiKeyAuthenticationEvents::CREDENTIAL_FAILURE,
+                new OnInvalidCredentialsEvent($object)
+            );
 
             throw new CredentialException();
         }
 
         $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::AUTHENTICATION, new OnAuthenticationEvent($object));
-
-        $key = $this->classMetadata->getPropertyValue($object, ClassMetadata::API_KEY_PROPERTY);
-        if (empty($key)) {
-            $this->classMetadata->modifyProperty($object, $this->keyFactory->getKey(), ClassMetadata::API_KEY_PROPERTY);
-        }
+        $this->buildKey($object);
 
         $this->om->persist($object);
-
         $this->om->flush();
 
         return $object;
@@ -124,11 +126,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     {
         $this->classMetadata->modifyProperty($user, null, ClassMetadata::API_KEY_PROPERTY);
 
-        $event = new OnLogoutEvent($user);
-        if ($purgeJob) {
-            $event->markAsPurgeJob();
-        }
-
+        $event = $this->buildEventObject($user, $purgeJob);
         $this->eventDispatcher->dispatch(Ma27ApiKeyAuthenticationEvents::LOGOUT, $event);
 
         $this->om->persist($user);
@@ -192,8 +190,75 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
     /**
      * @return ClassMetadata
      */
-    public function getClassMetadata()
+    protected function getClassMetadata()
     {
         return $this->classMetadata;
+    }
+
+    /**
+     * Simple helper which builds the API key and stores it in the user.
+     *
+     * @param object $userObject
+     */
+    private function buildKey($userObject)
+    {
+        $key = $this->classMetadata->getPropertyValue($userObject, ClassMetadata::API_KEY_PROPERTY);
+
+        if (empty($key)) {
+            $this->classMetadata->modifyProperty(
+                $userObject,
+                $this->keyFactory->getKey(),
+                ClassMetadata::API_KEY_PROPERTY
+            );
+        }
+    }
+
+    /**
+     * Simple helper which searches the ObjectManager by the given login parameter.
+     *
+     * @param string $loginProperty
+     * @param array  $credentials
+     *
+     * @return object
+     */
+    private function resolveObject($loginProperty, array $credentials)
+    {
+        return $this->om->getRepository($this->modelName)->findOneBy([
+            $loginProperty => $credentials[$loginProperty],
+        ]);
+    }
+
+    /**
+     * Validates the existance of the object and ensures that a valid password is given.
+     *
+     * @param object $object
+     * @param string $password
+     *
+     * @return bool
+     */
+    private function validateCredentials($object, $password)
+    {
+        return !(
+            null === $object
+            || !$this->passwordHasher->compareWith($object->getPassword(), $password)
+        );
+    }
+
+    /**
+     * Builds the `OnLogoutEvent`.
+     *
+     * @param object $user
+     * @param bool   $purgeJob
+     *
+     * @return OnLogoutEvent
+     */
+    private function buildEventObject($user, $purgeJob = false)
+    {
+        $event = new OnLogoutEvent($user);
+        if ($purgeJob) {
+            $event->markAsPurgeJob();
+        }
+
+        return $event;
     }
 }
