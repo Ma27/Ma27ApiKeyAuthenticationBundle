@@ -121,6 +121,6 @@ class KeyFactory implements KeyFactoryInterface
      */
     protected function doGenerate()
     {
-        return bin2hex(openssl_random_pseudo_bytes($this->keyLength));
+        return bin2hex(random_bytes($this->keyLength));
     }
 }

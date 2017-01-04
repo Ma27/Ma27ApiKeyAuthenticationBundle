@@ -3,7 +3,7 @@
 namespace Ma27\ApiKeyAuthenticationBundle\Service\Password;
 
 /**
- * Concrete hasher that uses the php 5.5 api.
+ * Hasher implementation based on the `password_*` API introduced in PHP 5.5.
  */
 class PHPPasswordHasher implements PasswordHasherInterface
 {
@@ -19,13 +19,6 @@ class PHPPasswordHasher implements PasswordHasherInterface
      */
     public function __construct($cost = 12)
     {
-        if (!function_exists('password_hash')) {
-            throw new \RuntimeException(
-                'In order to use this strategy please install the package "ircmaxell/password-compat" '.
-                'or upgrade your php version to 5.5 or higher!'
-            );
-        }
-
         $this->cost = (int) $cost;
     }
 

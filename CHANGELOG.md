@@ -2,6 +2,14 @@
 
 ## 2.0.0
 
+- [minor] used the PHP 7.x `random_bytes()` API rather than the `openssl_` function for API key and salt generation.
+
+- [breaking] `doctrine/common` must be at least `v2.6`.
+
+- [breaking] `ApiKeyAuthenticationHandler#getClassMetadata` has been made protected.
+
+- [breaking] made `hautelook/phpass` a dev dependency to avoid unnecessary installs.
+
 - [breaking] dropped support for `hhvm` and all PHP versions lower than PHP 7.1
 
 - [feature] Made `KeyFactory#doGenerate` protected in order to override only the generation part.

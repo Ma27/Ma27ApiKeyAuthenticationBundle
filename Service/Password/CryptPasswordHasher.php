@@ -30,6 +30,6 @@ class CryptPasswordHasher implements PasswordHasherInterface
      */
     protected function generateSalt()
     {
-        return bin2hex(openssl_random_pseudo_bytes(10));
+        return bin2hex(random_bytes(10));
     }
 }
