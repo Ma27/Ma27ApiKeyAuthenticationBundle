@@ -78,7 +78,7 @@ class ApiKeyAuthenticationHandler implements AuthenticationHandlerInterface
      * {@inheritdoc}
      *
      * @throws \InvalidArgumentException If the `login` or `password` property is missing.
-     * @throws CredentialException If the credentials couldn't be validated.
+     * @throws CredentialException       If the credentials couldn't be validated.
      */
     public function authenticate(array $credentials)
     {
