@@ -45,66 +45,64 @@ final class AnnotationDriver implements ModelConfigurationDriverInterface
     {
         $reflection = new ReflectionClass($this->userClass);
         $properties = $reflection->getProperties();
-        $loginProperty = $passwordProperty = $apiKeyProperty = $lastActionProperty = null;
+        $metadata = [
+            ClassMetadata::LOGIN_PROPERTY       => null,
+            ClassMetadata::PASSWORD_PROPERTY    => null,
+            ClassMetadata::API_KEY_PROPERTY     => null,
+            ClassMetadata::LAST_ACTION_PROPERTY => null,
+        ];
 
         foreach ($properties as $reflectionProperty) {
-            foreach (array('login', 'password', 'apiKey', 'lastAction') as $annotation) {
+            foreach (['login', 'password', 'apiKey', 'lastAction'] as $annotation) {
                 $class = sprintf('Ma27\\ApiKeyAuthenticationBundle\\Annotation\\%s', ucfirst($annotation));
                 $annotationObject = $this->reader->getPropertyAnnotation($reflectionProperty, $class);
 
-                if ($annotationObject) {
-                    switch ($annotation) {
-                        case 'login':
-                            $this->assertUnique($loginProperty);
-                            $loginProperty = $reflectionProperty;
-                            break;
-                        case 'password':
-                            $this->assertUnique($passwordProperty);
-                            $passwordProperty = $reflectionProperty;
-                            break;
-                        case 'apiKey':
-                            $this->assertUnique($apiKeyProperty);
-                            $apiKeyProperty = $reflectionProperty;
-                            break;
-                        case 'lastAction':
-                            $this->assertUnique($lastActionProperty);
-                            $lastActionProperty = $reflectionProperty;
-                    }
-
-                    if ($loginProperty && $passwordProperty && $apiKeyProperty && $lastActionProperty) {
-                        break;
-                    }
-
+                if (!$annotationObject) {
                     continue;
+                }
+
+                switch ($annotation) {
+                    case 'login':
+                        $this->assertUnique($metadata[ClassMetadata::LOGIN_PROPERTY]);
+                        $metadata[ClassMetadata::LOGIN_PROPERTY] = $reflectionProperty;
+                        break;
+                    case 'password':
+                        $this->assertUnique($metadata[ClassMetadata::PASSWORD_PROPERTY]);
+                        $metadata[ClassMetadata::PASSWORD_PROPERTY] = $reflectionProperty;
+                        break;
+                    case 'apiKey':
+                        $this->assertUnique($metadata[ClassMetadata::API_KEY_PROPERTY]);
+                        $metadata[ClassMetadata::API_KEY_PROPERTY] = $reflectionProperty;
+                        break;
+                    case 'lastAction':
+                        $this->assertUnique($metadata[ClassMetadata::LAST_ACTION_PROPERTY]);
+                        $metadata[ClassMetadata::LAST_ACTION_PROPERTY] = $reflectionProperty;
+                        break;
+                }
+
+                if ($this->isMetadataFullyLoaded($metadata)) {
+                    break 2;
                 }
             }
         }
 
-        if (!$loginProperty || !$passwordProperty || !$apiKeyProperty) {
-            throw new \LogicException(sprintf(
-                'A user class must have a "%s", "%s", "%s" annotation!',
-                'Login',
-                'Password',
-                'ApiKey'
-            ));
+        if (!$metadata[ClassMetadata::LOGIN_PROPERTY] || !$metadata[ClassMetadata::PASSWORD_PROPERTY] || !$metadata[ClassMetadata::API_KEY_PROPERTY]) {
+            throw new \LogicException('A user class must have a "Login", "Password", "ApiKey" annotation!');
         }
 
-        return array(
-            ClassMetadata::LOGIN_PROPERTY       => $loginProperty,
-            ClassMetadata::PASSWORD_PROPERTY    => $passwordProperty,
-            ClassMetadata::API_KEY_PROPERTY     => $apiKeyProperty,
-            ClassMetadata::LAST_ACTION_PROPERTY => $lastActionProperty,
-        );
+        return $metadata;
     }
 
     /**
      * Checks whether a property is already set.
      *
      * @param \ReflectionProperty $property
+     *
+     * @throws \InvalidArgumentException
      */
     private function assertUnique(\ReflectionProperty $property = null)
     {
-        if (!empty($property)) {
+        if (null !== $property) {
             throw $this->createDuplicateAnnotationException();
         }
     }
@@ -117,5 +115,20 @@ final class AnnotationDriver implements ModelConfigurationDriverInterface
     private function createDuplicateAnnotationException()
     {
         return new \InvalidArgumentException('None of the Ma27\\ApiKeyAuthenticationBundle annotations can be declared twice!');
+    }
+
+    /**
+     * Method which checks if all metadata annotations were loaded already.
+     *
+     * @param object[] $metadata
+     *
+     * @return bool
+     */
+    private function isMetadataFullyLoaded(array $metadata)
+    {
+        return $metadata[ClassMetadata::LOGIN_PROPERTY]
+            && $metadata[ClassMetadata::PASSWORD_PROPERTY]
+            && $metadata[ClassMetadata::API_KEY_PROPERTY]
+            && $metadata[ClassMetadata::LAST_ACTION_PROPERTY];
     }
 }

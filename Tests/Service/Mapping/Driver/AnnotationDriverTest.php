@@ -5,12 +5,14 @@ namespace Ma27\ApiKeyAuthenticationBundle\Tests\Service\Mapping\Driver;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\ClassMetadata;
 use Ma27\ApiKeyAuthenticationBundle\Service\Mapping\Driver\AnnotationDriver;
+use Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\IncompleteTestUser;
+use Ma27\ApiKeyAuthenticationBundle\Tests\Resources\Entity\TestUser;
 
 class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 {
     public function testExtractMetadata()
     {
-        $driver = new AnnotationDriver(new AnnotationReader(), 'Ma27\\ApiKeyAuthenticationBundle\\Tests\\Resources\\Entity\\TestUser');
+        $driver = new AnnotationDriver(new AnnotationReader(), TestUser::class);
         $metadata = $driver->getMetadataForUser();
 
         self::assertCount(4, $metadata);
@@ -26,7 +28,7 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
      */
     public function testIncompleteUser()
     {
-        $driver = new AnnotationDriver(new AnnotationReader(), 'Ma27\\ApiKeyAuthenticationBundle\\Tests\\Resources\\Entity\\IncompleteTestUser');
+        $driver = new AnnotationDriver(new AnnotationReader(), IncompleteTestUser::class);
         $driver->getMetadataForUser();
     }
 }
