@@ -10,6 +10,10 @@ Ma27ApiKeyAuthenticationBundle
 
 Symfony Bundle which provides an approach to authenticate users with API tokens.
 
+### Current status
+
+Unfortunately [@Ma27](https://github.com/Ma27/) doesn't have sufficient time to to keep this project running. Just open an issue if you're interested in helping out.
+
 1) About
 --------
 
